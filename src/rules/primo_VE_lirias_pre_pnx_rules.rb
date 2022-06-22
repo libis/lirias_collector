@@ -798,7 +798,7 @@ def collect_records()
   #  puts output.raw()[:supersedes_to]
   #  puts output.raw()[:supersedes_from]
 
-        log ("id: #{output.raw()[:id]} last_affected_when #{output[:updated] }")
+#        log ("id: #{output.raw()[:id]} last_affected_when #{output[:updated] }")
 
         log("-- source --") if debugging
         output.raw()[:source] = "lirias"
@@ -862,11 +862,14 @@ def collect_records()
           # PNX - local_field_07 (genre form)
           output.raw()[:local_field_07] = output.raw()[:type].clone()
           # pp output.raw()[:local_field_07]
-          output.raw()[:ristype] = output.raw()[:type].map { |t| Lirias_2_LIMO_types[t][:ris] }
+          ##  if type is not defined in Lirias_2_LIMO_types => { :limo => "other", :ris => "GEN" },
+          output.raw()[:ristype] = output.raw()[:type].map { |t| Lirias_2_LIMO_types[t].nil? ? "GEN" :   Lirias_2_LIMO_types[t][:ris] }
 
           # PNX - type
           log("-- type --") if debugging
-          output.raw()[:type].map! { |t| Lirias_2_LIMO_types[t][:limo] }
+          ##  if type is not defined in Lirias_2_LIMO_types => { :limo => "other", :ris => "GEN" },
+          output.raw()[:type].map! { |t| Lirias_2_LIMO_types[t].nil? ? "other" :   Lirias_2_LIMO_types[t][:limo] }
+
           if output.raw()[:type].length != 1
             log(" Issue with records type #{  output.raw()[:type] } in id #{  output.raw()[:id] }")
           else

@@ -1,0 +1,16 @@
+---
+:base_url: https://lirias2repo.example.be/elements-cache/rest/publications?per-page=500&affected-since=  
+:base_delete_url: https://lirias2repo.example.be/elements-cache/rest/deleted/publications?per-page=1000&deleted-since=
+:user: userid
+:password: password
+:last_run_updates: '2022-06-21T15:22:21.517+02:00'
+:last_run_deletes: '2022-06-21T10:38:28.620Z'
+:records_dir: "/records/"
+:record_template: lirias_pre_pnx_template.erb
+:delete_template: lirias_delete_template.erb
+:max_updated_records: 500000
+:max_deleted_records: 5000
+:tar_records: true
+:one_xml_file: false
+:remove_temp_files: true
+:debugging: false

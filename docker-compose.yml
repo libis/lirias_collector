@@ -1,0 +1,16 @@
+version: '3'
+services:
+  lirias_collector:
+    image: lirias_collector
+    container_name: lirias_collector
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    networks: 
+      - collector_network
+    volumes:
+      - ./config:/app/src/config/
+      - ./records:/records/
+networks:
+  collector_network:
+    driver: bridge

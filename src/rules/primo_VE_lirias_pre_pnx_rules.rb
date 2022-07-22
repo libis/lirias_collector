@@ -973,7 +973,7 @@ def collect_records()
             output.raw()[:risdate] = output.raw()[:search_creationdate]
             output.raw()[:search_startdate] = output.raw()[:search_creationdate].map { |d| d.gsub(/(\d{4})(\d{4})/, '\10101') }
             output.raw()[:search_enddate] = output.raw()[:search_creationdate].map { |d| d.gsub(/(\d{4})(\d{4})/, '\11231') }
-            unless output.raw()[:journal].nil? && output.raw()[:parent_title].nil?
+            if output.raw()[:journal].nil? && output.raw()[:parent_title].nil?
               output.raw()[:creationdate] = output.raw()[:search_creationdate].map { |d| d.gsub(/([\d]{4})([\d]{2})([\d]{2})/, '\1-\2') }
               if output.raw()[:type] === 'dissertation'
                 output.raw()[:creationdate] = output.raw()[:search_creationdate].map { |d| d.gsub(/([\d]{4})([\d]{2})([\d]{2})/, '\1-\2-\3') }

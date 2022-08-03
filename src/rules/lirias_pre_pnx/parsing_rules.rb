@@ -20,9 +20,11 @@ def parse_record(object)
     virtual_collections = []
     keywords = []
     filter(object, '$..keywords.keyword').each do |keyword|
-    #  log(" Keyword ---- #{ keyword } ")
+      #log(" Keyword ---- #{ keyword } ")
       if keyword.is_a?(Nori::StringWithAttributes)
-        if filter( keyword.attributes.to_json, '$[?(@.scheme=="c-virtual-collection"]').any?
+        # log(" Keyword ---- #{ keyword.attributes } ")
+        # if filter( keyword.attributes.to_json, '$[?(@.scheme=="c-virtual-collection"]').any?
+        if (keyword.attributes)["scheme"] == "c-virtual-collection" 
             virtual_collections << keyword
         else
           keywords << keyword

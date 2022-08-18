@@ -17,6 +17,7 @@ class Input
 
   def initialize
     @logger = Logger.new(STDOUT)
+    @retry_request_counter = 0
   end
 
   def from_uri(source, options = {})
@@ -56,46 +57,60 @@ class Input
   end
 
   def from_https(uri, options = {})
-    data = nil
-    raise "User or Password parameter not found" unless options.keys.include?(:user) && options.keys.include?(:password)
-    user = options[:user]
-    password = options[:password]
-    http_response = HTTP.basic_auth(user: user, pass: password).get(escape_uri(uri))
-    @logger.info("http_response.code #{http_response.code}")
-    case http_response.code
-      when 200
-        @raw = data = http_response.body.to_s
+    begin
+      data = nil
+      raise "User or Password parameter not found" unless options.keys.include?(:user) && options.keys.include?(:password)
+      user = options[:user]
+      password = options[:password]
+      http_response = HTTP.basic_auth(user: user, pass: password).get(escape_uri(uri))
+      @logger.info("http_response.code #{http_response.code}")
+      case http_response.code
+        when 200
+          @retry_request_counter = 0
+          @raw = data = http_response.body.to_s
 
-        ##########################################################
-        #  file_name = "bronbestanden/call_#{rand(1000)}.xml"
-        #  File.open(file_name, 'wb:UTF-8') do |f|
-        #    f.puts data
-        #  end
-        ##########################################################
+          ##########################################################
+          #  file_name = "bronbestanden/call_#{rand(1000)}.xml"
+          #  File.open(file_name, 'wb:UTF-8') do |f|
+          #    f.puts data
+          #  end
+          ##########################################################
 
-        file_type = file_type_from(http_response.headers)
-        unless options.with_indifferent_access.has_key?(:raw) && options.with_indifferent_access[:raw] == true
-          case file_type
-            when 'applicaton/json'
-              data = JSON.parse(data)
-            when 'application/atom+xml'
-              data = xml_to_hash(data)
-            when 'application/xml'
-            when 'text/xml'
-              data = xml_to_hash(data)
-            else
-              data = xml_to_hash(data)
+          file_type = file_type_from(http_response.headers)
+          unless options.with_indifferent_access.has_key?(:raw) && options.with_indifferent_access[:raw] == true
+            case file_type
+              when 'applicaton/json'
+                data = JSON.parse(data)
+              when 'application/atom+xml'
+                data = xml_to_hash(data)
+              when 'application/xml'
+              when 'text/xml'
+                data = xml_to_hash(data)
+              else
+                data = xml_to_hash(data)
+            end
           end
-        end
-      when 401
-        raise 'Unauthorized'
-      when 404
-        raise 'Not found'
-      else
-        raise "Unable to process received status code = #{http_response.code}"
-    end
+        when 401
+          raise 'Unauthorized'
+        when 404
+          raise 'Not found'
+        else
+          raise "Unable to process received status code = #{http_response.code}"
+      end
 
-    data
+      data
+    rescue StandardError => e
+      
+      if   @retry_request_counter < 5
+        @retry_request_counter =  @retry_request_counter = + 1
+        puts "retry_request for the #{ @retry_request_counter } time !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        from_https(uri, options = {})
+      else
+        puts e.message
+        puts e.backtrace.inspect
+        raise "rescue from input.rb"
+      end
+    end
   end
 
   def from_file(uri, options = {})

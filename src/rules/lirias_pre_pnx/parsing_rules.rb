@@ -34,9 +34,9 @@ def parse_record(object)
         keywords << keyword
       end
     end
-    output[:virtual_collections] = virtual_collections 
-    output[:dspace_keywords] = dspace_keywords 
-    output[:keyword] = keywords
+    output[:virtual_collections] = virtual_collections.uniq! 
+    output[:dspace_keywords] = dspace_keywords.uniq!
+    output[:keyword] = keywords.uniq!
 
     filter(object, '$.records.record') .each do |record|
       output[:pmid]     = record["_id_at_source"] if  record["_source_name"] == "pubmed"

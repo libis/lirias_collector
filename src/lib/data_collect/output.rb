@@ -157,7 +157,7 @@ class Output
 
 
   def to_jsonfile (jsondata, jsonfile, records_dir)
-    file_name = "#{records_dir}/#{jsonfile}_#{Time.now.to_i}_#{rand(1000)}.json"
+    file_name = "#{records_dir}/#{jsonfile}_#{Time.now.strftime("%Y%m%d%H%M%S")}_#{rand(1000)}.json"
     File.open(file_name, 'wb') do |f|
       f.puts jsondata.to_json
     end

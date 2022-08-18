@@ -1285,9 +1285,9 @@ def collect_records()
       log(" delete-records (not claimed) #{ dcounter } ")
 
       
-      
       if tar_records
-        filename      = "lirias_#{Time.now.to_i}.tar.gz"
+        time = Time.now.strftime("%Y%m%d_%H%M%S")
+        filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"
         full_filename = "#{records_dir}/#{filename}"
         directory_to_process  = "#{records_dir}"
         PrimoVE_create_tar(full_filename, directory_to_process)
@@ -1401,7 +1401,8 @@ def collect_records()
 
 
       if tar_records
-        filename      = "lirias_#{Time.now.to_i}.tar.gz"
+        time = Time.now.strftime("%Y%m%d_%H%M%S")
+        filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"
         full_filename = "#{records_dir}/#{filename}"
         directory_to_process  = "#{records_dir}"
         PrimoVE_create_tar(full_filename, directory_to_process)

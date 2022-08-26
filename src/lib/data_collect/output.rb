@@ -136,14 +136,14 @@ class Output
 
     if tar_file_name.nil?
       file_name = "records/#{id}_#{rand(1000)}.xml"
-      File.open(file_name, 'wb:UTF-8') do |f|
+      File.open(file_name, 'wb:UTF-8', 0666)) do |f|
         f.puts xml_result.to_xml
       end
 
       return file_name
     else
 
-      Minitar::Output.open(Zlib::GzipWriter.new(File.open("records/#{tar_file_name}", 'wb:UTF-8'))) do |f|
+      Minitar::Output.open(Zlib::GzipWriter.new(File.open("records/#{tar_file_name}", 'wb:UTF-8', 0666))) do |f|
         xml_data = xml_result.to_xml
         f.tar.add_file_simple("#{id}_#{rand(1000)}.xml", data: xml_data, size: xml_data.size, mtime: Time.now.to_i)
       end
@@ -158,7 +158,7 @@ class Output
 
   def to_jsonfile (jsondata, jsonfile, records_dir)
     file_name = "#{records_dir}/#{jsonfile}_#{Time.now.strftime("%Y%m%d%H%M%S")}_#{rand(1000)}.json"
-    File.open(file_name, 'wb') do |f|
+    File.open(file_name, 'wb', 0666) do |f|
       f.puts jsondata.to_json
     end
   rescue Exception => e

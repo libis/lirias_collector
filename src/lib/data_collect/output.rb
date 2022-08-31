@@ -136,7 +136,7 @@ class Output
 
     if tar_file_name.nil?
       file_name = "records/#{id}_#{rand(1000)}.xml"
-      File.open(file_name, 'wb:UTF-8', 0666)) do |f|
+      File.open(file_name, 'wb:UTF-8', 0666) do |f|
         f.puts xml_result.to_xml
       end
       File.chmod(0666, file_name)
@@ -164,7 +164,7 @@ class Output
     File.open(file_name, 'wb', 0666) do |f|
       f.puts jsondata.to_json
     end
-    File.chmod(0666, file_name)
+    # File.chmod(0666, file_name)
     
   rescue Exception => e
     raise "unable to save to jsonfile: #{e.message}"

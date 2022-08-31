@@ -139,6 +139,7 @@ class Output
       File.open(file_name, 'wb:UTF-8', 0666)) do |f|
         f.puts xml_result.to_xml
       end
+      File.chmod(0666, file_name)
 
       return file_name
     else
@@ -147,6 +148,8 @@ class Output
         xml_data = xml_result.to_xml
         f.tar.add_file_simple("#{id}_#{rand(1000)}.xml", data: xml_data, size: xml_data.size, mtime: Time.now.to_i)
       end
+
+      File.chmod(0666, "records/#{tar_file_name}")
 
       return tar_file_name
     end
@@ -161,6 +164,8 @@ class Output
     File.open(file_name, 'wb', 0666) do |f|
       f.puts jsondata.to_json
     end
+    File.chmod(0666, file_name)
+    
   rescue Exception => e
     raise "unable to save to jsonfile: #{e.message}"
   end

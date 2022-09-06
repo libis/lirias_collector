@@ -665,6 +665,8 @@ def PrimoVE_create_tar(tarfilename, directory_to_tar)
 
     tar_resp = `cd #{directory_to_tar}; tar -czf #{tarfilename} primoVE_*.json; cd #{c_dir}`
 
+    File.chmod(0666, tarfilename)
+
     if $?.exitstatus != 0
       log("ERROR in creating tar.gz")
     else
@@ -929,6 +931,27 @@ def collect_records()
             }.select { |s| !s.nil? }.flatten unless  p["identifiers"].nil?
           }.select { |s| !s.nil? }.flatten unless output.raw()[:contributor].nil?
 
+
+          log("-- facets_staffnr --") if debugging
+          output.raw()[:facets_staffnr] = []
+          output.raw()[:facets_staffnr].concat output.raw()[:creator].map { |p|
+            p["identifiers"].map { |i|
+              "staffnr_#{i[:staff_nbr]}"
+            }.select { |s| !s.nil? }.flatten unless p["identifiers"].nil?
+          }.select { |s| !s.nil? }.flatten unless output.raw()[:creator].nil?       
+
+          output.raw()[:facets_staffnr].concat output.raw()[:contributor].map { |p|
+            p["identifiers"].map { |i|
+              "staffnr_#{i[:staff_nbr]}"
+            }.select { |s| !s.nil? }.flatten unless  p["identifiers"].nil?
+          }.select { |s| !s.nil? }.flatten unless output.raw()[:contributor].nil?
+
+          facets_staffnr = output.raw()[:facets_staffnr].clone()
+          facets_staffnr.uniq!
+          facets_staffnr.sort!
+          facets_staffnr.delete("staffnr_")
+
+          output.raw()[:facets_staffnr] = facets_staffnr
           #pp output.raw()[:addlink]
 
           # PNX - edition / version (local_field_12) ???
@@ -1284,6 +1307,10 @@ def collect_records()
       log(" records created #{ updated_records } ")
       log(" delete-records (not claimed) #{ dcounter } ")
 
+      puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"        
+      puts tar_records
+
+
       
       if tar_records
         time = Time.now.strftime("%Y%m%d_%H%M%S")
@@ -1398,7 +1425,6 @@ def collect_records()
       deleted_records = dcounter
       #log(" deleted_when #{ deleted_when } ")
       log(" delete-records created #{ deleted_records } ")
-
 
       if tar_records
         time = Time.now.strftime("%Y%m%d_%H%M%S")

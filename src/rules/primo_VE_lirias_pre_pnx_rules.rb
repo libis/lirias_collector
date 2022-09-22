@@ -701,8 +701,10 @@ def collect_records()
 
     max_updated_records  = config[:max_updated_records] || 1000
     max_deleted_records  = config[:max_deleted_records] || 50
-    tar_records          = config[:tar_records]         || true
-    one_xml_file         = config[:one_xml_file]        || false
+    tar_records          = true  
+    tar_records          = config[:tar_records]
+    one_xml_file         = false
+    one_xml_file         = config[:one_xml_file]
     remove_temp_files    = config[:remove_temp_files]   || true
     debugging            = config[:debugging]           || false
 
@@ -1183,45 +1185,56 @@ def collect_records()
           # PNX - Links linktorsrc
           log("-- linktorsrc  --") if debugging
           output.raw()[:linktorsrc] = []
-          output.raw()[:linktorsrc].concat output.raw()[:publisher_url].map { |u| "$$U#{u}" } unless  output.raw()[:publisher_url].nil?
-          output.raw()[:linktorsrc].concat output.raw()[:additional_identifier].map { |ai|
-            if ai.match(/^http:/)
-             "$$U#{ai}"
+
+
+          if output.raw()[:type] == "research_dataset" 
+            if output.raw()[:doi].nil?
+              output.raw()[:linktorsrc].concat output.raw()[:other_identifier].map { |u| "$$U#{u}$$D#{u}" } unless output.raw()[:other_identifier].nil?
+            else
+              output.raw()[:linktorsrc].concat output.raw()[:doi].map { |d| "$$Uhttp://doi.org/#{d}$$D#{d}" }
+##=> $$Tlirias_rdr_doi_linktorsrc$$ECheck_Availability
             end
-          } unless output.raw()[:additional_identifier].nil?
+          else
+            output.raw()[:linktorsrc].concat output.raw()[:publisher_url].map { |u| "$$U#{u}" } unless output.raw()[:publisher_url].nil?
+            output.raw()[:linktorsrc].concat output.raw()[:additional_identifier].map { |ai|
+              if ai.match(/^http:/)
+              "$$U#{ai}"
+              end
+            } unless output.raw()[:additional_identifier].nil?
 
-          unless output.raw()[:files].nil?
-            output.raw()[:files].map! { |file|
-              file["public_access"] =  file["filePublic"]
-              file["intranet_access"] =  file["fileIntranet"]
-              file
-            }
+            unless output.raw()[:files].nil?
+              output.raw()[:files].map! { |file|
+                file["public_access"] =  file["filePublic"]
+                file["intranet_access"] =  file["fileIntranet"]
+                file
+              }
 
-            output.raw()[:linktorsrc].concat  output.raw()[:files].map { |file|
-              restriction = nil
-              if file["filePublic"]
-                restriction ="freely available"
-              else
-                if file["fileIntranet"]
-                  restriction = "Available for KU Leuven users"
-                  if file["embargo_release_date"]
-                    unless file["embargo_release_date"].to_s.match(/^9999/)
-                      restriction = "Available for KU Leuven users - Embargoed until #{file["embargo_release_date"]}"
+              output.raw()[:linktorsrc].concat  output.raw()[:files].map { |file|
+                restriction = nil
+                if file["filePublic"]
+                  restriction ="freely available"
+                else
+                  if file["fileIntranet"]
+                    restriction = "Available for KU Leuven users"
+                    if file["embargo_release_date"]
+                      unless file["embargo_release_date"].to_s.match(/^9999/)
+                        restriction = "Available for KU Leuven users - Embargoed until #{file["embargo_release_date"]}"
+                      end
                     end
                   end
                 end
-              end
 
-              if file.has_key?("description") && file["description"].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file["description"])
-                desc = file["description"]
-              else
-                desc = file["filename"]
-              end
+                if file.has_key?("description") && file["description"].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file["description"])
+                  desc = file["description"]
+                else
+                  desc = file["filename"]
+                end
 
-              unless restriction.nil?
-                "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]"
-              end
-            }
+                unless restriction.nil?
+                  "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]"
+                end
+              }
+            end
           end
           # pp output.raw()[:linktorsrc]
 
@@ -1240,6 +1253,17 @@ def collect_records()
           elsif !output.raw()[:additional_identifier].nil? && output.raw()[:additional_identifier].any?  { |ai|  ai.match(/^http/) }
             output.raw()[:delivery_delcategory] = "Online Resource"
             output.raw()[:delivery_fulltext] = "fulltext_linktorsrc"
+          elsif output.raw()[:type] == "research_dataset" && ( output.raw()[:doi] || output.raw()[:other_identifier] )
+            output.raw()[:delivery_delcategory] = "Online Resource"
+            if  output.raw()[:accessright].nil?
+              output.raw()[:delivery_fulltext] = "fulltext_linktorsrc"
+            else
+              if output.raw()[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
+                output.raw()[:delivery_fulltext] = "fulltext_unknown"
+              else
+                output.raw()[:delivery_fulltext] = "fulltext_linktorsrc"
+              end
+            end
           else
             output.raw()[:delivery_delcategory] = "Remote Search Resource"
             output.raw()[:delivery_fulltext] = "no_fulltext"
@@ -1306,11 +1330,6 @@ def collect_records()
       log(" last_affected_when #{ last_affected_when } ")
       log(" records created #{ updated_records } ")
       log(" delete-records (not claimed) #{ dcounter } ")
-
-      puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"        
-      puts tar_records
-
-
       
       if tar_records
         time = Time.now.strftime("%Y%m%d_%H%M%S")

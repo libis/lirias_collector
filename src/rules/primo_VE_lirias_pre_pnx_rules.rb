@@ -1210,9 +1210,17 @@ def collect_records()
               }
 
               output.raw()[:linktorsrc].concat  output.raw()[:files].map { |file|
+                
+                if file.has_key?("description") && file["description"].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file["description"])
+                  desc = file["description"]
+                else
+                  desc = file["filename"]
+                end
+
                 restriction = nil
                 if file["filePublic"]
                   restriction ="freely available"
+                  "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]$$Hfree_for_read"
                 else
                   if file["fileIntranet"]
                     restriction = "Available for KU Leuven users"
@@ -1221,17 +1229,8 @@ def collect_records()
                         restriction = "Available for KU Leuven users - Embargoed until #{file["embargo_release_date"]}"
                       end
                     end
+                    "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]"
                   end
-                end
-
-                if file.has_key?("description") && file["description"].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file["description"])
-                  desc = file["description"]
-                else
-                  desc = file["filename"]
-                end
-
-                unless restriction.nil?
-                  "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]"
                 end
               }
             end

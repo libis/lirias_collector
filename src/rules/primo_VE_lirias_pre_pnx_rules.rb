@@ -1176,39 +1176,55 @@ def collect_records()
           # PNX - Links backlink
           log("-- backlink  --") if debugging
           output.raw()[:backlink] =  output.raw()[:public_url].map { |u|
-             unless u.match(/\/bitstream\/|\/retrieve\//)
+            unless u.match(/\/bitstream\/|\/retrieve\//)
               "$$U#{u}$$Ebacklink_lirias"
             end
           }
           # pp output.raw()[:backlink]
 
+          
+          # delivery_delcategory in primoVE is always Remote Search Resource !!!!
+          output.raw()[:delivery_delcategory] = "Remote Search Resource"
+
           # PNX - Links linktorsrc
           log("-- linktorsrc  --") if debugging
           output.raw()[:linktorsrc] = []
 
+          default_delivery_fulltext = "no_fulltext"
+          delivery_fulltext = default_delivery_fulltext
+          open_access = false
+          online_resources = true
 
           if output.raw()[:type] == "research_dataset" 
             if output.raw()[:doi].nil?
-              output.raw()[:linktorsrc].concat output.raw()[:other_identifier].map { |u| "$$U#{u}$$D#{u}" } unless output.raw()[:other_identifier].nil?
+              unless output.raw()[:other_identifier].nil?
+                delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
+                output.raw()[:linktorsrc].concat output.raw()[:other_identifier].map { |u|
+                  "$$U#{u}$$D#{u}$$Hfree_for_read"
+                  if !output.raw()[:accessright].nil? && !output.raw()[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
+                    open_access = true
+                  end
+                } 
+              end
             else
-              output.raw()[:linktorsrc].concat output.raw()[:doi].map { |d| "$$Uhttp://doi.org/#{d}$$D#{d}" }
-##=> $$Tlirias_rdr_doi_linktorsrc$$ECheck_Availability
+              delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
+              output.raw()[:linktorsrc].concat output.raw()[:doi].map { |d| 
+                "$$Uhttp://doi.org/#{d}$$D#{d}$$Hfree_for_read" 
+                if output.raw()[:accessright].nil? && !output.raw()[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
+                  open_access = true
+                end
+              }
             end
           else
-            output.raw()[:linktorsrc].concat output.raw()[:publisher_url].map { |u| "$$U#{u}" } unless output.raw()[:publisher_url].nil?
-            output.raw()[:linktorsrc].concat output.raw()[:additional_identifier].map { |ai|
-              if ai.match(/^http:/)
-              "$$U#{ai}"
-              end
-            } unless output.raw()[:additional_identifier].nil?
 
             unless output.raw()[:files].nil?
+=begin 
               output.raw()[:files].map! { |file|
                 file["public_access"] =  file["filePublic"]
                 file["intranet_access"] =  file["fileIntranet"]
                 file
               }
-
+=end
               output.raw()[:linktorsrc].concat  output.raw()[:files].map { |file|
                 
                 if file.has_key?("description") && file["description"].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file["description"])
@@ -1218,64 +1234,69 @@ def collect_records()
                 end
 
                 restriction = nil
-                if file["filePublic"]
-                  restriction ="freely available"
-                  "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]$$Hfree_for_read"
+                if desc == "Supporting information"
+                  "$$U#{file["file_url"]}$$D#{desc}$$Hfree_for_read"
                 else
-                  if file["fileIntranet"]
-                    restriction = "Available for KU Leuven users"
-                    if file["embargo_release_date"]
-                      unless file["embargo_release_date"].to_s.match(/^9999/)
-                        restriction = "Available for KU Leuven users - Embargoed until #{file["embargo_release_date"]}"
+                  if file["filePublic"]
+                    delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
+                    open_access = true
+                    restriction ="freely available"
+                    "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]$$Hfree_for_read"
+                  else
+                    if file["fileIntranet"]
+                      delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
+                      restriction = "Available for KU Leuven users"
+                      if file["embargo_release_date"]
+                        unless file["embargo_release_date"].to_s.match(/^9999/)
+                          restriction = "Available for KU Leuven users - Embargoed until #{file["embargo_release_date"]}"
+                        end
                       end
+                      "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]$$Hfree_for_read"
                     end
-                    "$$U#{file["file_url"]}$$D#{desc} [#{restriction}]"
-                  end
+                  end 
                 end
               }
             end
-          end
-          # pp output.raw()[:linktorsrc]
 
-          # PNX - delivery_delcategory
-          log("-- delivery_delcategory  --") if debugging
-          if !output.raw()[:files].nil? && output.raw()[:files].any? { |file| file["file_url"] }
-            output.raw()[:delivery_delcategory] = "Online Resource"
-            output.raw()[:delivery_fulltext] = "fulltext_linktorsrc"
-
-          elsif output.raw()[:issn] || output.raw()[:isbn] || output.raw()[:doi]
-            output.raw()[:delivery_delcategory] = "Remote Search Resource"
-            output.raw()[:delivery_fulltext] = "fulltext_unknown"
-          elsif output.raw()[:publisher_url]
-            output.raw()[:delivery_delcategory] = "Online Resource"
-            output.raw()[:delivery_fulltext] = "fulltext_linktorsrc"
-          elsif !output.raw()[:additional_identifier].nil? && output.raw()[:additional_identifier].any?  { |ai|  ai.match(/^http/) }
-            output.raw()[:delivery_delcategory] = "Online Resource"
-            output.raw()[:delivery_fulltext] = "fulltext_linktorsrc"
-          elsif output.raw()[:type] == "research_dataset" && ( output.raw()[:doi] || output.raw()[:other_identifier] )
-            output.raw()[:delivery_delcategory] = "Online Resource"
-            if  output.raw()[:accessright].nil?
-              output.raw()[:delivery_fulltext] = "fulltext_linktorsrc"
-            else
-              if output.raw()[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
-                output.raw()[:delivery_fulltext] = "fulltext_unknown"
-              else
-                output.raw()[:delivery_fulltext] = "fulltext_linktorsrc"
-              end
+            unless output.raw()[:publisher_url].nil?
+              output.raw()[:linktorsrc].concat output.raw()[:publisher_url].map { |u|
+                delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
+                "$$U#{u}$$Hfree_for_read" 
+              } 
             end
-          else
-            output.raw()[:delivery_delcategory] = "Remote Search Resource"
-            output.raw()[:delivery_fulltext] = "no_fulltext"
+            unless output.raw()[:additional_identifier].nil?
+              output.raw()[:linktorsrc].concat output.raw()[:additional_identifier].map { |ai|
+                if ai.match(/^http/)
+                  delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
+                  "$$U#{ai}$$Hfree_for_read"
+                end
+              }
+            end
+            if output.raw()[:issn] || output.raw()[:isbn] || output.raw()[:doi]
+              delivery_fulltext = "fulltext_unknown" if delivery_fulltext == default_delivery_fulltext
+            end
           end
+          output.raw()[:linktorsrc] = output.raw()[:linktorsrc].compact
+          # pp output.raw()[:linktorsrc].compact
+          
+          # PNX - delivery_delcategory
+          output.raw()[:delivery_fulltext] = delivery_fulltext
           # pp output.raw()[:delivery_delcategory]
 
+          # PNX - oa
+          if open_access
+            output.raw()[:oa] = "free_for_read"
+          end
+          
           # PNX - delivery_resdelscope
+          # resdelscope does not exists in primoVE
+=begin          
           log("-- delivery_resdelscope  --") if debugging
-          if !output.raw()[:files].nil? && output.raw()[:files].none? { |file| file["public_access"] == true } &&  output.raw()[:delivery_delcategory] == "Online Resource"
+          if !output.raw()[:files].nil? && output.raw()[:files].none? { |file| file["filePublic"] == true } &&  output.raw()[:delivery_delcategory] == "Online Resource"
             output.raw()[:delivery_resdelscope] = "RESLIRIAS"
           end
           # pp output.raw()[:delivery_resdelscope]
-
+=end
           # facets_toplevel
           log("-- facets_toplevel  --") if debugging
           output.raw()[:facets_toplevel] = []
@@ -1284,12 +1305,11 @@ def collect_records()
               output.raw()[:facets_toplevel] << "peer_reviewed"
             end
           end
-          if output.raw()[:delivery_delcategory] == "Online Resource"
+          unless delivery_fulltext == "no_fulltext"
             output.raw()[:facets_toplevel] << "online_resources"
-          end
-          if output.raw()[:delivery_delcategory] == "Online Resource" && output.raw()[:delivery_resdelscope].nil?
+          end 
+          unless output.raw()[:oa].nil?
             output.raw()[:facets_toplevel] << "open_access"
-            output.raw()[:oa] = "free_for_read"
           end
           # pp   output.raw()[:facets_toplevel]
 

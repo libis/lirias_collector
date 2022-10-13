@@ -1210,7 +1210,7 @@ def collect_records()
               delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
               output.raw()[:linktorsrc].concat output.raw()[:doi].map { |d| 
                 "$$Uhttp://doi.org/#{d}$$D#{d}$$Hfree_for_read" 
-                if output.raw()[:accessright].nil? && !output.raw()[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
+                if !output.raw()[:accessright].nil? && !output.raw()[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
                   open_access = true
                 end
               }
@@ -1346,6 +1346,7 @@ def collect_records()
       updated_records = counter
       not_claimed_records = dcounter
 
+      print ".\n"
       log(" last_affected_when #{ last_affected_when } ")
       log(" records created #{ updated_records } ")
       log(" delete-records (not claimed) #{ dcounter } ")

@@ -703,6 +703,10 @@ def collect_records()
     max_deleted_records  = config[:max_deleted_records] || 50
     tar_records          = true  
     tar_records          = config[:tar_records]
+
+    create_resolver_json = false
+    create_resolver_json = config[:create_resolver_json]
+
     one_xml_file         = false
     one_xml_file         = config[:one_xml_file]
     remove_temp_files    = config[:remove_temp_files]   || true
@@ -822,7 +826,9 @@ def collect_records()
           #output.to_tmp_file("templates/lirias_delete_template.erb",tmp_not_claimed_records_dir)
           #output.to_tmp_file(delete_template,tmp_records_dir)
           output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
-          resolver_data_not_claimed_lirias_records << output.raw.slice(:id, :deleted, :response_date)
+          if create_resolver_json
+            resolver_data_not_claimed_lirias_records << output.raw.slice(:id, :deleted, :response_date)
+          end
         else
           last_affected_when = output[:updated][0]
 
@@ -1318,9 +1324,10 @@ def collect_records()
           output.raw()[:facets_prefilter] = Format_mean[ output.raw()[:type] ]
           log("-- facets_rsrctype  --") if debugging
           output.raw()[:facets_rsrctype]  = output.raw()[:facets_prefilter]
-
-          resolver_data_lirias_records = output.raw().slice(:id, :wosid, :scopus, :pmid, :doi, :isbn_13, :isbn10, :issn, :eissn, :additional_identifier, :files, :public_url, :author, :editor, :supervisor, :co_supervisor, :contributor)
-          resolver_data[ resolver_data_lirias_records[:id] ] = resolver_data_lirias_records
+          if create_resolver_json
+            resolver_data_lirias_records = output.raw().slice(:id, :wosid, :scopus, :pmid, :doi, :isbn_13, :isbn10, :issn, :eissn, :additional_identifier, :files, :public_url, :author, :editor, :supervisor, :co_supervisor, :contributor)
+            resolver_data[ resolver_data_lirias_records[:id] ] = resolver_data_lirias_records
+          end
           counter += 1
         end
 
@@ -1331,10 +1338,12 @@ def collect_records()
 
           #puts "records_dir: #{records_dir}"
           print "."
-          #create JSON files for resolver
           output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
-          resolver_data_lirias_records = output.raw().slice(:id, :wosid, :scopus, :pmid, :doi, :isbn_13, :isbn10, :issn, :eissn, :additional_identifier, :files, :public_url, :author, :editor, :supervisor, :co_supervisor, :contributor)
-          resolver_data[ resolver_data_lirias_records[:id] ] = resolver_data_lirias_records
+          #create JSON files for resolver
+          if create_resolver_json
+            resolver_data_lirias_records = output.raw().slice(:id, :wosid, :scopus, :pmid, :doi, :isbn_13, :isbn10, :issn, :eissn, :additional_identifier, :files, :public_url, :author, :editor, :supervisor, :co_supervisor, :contributor)
+            resolver_data[ resolver_data_lirias_records[:id] ] = resolver_data_lirias_records
+          end
           counter += 1
         end
 
@@ -1382,7 +1391,9 @@ def collect_records()
       end
 =end
       #create JSON files for resolver
-      output.to_jsonfile(resolver_data, "lirias_resolver_data",records_dir)
+      if create_resolver_json
+        output.to_jsonfile(resolver_data, "lirias_resolver_data",records_dir)
+      end
       # output.to_jsonfile(resolver_authors, "lirias_resolver_author")
 
 =begin      

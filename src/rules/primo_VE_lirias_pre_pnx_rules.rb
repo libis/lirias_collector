@@ -1200,19 +1200,19 @@ def collect_records()
               unless output.raw()[:other_identifier].nil?
                 delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
                 output.raw()[:linktorsrc].concat output.raw()[:other_identifier].map { |u|
-                  "$$U#{u}$$D#{u}$$Hfree_for_read"
                   if !output.raw()[:accessright].nil? && !output.raw()[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
                     open_access = true
                   end
+                  "$$U#{u}$$D#{u}$$Hfree_for_read"
                 } 
               end
             else
               delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
               output.raw()[:linktorsrc].concat output.raw()[:doi].map { |d| 
-                "$$Uhttp://doi.org/#{d}$$D#{d}$$Hfree_for_read" 
                 if !output.raw()[:accessright].nil? && !output.raw()[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
                   open_access = true
                 end
+                "$$Uhttp://doi.org/#{d}$$D#{d}$$Hfree_for_read" 
               }
             end
           else
@@ -1235,6 +1235,7 @@ def collect_records()
 
                 restriction = nil
                 if desc == "Supporting information"
+                  delivery_fulltext = "fulltext_linktorsrc" if delivery_fulltext == default_delivery_fulltext
                   "$$U#{file["file_url"]}$$D#{desc}$$Hfree_for_read"
                 else
                   if file["filePublic"]

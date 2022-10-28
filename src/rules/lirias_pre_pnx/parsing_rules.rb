@@ -34,7 +34,8 @@ def parse_record(object)
         keywords << keyword
       end
     end
-    output[:virtual_collections] = virtual_collections.uniq! 
+    output[:virtual_collections] = virtual_collections.uniq
+
     output[:dspace_keywords] = dspace_keywords.uniq!
     output[:keyword] = keywords.uniq!
 
@@ -181,67 +182,6 @@ def parse_record(object)
 
       output[:contributor]        = filter(filter(record, '$..native.field[?(@._name=="c-contributor")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
 
-=begin     
-# deprecated (Use creditRoles)
-      output[:actor]              = filter(filter(record, '$..native.field[?(@._name=="c-actor")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:architect]          = filter(filter(record, '$..native.field[?(@._name=="c-architect")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:choreographer]      = filter(filter(record, '$..native.field[?(@._name=="c-choreographer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:cinematographer]    = filter(filter(record, '$..native.field[?(@._name=="c-cinematographer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:composer]           = filter(filter(record, '$..native.field[?(@._name=="c-composer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:conductor]          = filter(filter(record, '$..native.field[?(@._name=="c-conductor")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:curator]            = filter(filter(record, '$..native.field[?(@._name=="c-curator")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:director]           = filter(filter(record, '$..native.field[?(@._name=="c-director")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:editor_c]           = filter(filter(record, '$..native.field[?(@._name=="c-editor")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      
-      output[:educator]           = filter(filter(record, '$..native.field[?(@._name=="c-educator")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:interaction]        = filter(filter(record, '$..native.field[?(@._name=="c-interaction-designer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:interior_architect] = filter(filter(record, '$..native.field[?(@._name=="c-interior-architect")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:game_designer]      = filter(filter(record, '$..native.field[?(@._name=="c-game-designer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:graphic_designer]   = filter(filter(record, '$..native.field[?(@._name=="c-graphic-designer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:landscape_architect]= filter(filter(record, '$..native.field[?(@._name=="c-landscape-architect")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:music_performer]    = filter(filter(record, '$..native.field[?(@._name=="c-music-performer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:otherrole]          = filter(filter(record, '$..native.field[?(@._name=="c-otherrole")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:photographer]       = filter(filter(record, '$..native.field[?(@._name=="c-photographer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:producer]           = filter(filter(record, '$..native.field[?(@._name=="c-producer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:product_designer]   = filter(filter(record, '$..native.field[?(@._name=="c-product-designer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:sound_artist]       = filter(filter(record, '$..native.field[?(@._name=="c-sound-artist")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      
-      output[:urban_designer]     = filter(filter(record, '$..native.field[?(@._name=="c-urban-designer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:visual_artist]      = filter(filter(record, '$..native.field[?(@._name=="c-visual-artist")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-      output[:writer]             = filter(filter(record, '$..native.field[?(@._name=="c-writer")].people.person'), [:first_names, :last_name, :initials, :username, :identifiers, :roles])
-=end
-
-=begin     
-# deprecated (Use creditRoles)
-      author_functions = [
-        :actor, 
-        :architect,
-        :book_series_editor,
-        :choreographer,
-        :cinematographer,
-        :composer,
-        :conductor,
-        :curator,
-        :director,
-        :editor_c,
-        :educator,
-        :interaction,
-        :interior_architect,
-        :game_designer,
-        :graphic_designer,
-        :landscape_architect,
-        :music_performer,
-        # :otherrole,
-        :photographer,
-        :producer,
-        :product_designer,
-        :sound_artist,
-        :urban_designer,
-        :visual_artist,
-        :writer,
-      ]
-=end
-
       author_function_mapping = {
         :book_series_editor => "Book Series Editor",
         :editor_c    => "Editor",
@@ -285,39 +225,6 @@ def parse_record(object)
           end
         end
       end
-=begin
-# deprecated (Use creditRoles)
-      # loop over author functions
-      # if output contains this author_function
-      # loop over author types
-      # if output contains this author_type 
-      # check if the name, identifiers, ... of author_function and author_type are the same.
-      # add function to author_type
-      author_functions.each do |function|
-        if output[function]
-          output.raw()[function].each do |pfunction|
-            [:author, :editor, :supervisor, :co_supervisor, :contributor, :translator].each do |author_type|
-              if output[author_type]
-                 # log(" record function  #{ function.to_s } ")
-                output[author_type].map do |person|
-                  if  person["last_name"] == pfunction["last_name"] &&  
-                    person["first_name"] == pfunction["first_name"] &&  
-                    person["initials"] == pfunction["initials"] && 
-                    person["identifiers"] == pfunction["identifiers"]  
-                    displ_function = author_function_mapping[ function ] || function.to_s.capitalize.gsub(/_/,' ');
-                    person["function"] ? person["function"] << displ_function : person["function"] = [displ_function]
-                    person["function"].uniq
-                  else
-                    person
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-=end
-
     end
   end
 end

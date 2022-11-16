@@ -1312,7 +1312,7 @@ def collect_records()
               output.raw()[:facets_toplevel] << "peer_reviewed"
             end
           end
-          unless delivery_fulltext == "no_fulltext"
+          if delivery_fulltext == "fulltext_linktorsrc" 
             output.raw()[:facets_toplevel] << "online_resources"
           end 
           unless output.raw()[:oa].nil?

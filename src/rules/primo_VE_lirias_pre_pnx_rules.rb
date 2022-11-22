@@ -658,27 +658,30 @@ def create_person_addlink(expanded_person)
 end
 
 
-def PrimoVE_create_tar(tarfilename, directory_to_tar)
+def PrimoVE_create_tar(dirname, filename, directory_to_tar)
   c_dir = Dir.pwd
   if Dir.exist?(directory_to_tar) 
-    log("INFO Start tar cd #{directory_to_tar}; tar -czf #{tarfilename}  primoVE_*.json; cd #{c_dir}")
-
+    tarfilename = "#{dirname}/#{filename}"
+    # log("INFO Start tar cd #{directory_to_tar}; tar -czf #{tarfilename}  primoVE_*.json; cd #{c_dir}")
+    log("INFO Create tar for JSON-files")
     tar_resp = `cd #{directory_to_tar}; tar -czf #{tarfilename} primoVE_*.json; cd #{c_dir}`
-
     File.chmod(0666, tarfilename)
+
+    log("INFO Create tar for XML-files")
+    tarfilename = "#{dirname}/ALMA_#{filename}"
+    tar_resp = `cd #{directory_to_tar}; tar -czf #{tarfilename} primoVE_*.xml; cd #{c_dir}`
+    File.chmod(0666, "#{tarfilename}")
 
     if $?.exitstatus != 0
       log("ERROR in creating tar.gz")
     else
-      log ("REMOVE: #{directory_to_tar}/primoVE_*.json ")
-
+      log ("REMOVE: #{directory_to_tar}/primoVE_*.json")
       Dir.glob("#{directory_to_tar}/primoVE_*.json").each { |f| File.delete(f) }
+      log ("REMOVE: #{directory_to_tar}/primoVE_*.xml")
+      Dir.glob("#{directory_to_tar}/primoVE_*.xml").each { |f| File.delete(f) }
     end
   end
 end
-
-
-
 
 def collect_records()
   begin
@@ -786,10 +789,6 @@ def collect_records()
       tmp_records_dir = "#{records_dir}/records_#{Time.now.to_i}"
       tmp_not_claimed_records_dir = "#{records_dir}/records_not_claimed_#{Time.now.to_i}"
 
-      resolver_data = {}
-      resolver_authors = {}
-      resolver_data_not_claimed_lirias_records = []
-
       timing_start = Time.now
       #Filter on Object
 
@@ -826,9 +825,7 @@ def collect_records()
           #output.to_tmp_file("templates/lirias_delete_template.erb",tmp_not_claimed_records_dir)
           #output.to_tmp_file(delete_template,tmp_records_dir)
           output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
-          if create_resolver_json
-            resolver_data_not_claimed_lirias_records << output.raw.slice(:id, :deleted, :response_date)
-          end
+          output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)                    
         else
           last_affected_when = output[:updated][0]
 
@@ -1324,10 +1321,7 @@ def collect_records()
           output.raw()[:facets_prefilter] = Format_mean[ output.raw()[:type] ]
           log("-- facets_rsrctype  --") if debugging
           output.raw()[:facets_rsrctype]  = output.raw()[:facets_prefilter]
-          if create_resolver_json
-            resolver_data_lirias_records = output.raw().slice(:id, :wosid, :scopus, :pmid, :doi, :isbn_13, :isbn10, :issn, :eissn, :additional_identifier, :files, :public_url, :author, :editor, :supervisor, :co_supervisor, :contributor)
-            resolver_data[ resolver_data_lirias_records[:id] ] = resolver_data_lirias_records
-          end
+
           counter += 1
         end
 
@@ -1339,11 +1333,7 @@ def collect_records()
           #puts "records_dir: #{records_dir}"
           print "."
           output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
-          #create JSON files for resolver
-          if create_resolver_json
-            resolver_data_lirias_records = output.raw().slice(:id, :wosid, :scopus, :pmid, :doi, :isbn_13, :isbn10, :issn, :eissn, :additional_identifier, :files, :public_url, :author, :editor, :supervisor, :co_supervisor, :contributor)
-            resolver_data[ resolver_data_lirias_records[:id] ] = resolver_data_lirias_records
-          end
+          output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
           counter += 1
         end
 
@@ -1359,14 +1349,14 @@ def collect_records()
       print ".\n"
       log(" last_affected_when #{ last_affected_when } ")
       log(" records created #{ updated_records } ")
-      log(" delete-records (not claimed) #{ dcounter } ")
+      log(" delete-records (not claimed) #{ dcounter } ")     
       
       if tar_records
         time = Time.now.strftime("%Y%m%d_%H%M%S")
         filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"
-        full_filename = "#{records_dir}/#{filename}"
+        dirname = "#{records_dir}/"
         directory_to_process  = "#{records_dir}"
-        PrimoVE_create_tar(full_filename, directory_to_process)
+        PrimoVE_create_tar(dirname, filename, directory_to_process)
       end
 
 =begin
@@ -1390,11 +1380,6 @@ def collect_records()
         remove_temp_xml(tmp_records_dir)
       end
 =end
-      #create JSON files for resolver
-      if create_resolver_json
-        output.to_jsonfile(resolver_data, "lirias_resolver_data",records_dir)
-      end
-      # output.to_jsonfile(resolver_authors, "lirias_resolver_author")
 
 =begin      
       if one_xml_file
@@ -1415,10 +1400,7 @@ def collect_records()
         remove_temp_xml(tmp_not_claimed_records_dir)
       end
 =end
-      #create JSON files for resolver
-      if !resolver_data_not_claimed_lirias_records.empty?
-        output.to_jsonfile(resolver_data_not_claimed_lirias_records, "lirias_resolver_deleted_data",records_dir)
-      end
+     
 
       #update config with the new data
       log(" update  config[:last_run_updates] with #{ last_affected_when } ")
@@ -1447,11 +1429,7 @@ def collect_records()
       data = input.from_uri(url_delete, url_options)
       tmp_records_dir = "#{records_dir}/records_delete_#{Time.now.to_i}"
 
-      resolver_deleted_data = {}
-
       log("Data loaded in #{((Time.now - timing_start) * 1000).to_i} ms")
-
-      resolver_data_lirias_records = []
 
       timing_start = Time.now
       #Filter on Object
@@ -1461,12 +1439,12 @@ def collect_records()
 
         #log(" record id #{ output[:id] } deleted")
         output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
+        output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
 =begin        
         #output.to_tmp_file("templates/lirias_delete_template.erb",tmp_records_dir)
         output.to_tmp_file(delete_template,tmp_records_dir)
 =end
         deleted_when = output[:deleted][0]
-        resolver_data_lirias_records << output.raw()
 
         #results are sorted by deleted_when
         dcounter += 1
@@ -1480,9 +1458,9 @@ def collect_records()
       if tar_records
         time = Time.now.strftime("%Y%m%d_%H%M%S")
         filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"
-        full_filename = "#{records_dir}/#{filename}"
+        dirname = "#{records_dir}/"
         directory_to_process  = "#{records_dir}"
-        PrimoVE_create_tar(full_filename, directory_to_process)
+        PrimoVE_create_tar(dirname, filename, directory_to_process)        
       end
 
 
@@ -1505,9 +1483,6 @@ def collect_records()
         remove_temp_xml(tmp_records_dir)
       end
 =end
-      if !resolver_data_lirias_records.empty?
-        output.to_jsonfile(resolver_data_lirias_records, "lirias_resolver_deleted_data",records_dir)
-      end
 
       #update config with the new data
       log("update config[:last_run_delete] with #{ last_affected_when } ")

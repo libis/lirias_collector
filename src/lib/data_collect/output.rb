@@ -165,9 +165,18 @@ class Output
       f.puts jsondata.to_json
     end
     # File.chmod(0666, file_name)
-    
   rescue Exception => e
     raise "unable to save to jsonfile: #{e.message}"
+  end
+
+  def to_xmlfile (jsondata, jsonfile, records_dir)
+    file_name = "#{records_dir}/#{jsonfile}_#{Time.now.strftime("%Y%m%d%H%M%S")}_#{rand(1000)}.xml"
+    File.open(file_name, 'wb', 0666) do |f|
+      f.puts jsondata.to_xml(:root => 'record')
+    end
+    # File.chmod(0666, file_name)
+  rescue Exception => e
+    raise "unable to save to xmlfile: #{e.message}"
   end
 
   private

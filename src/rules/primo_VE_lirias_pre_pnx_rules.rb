@@ -592,6 +592,7 @@ def create_person(person)
   end
   person.delete("username");
   person["name"] = "#{person["last_name"]}, #{person["first_names"]}";
+  person["pnx_display_name"] = create_person_display(person)
   person
 end
 
@@ -599,9 +600,9 @@ end
 def create_person_display(person)
   if person["function"].nil?
     "#{person["last_name"]}, #{person["first_names"]}$$Q#{person["last_name"]}, #{person["first_names"]}"
-   else
-     "#{person["last_name"]}, #{person["first_names"]} (#{person["function"].uniq.join(', ')})$$Q#{person["last_name"]}, #{person["first_names"]}"
-   end
+  else
+    "#{person["last_name"]}, #{person["first_names"]} (#{person["function"].uniq.join(', ')})$$Q#{person["last_name"]}, #{person["first_names"]}"
+  end
 end
 
 def create_person_addlink(expanded_person)
@@ -824,8 +825,8 @@ def collect_records()
 
           #output.to_tmp_file("templates/lirias_delete_template.erb",tmp_not_claimed_records_dir)
           #output.to_tmp_file(delete_template,tmp_records_dir)
-          output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
-          output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)                    
+          output.to_jsonfile(output.raw(), "primoVE_not_claimed_#{output.raw()[:id]}",records_dir)
+          output.to_xmlfile(output.raw(), "primoVE_not_claimed_#{output.raw()[:id]}",records_dir)                    
         else
           last_affected_when = output[:updated][0]
 
@@ -1438,8 +1439,8 @@ def collect_records()
         output[:deleted] = filter(object, '@._deleted_when')
 
         #log(" record id #{ output[:id] } deleted")
-        output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
-        output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
+        output.to_jsonfile(output.raw(), "primoVE_delete_#{output.raw()[:id]}",records_dir)
+        output.to_xmlfile(output.raw(), "primoVE_delete_#{output.raw()[:id]}",records_dir)
 =begin        
         #output.to_tmp_file("templates/lirias_delete_template.erb",tmp_records_dir)
         output.to_tmp_file(delete_template,tmp_records_dir)

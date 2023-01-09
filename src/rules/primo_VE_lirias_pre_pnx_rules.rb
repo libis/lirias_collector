@@ -579,6 +579,8 @@ Format_mean = {
 }
 
 
+RECORDS_PER_ALMA_XML_FILE = 50
+
 def create_person(person)
   unless person["identifiers"].nil?
     person["identifiers"] = person["identifiers"]["identifier"]
@@ -670,8 +672,32 @@ def PrimoVE_create_tar(dirname, filename, directory_to_tar)
 
     log("INFO Create tar for XML-files")
     tarfilename = "#{dirname}/ALMA_#{filename}"
-    tar_resp = `cd #{directory_to_tar}; tar -czf #{tarfilename} primoVE_*.xml; cd #{c_dir}`
-    File.chmod(0666, "#{tarfilename}")
+
+    counter = 0
+    xml_file_list = Dir.glob("#{directory_to_tar}/primoVE_*.xml").each_slice(RECORDS_PER_ALMA_XML_FILE).to_a
+    filename = File.basename( tarfilename, ".tar.gz" )
+    
+    xml_file_list.each { |xml_files|
+      counter = counter+1
+      xmlfilename = "#{dirname}#{filename}_#{counter}.xml"
+      tarfilename = "#{dirname}#{filename}_#{counter}.tar.gz"
+      
+      doc = Nokogiri::XML("<ListRecords></ListRecords>")
+      xml_files.each { |xml_file|
+        xml_record = File.open(xml_file) { |f| Nokogiri::XML(f) }
+        doc.at('ListRecords').add_child(xml_record.search("record"))
+      }
+      File.write(xmlfilename, doc.to_xml)
+    
+      tar_resp = `cd #{directory_to_tar}; tar -czf #{tarfilename} #{ File.basename(xmlfilename) }; cd #{c_dir}`
+      File.chmod(0666, "#{tarfilename}")
+
+      Dir.glob("#{xmlfilename}").each { |f| File.delete(f) }
+    
+    }
+
+    # tar_resp = `cd #{directory_to_tar}; tar -czf #{tarfilename} primoVE_*.xml; cd #{c_dir}`
+    # File.chmod(0666, "#{tarfilename}")
 
     if $?.exitstatus != 0
       log("ERROR in creating tar.gz")

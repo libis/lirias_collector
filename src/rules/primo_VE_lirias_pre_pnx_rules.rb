@@ -1360,7 +1360,10 @@ def collect_records()
           #puts "records_dir: #{records_dir}"
           print "."
           output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
-          output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
+          # publication_status must be "published", "published online" or "accepted"
+          if [ "published", "published online", "accepted"].include?(output.raw()[:local_field_08].downcase)
+            output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
+          end
           counter += 1
         end
 
@@ -1462,6 +1465,13 @@ def collect_records()
       #Filter on Object
       filter(data, '$..entry[*].deleted_object').each do |object|
         output[:id] = filter(object, '@._id').first
+
+        output.raw()[:source] = "lirias"
+        output.raw()[:sourceid] =  "lirias"
+        output.raw()[:sourcerecordid] = output.raw()[:id]
+        output.raw()[:recordid] = output.raw()[:sourceid] + output.raw()[:id]
+        output.raw()[:id] = output.raw()[:id]
+
         output[:deleted] = filter(object, '@._deleted_when')
 
         #log(" record id #{ output[:id] } deleted")

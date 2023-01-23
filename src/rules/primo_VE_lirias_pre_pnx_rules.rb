@@ -1361,8 +1361,10 @@ def collect_records()
           print "."
           output.to_jsonfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
           # publication_status must be "published", "published online" or "accepted"
-          if [ "published", "published online", "accepted"].include?(output.raw()[:local_field_08].downcase)
-            output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
+          unless output.raw()[:local_field_08].nil?
+            if [ "published", "published online", "accepted"].include?(output.raw()[:local_field_08][0].downcase)
+              output.to_xmlfile(output.raw(), "primoVE_#{output.raw()[:id]}",records_dir)
+            end
           end
           counter += 1
         end

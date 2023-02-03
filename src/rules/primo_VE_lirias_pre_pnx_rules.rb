@@ -1105,7 +1105,6 @@ def collect_records()
           # pp output.raw()[:ispartof]
 
 
-
           output.raw()[:book_title] = output.raw()[:parent_title] || []
 
          # if ["chapter","journal-article","conference"].include?( output.raw()[:type] )
@@ -1390,11 +1389,7 @@ def collect_records()
       log(" last_affected_when #{ last_affected_when } ")
       log(" records created #{ updated_records } ")
       log(" delete-records (not claimed) #{ dcounter } ")     
-      log("  remove_temp_files ================> #{ remove_temp_files } ")     
       
-
-      
-
       if tar_records
         time = Time.now.strftime("%Y%m%d_%H%M%S")
         filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"

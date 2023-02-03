@@ -600,10 +600,11 @@ end
 
 
 def create_person_display(person)
-  if person["function"].nil?
+  if person["roles"].nil?
     "#{person["last_name"]}, #{person["first_names"]}$$Q#{person["last_name"]}, #{person["first_names"]}"
   else
-    "#{person["last_name"]}, #{person["first_names"]} (#{person["function"].uniq.join(', ')})$$Q#{person["last_name"]}, #{person["first_names"]}"
+    person["roles"]["role"] = [person["roles"]["role"]] if person["roles"]["role"].is_a? String  
+    "#{person["last_name"]}, #{person["first_names"]} (#{person["roles"]["role"].uniq.join(', ')})$$Q#{person["last_name"]}, #{person["first_names"]}"
   end
 end
 
@@ -689,13 +690,11 @@ def PrimoVE_create_tar(dirname, filename, directory_to_tar, options)
       }
       File.write(xmlfilename, doc.to_xml)
     
+      # Move this so multople xml-files will be added to 1 tar-file
       tar_resp = `cd #{directory_to_tar}; tar -czf #{tarfilename} #{ File.basename(xmlfilename) }; cd #{c_dir}`
       File.chmod(0666, "#{tarfilename}")
 
-      if options[:remove_temp_files]
-        Dir.glob("#{xmlfilename}").each { |f| File.delete(f) }
-      end
-    
+      Dir.glob("#{xmlfilename}").each { |f| File.delete(f) }
     
     }
 
@@ -705,10 +704,12 @@ def PrimoVE_create_tar(dirname, filename, directory_to_tar, options)
     if $?.exitstatus != 0
       log("ERROR in creating tar.gz")
     else
-      log ("REMOVE: #{directory_to_tar}/primoVE_*.json")
-      Dir.glob("#{directory_to_tar}/primoVE_*.json").each { |f| File.delete(f) }
-      log ("REMOVE: #{directory_to_tar}/primoVE_*.xml")
-      Dir.glob("#{directory_to_tar}/primoVE_*.xml").each { |f| File.delete(f) }
+      if options[:remove_temp_files]
+        log ("REMOVE: #{directory_to_tar}/primoVE_*.json")
+        Dir.glob("#{directory_to_tar}/primoVE_*.json").each { |f| File.delete(f) }
+        log ("REMOVE: #{directory_to_tar}/primoVE_*.xml")
+        Dir.glob("#{directory_to_tar}/primoVE_*.xml").each { |f| File.delete(f) }
+      end
     end
   end
 end

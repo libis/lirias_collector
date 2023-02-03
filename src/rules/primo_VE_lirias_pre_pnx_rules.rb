@@ -661,7 +661,7 @@ def create_person_addlink(expanded_person)
 end
 
 
-def PrimoVE_create_tar(dirname, filename, directory_to_tar)
+def PrimoVE_create_tar(dirname, filename, directory_to_tar, options)
   c_dir = Dir.pwd
   if Dir.exist?(directory_to_tar) 
     tarfilename = "#{dirname}/#{filename}"
@@ -692,7 +692,10 @@ def PrimoVE_create_tar(dirname, filename, directory_to_tar)
       tar_resp = `cd #{directory_to_tar}; tar -czf #{tarfilename} #{ File.basename(xmlfilename) }; cd #{c_dir}`
       File.chmod(0666, "#{tarfilename}")
 
-      Dir.glob("#{xmlfilename}").each { |f| File.delete(f) }
+      if options[:remove_temp_files]
+        Dir.glob("#{xmlfilename}").each { |f| File.delete(f) }
+      end
+    
     
     }
 
@@ -739,8 +742,10 @@ def collect_records()
 
     one_xml_file         = false
     one_xml_file         = config[:one_xml_file]
-    remove_temp_files    = config[:remove_temp_files]   || true
-    debugging            = config[:debugging]           || false
+    remove_temp_files    = true
+    remove_temp_files    = config[:remove_temp_files]
+    debugging            = false
+    debugging            = config[:debugging]
 
     unless records_dir.chr == "/"
       records_dir = "#{File.dirname(__FILE__)}/../#{records_dir}"
@@ -1058,7 +1063,7 @@ def collect_records()
               output.raw()[:journal_title] = output.raw()[:journal].clone()
           end
           unless output.raw()[:parent_title].nil?
-            output.raw()[:ispartof] = output.raw()[:parent_title]
+            output.raw()[:ispartof] = output.raw()[:parent_title].clone()
           end
           unless output.raw()[:journal].nil? && output.raw()[:parent_title].nil?
             unless output.raw()[:search_creationdate].nil?
@@ -1098,6 +1103,7 @@ def collect_records()
             output.raw()[:ispartof].map! { |p| p + "; Chapter Nr. " + chapter }
           end
           # pp output.raw()[:ispartof]
+
 
 
           output.raw()[:book_title] = output.raw()[:parent_title] || []
@@ -1384,13 +1390,18 @@ def collect_records()
       log(" last_affected_when #{ last_affected_when } ")
       log(" records created #{ updated_records } ")
       log(" delete-records (not claimed) #{ dcounter } ")     
+      log("  remove_temp_files ================> #{ remove_temp_files } ")     
       
+
+      
+
       if tar_records
         time = Time.now.strftime("%Y%m%d_%H%M%S")
         filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"
         dirname = "#{records_dir}/"
         directory_to_process  = "#{records_dir}"
-        PrimoVE_create_tar(dirname, filename, directory_to_process)
+        options = {:remove_temp_files => remove_temp_files}
+        PrimoVE_create_tar(dirname, filename, directory_to_process, options)
       end
 
 =begin
@@ -1501,7 +1512,8 @@ def collect_records()
         filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"
         dirname = "#{records_dir}/"
         directory_to_process  = "#{records_dir}"
-        PrimoVE_create_tar(dirname, filename, directory_to_process)        
+        options = {:remove_temp_files => remove_temp_files}
+        PrimoVE_create_tar(dirname, filename, directory_to_process, options)     
       end
 
 

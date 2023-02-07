@@ -592,6 +592,19 @@ def create_person(person)
   else
     person["identifiers"] = [{ :staff_nbr =>  person["username"] }] unless person["username"].nil?
   end
+
+  unless person["roles"].nil?
+    function = []
+    if person["function"].nil?
+      function <<person["roles"]["role"]
+    else
+      function << person["function"]
+      function << person["roles"]["role"]
+    end
+    person["function"] = function.flatten.compact.uniq
+    person["roles"] = person["function"]
+  end
+ 
   person.delete("username");
   person["name"] = "#{person["last_name"]}, #{person["first_names"]}";
   person["pnx_display_name"] = create_person_display(person)
@@ -600,11 +613,10 @@ end
 
 
 def create_person_display(person)
-  if person["roles"].nil?
+  if person["function"].nil?
     "#{person["last_name"]}, #{person["first_names"]}$$Q#{person["last_name"]}, #{person["first_names"]}"
   else
-    person["roles"]["role"] = [person["roles"]["role"]] if person["roles"]["role"].is_a? String  
-    "#{person["last_name"]}, #{person["first_names"]} (#{person["roles"]["role"].uniq.join(', ')})$$Q#{person["last_name"]}, #{person["first_names"]}"
+    "#{person["last_name"]}, #{person["first_names"]} (#{person["function"].uniq.join(', ')})$$Q#{person["last_name"]}, #{person["first_names"]}"
   end
 end
 
@@ -829,6 +841,7 @@ def collect_records()
         ######################### Parse_record ###  rules/test_lirias_pre_pnx/parsing_rules.rb ######
         parse_record(object)
 
+        # pp output.raw()[:id]
   #  puts output.raw()[:correction_to]
   #  puts output.raw()[:correction_from]
   #  puts output.raw()[:derivative_to]

@@ -14,3 +14,4 @@
 :one_xml_file: false
 :remove_temp_files: true
 :debugging: false
+:number_of_records_per_alma_xml_file: 1000

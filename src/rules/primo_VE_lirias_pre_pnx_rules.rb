@@ -579,7 +579,6 @@ Format_mean = {
 }
 
 
-RECORDS_PER_ALMA_XML_FILE = 50
 
 def create_person(person)
   unless person["identifiers"].nil?
@@ -673,7 +672,6 @@ def create_person_addlink(expanded_person)
 
 end
 
-
 def PrimoVE_create_tar(dirname, filename, directory_to_tar, options)
   c_dir = Dir.pwd
   if Dir.exist?(directory_to_tar) 
@@ -687,7 +685,7 @@ def PrimoVE_create_tar(dirname, filename, directory_to_tar, options)
     tarfilename = "#{dirname}/ALMA_#{filename}"
 
     counter = 0
-    xml_file_list = Dir.glob("#{directory_to_tar}/primoVE_*.xml").each_slice(RECORDS_PER_ALMA_XML_FILE).to_a
+    xml_file_list = Dir.glob("#{directory_to_tar}/primoVE_*.xml").each_slice(options[:number_of_records_per_alma_xml_file]).to_a
     filename = File.basename( tarfilename, ".tar.gz" )
     
     xml_file_list.each { |xml_files|
@@ -763,7 +761,7 @@ def collect_records()
     unless records_dir.chr == "/"
       records_dir = "#{File.dirname(__FILE__)}/../#{records_dir}"
     end
-
+    number_of_records_per_alma_xml_file = config[:number_of_records_per_alma_xml_file]
 
 =begin
 #Create starting URL
@@ -1409,7 +1407,7 @@ def collect_records()
         filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"
         dirname = "#{records_dir}/"
         directory_to_process  = "#{records_dir}"
-        options = {:remove_temp_files => remove_temp_files}
+        options = {:remove_temp_files => remove_temp_files, :number_of_records_per_alma_xml_file => number_of_records_per_alma_xml_file}
         PrimoVE_create_tar(dirname, filename, directory_to_process, options)
       end
 
@@ -1521,7 +1519,7 @@ def collect_records()
         filename      = "lirias_#{time}_#{rand(1000)}.tar.gz"
         dirname = "#{records_dir}/"
         directory_to_process  = "#{records_dir}"
-        options = {:remove_temp_files => remove_temp_files}
+        options = {:remove_temp_files => remove_temp_files, :number_of_records_per_alma_xml_file => number_of_records_per_alma_xml_file}
         PrimoVE_create_tar(dirname, filename, directory_to_process, options)     
       end
 

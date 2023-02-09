@@ -761,8 +761,8 @@ def collect_records()
     unless records_dir.chr == "/"
       records_dir = "#{File.dirname(__FILE__)}/../#{records_dir}"
     end
-    number_of_records_per_alma_xml_file = config[:number_of_records_per_alma_xml_file]
-
+    number_of_records_per_alma_xml_file = config[:number_of_records_per_alma_xml_file] || 1000
+    
 =begin
 #Create starting URL
   url = "#{config[:base_url]}#{from_date}"

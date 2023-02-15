@@ -819,6 +819,7 @@ def collect_records()
     #url ="file://test_records/edition.xml"
     #url ="file://test_records/series.xml"
     #url ="file://test_records/new_credit_roles.xml"
+    #url ="file:///records/bronbestanden/call_594.xml"
 
 
     while url
@@ -1136,7 +1137,8 @@ def collect_records()
           output.raw()[:identifiers].concat output.raw()[:eissn].map { |i| "$$CEISSN:$$V" + i } unless output.raw()[:eissn].nil?
           output.raw()[:identifiers].concat output.raw()[:doi].map { |i| "$$CDOI:$$V" + i } unless output.raw()[:doi].nil?
           output.raw()[:identifiers] << "$$CPMID:$$V" + output.raw()[:pmid]  unless output.raw()[:pmid].nil?
-          output.raw()[:identifiers] << "$$CWOSID:$$V" + output.raw()[:wosid] unless output.raw()[:wosid].nil?
+          # WOS-ID https://libis.teamwork.com/app/tasks/20947956 ( Web of Science  terms of use)
+          # output.raw()[:identifiers] << "$$CWOSID:$$V" + output.raw()[:wosid] unless output.raw()[:wosid].nil?
           output.raw()[:identifiers] << "$$CSCOPUSID:$$V" + output.raw()[:scopusid]  unless output.raw()[:scopusid].nil?
           output.raw()[:identifiers].concat output.raw()[:external_identifiers].map { |i| "$$Cexternal_identifiers:$$V" + i } unless output.raw()[:external_identifiers].nil?
           output.raw()[:identifiers].concat output.raw()[:patent_number].map { |i| "$$Cpatent_number:$$V" + i } unless output.raw()[:patent_number].nil?
@@ -1466,6 +1468,9 @@ def collect_records()
         url = nil
       end
     end
+
+
+##########################################################################################################################################################
 
 
     log("Get Deleted affected-since #{from_date_deleted} ")

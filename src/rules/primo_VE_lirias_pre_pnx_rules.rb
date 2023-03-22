@@ -937,13 +937,14 @@ def collect_records()
           log("-- creator --") if debugging
           # PNX - creator
           unless output.raw()[:author].nil?
+            output.raw()[:first_author] = output.raw()[:author].first
 
             output.raw()[:creator] = output.raw()[:author].clone()
             output.raw()[:creator].map! { |person| create_person(person) }
 
             # output.raw()[:creator] = output.raw()[:author].map { |person| create_person_display(person) }
             output.raw()[:addlink].concat create_person_addlink( output.raw()[:creator] )
-
+                        
           end
           # pp output.raw()[:creator]
           # pp output.raw()[:expanded_creator]

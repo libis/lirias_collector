@@ -1311,11 +1311,12 @@ def collect_records()
 
             unless output.raw()[:publisher_url].nil?
               output.raw()[:linktorsrc].concat output.raw()[:publisher_url].map { |u|
-                if delivery_fulltext == default_delivery_fulltext
+                if delivery_fulltext == default_delivery_fulltext # if output.raw()[:files].nil? delivery_fulltext is still default_delivery_fulltext 
                   if open_access
                     delivery_fulltext = "fulltext_linktorsrc"
                   else
-                    delivery_fulltext = "fulltext_unknown"
+                    #delivery_fulltext = "fulltext_unknown"
+                    delivery_fulltext = "fulltext_linktorsrc"
                   end
                 end
                 "$$U#{u}$$Hfree_for_read" 
@@ -1324,12 +1325,13 @@ def collect_records()
             unless output.raw()[:additional_identifier].nil?
               output.raw()[:linktorsrc].concat output.raw()[:additional_identifier].map { |ai|
                 if ai.match(/^http/)
-                  if delivery_fulltext == default_delivery_fulltext
+                  if delivery_fulltext == default_delivery_fulltext # if output.raw()[:files].nil? delivery_fulltext is still default_delivery_fulltext 
                     if open_access
                       delivery_fulltext = "fulltext_linktorsrc"
                     else
-                      delivery_fulltext = "fulltext_unknown"
-                    end                  
+                      #delivery_fulltext = "fulltext_unknown"
+                      delivery_fulltext = "fulltext_linktorsrc"
+                    end
                   end
                   "$$U#{ai}$$Hfree_for_read"
                 end

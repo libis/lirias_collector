@@ -1280,7 +1280,7 @@ def collect_records()
                 if file.has_key?("description") && file["description"].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file["description"])
                   desc = file["description"]
                 else
-                  desc = file["filename"]
+                  desc = file["filename"] # if  output.raw()[:files].size == 1 desc = "Link to resource"
                 end
 
                 restriction = nil
@@ -1337,8 +1337,10 @@ def collect_records()
                 end
               }
             end
-            if output.raw()[:issn] || output.raw()[:isbn] || output.raw()[:doi]
-              delivery_fulltext = "fulltext_unknown" if delivery_fulltext == default_delivery_fulltext
+            if output.raw()[:files].nil? && (output.raw()[:issn] || output.raw()[:isbn] || output.raw()[:doi])
+              # delivery_fulltext = "fulltext_unknown" if delivery_fulltext == default_delivery_fulltext
+              delivery_fulltext = "fulltext_unknown"
+              output.raw()[:linktorsrc] = [] 
             end
           end
           output.raw()[:linktorsrc] = output.raw()[:linktorsrc].compact

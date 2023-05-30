@@ -1,7 +1,9 @@
 version: '3'
 services:
   lirias_collector:
-    image: lirias_collector
+    #image: lirias_collector:v2.0
+    image: libis/lirias_collector:v2.0
+    #image: registry.docker.libis.be/libis/lirias_collector:v2.0
     container_name: lirias_collector
     build: 
       context: ./
@@ -11,6 +13,16 @@ services:
     volumes:
       - ./config:/app/src/config/
       - ./records:/records/
+  lirias_collector_full_reload:
+    image: lirias_collector:v2.0
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    networks: 
+      - collector_network
+    volumes:
+      - ./config:/app/src/config/
+      - ./primo_ve/full_reload/:/records/      
 networks:
   collector_network:
     driver: bridge

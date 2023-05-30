@@ -1,0 +1,293 @@
+{
+    "id": "1373285",
+    "claimed": [
+        true
+    ],
+    "type": "conference_proceeding",
+    "updated": [
+        "2022-12-07T11:56:02.243+01:00"
+    ],
+    "elements_creation_date": [
+        "2017-09-08T00:56:24.65+02:00"
+    ],
+    "scopusid": "2-s2.0-80052792360",
+    "title": [
+        "Desflurane but not sevoflurane increases intestinal motility during gastric bypass surgery"
+    ],
+    "author": [
+        {
+            "last_name": "Delrue",
+            "initials": "HG",
+            "first_names": "HG",
+            "name": "Delrue, HG",
+            "pnx_display_name": "Delrue, HG$$QDelrue, HG"
+        },
+        {
+            "last_name": "De Corte",
+            "initials": "W",
+            "first_names": "W",
+            "name": "De Corte, W",
+            "pnx_display_name": "De Corte, W$$QDe Corte, W"
+        },
+        {
+            "last_name": "Pottel",
+            "initials": "H",
+            "first_names": "H",
+            "identifiers": [
+                {
+                    "orcid": "0000-0003-0074-8919"
+                },
+                {
+                    "staff_nbr": "U0003149"
+                }
+            ],
+            "name": "Pottel, H",
+            "pnx_display_name": "Pottel, H$$QPottel, H"
+        },
+        {
+            "last_name": "Devriendt",
+            "initials": "D",
+            "first_names": "D",
+            "identifiers": [
+                {
+                    "staff_nbr": "U0073069"
+                }
+            ],
+            "name": "Devriendt, D",
+            "pnx_display_name": "Devriendt, D$$QDevriendt, D"
+        },
+        {
+            "last_name": "Hec Van Rooy",
+            "initials": "F",
+            "first_names": "F",
+            "name": "Hec Van Rooy, F",
+            "pnx_display_name": "Hec Van Rooy, F$$QHec Van Rooy, F"
+        },
+        {
+            "last_name": "Carlier",
+            "initials": "S",
+            "first_names": "S",
+            "name": "Carlier, S",
+            "pnx_display_name": "Carlier, S$$QCarlier, S"
+        },
+        {
+            "last_name": "Desmet",
+            "initials": "MB",
+            "first_names": "MB",
+            "identifiers": [
+                {
+                    "staff_nbr": "U0072468"
+                }
+            ],
+            "name": "Desmet, MB",
+            "pnx_display_name": "Desmet, MB$$QDesmet, MB"
+        }
+    ],
+    "volume": [
+        "62"
+    ],
+    "issue": [
+        "2"
+    ],
+    "pagination": [
+        {
+            "begin_page": "115",
+            "pagination": "115 - ..."
+        }
+    ],
+    "publication_date": [
+        "2011-06-01"
+    ],
+    "publication_status": [
+        "Published"
+    ],
+    "journal": [
+        "Acta Anaesthesiologica Belgica"
+    ],
+    "issn": [
+        "0001-5164"
+    ],
+    "peer_reviewed": [
+        "Yes - author can provide reports",
+        "Yes - author can provide reports"
+    ],
+    "public_url": [
+        "https://lirias.kuleuven.be/1373285"
+    ],
+    "organizational_unit": [
+        "51841970",
+        "50000050",
+        "50000598",
+        "50000600",
+        "53940104",
+        "54965008",
+        "50000687",
+        "52331635"
+    ],
+    "source": "lirias",
+    "sourceid": "lirias",
+    "sourcerecordid": [
+        "1373285"
+    ],
+    "recordid": "lirias1373285",
+    "local_field_07": [
+        "conference"
+    ],
+    "ristype": [
+        "CONF"
+    ],
+    "addlink": [
+        "Pottel, H [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0003149",
+        "Devriendt, D [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0073069",
+        "Desmet, MB [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0072468",
+        "Pottel, H [ORCID]$$Uhttps://orcid.org/0000-0003-0074-8919"
+    ],
+    "first_author": {
+        "last_name": "Delrue",
+        "initials": "HG",
+        "first_names": "HG",
+        "name": "Delrue, HG",
+        "pnx_display_name": "Delrue, HG$$QDelrue, HG"
+    },
+    "creator": [
+        {
+            "last_name": "Delrue",
+            "initials": "HG",
+            "first_names": "HG",
+            "name": "Delrue, HG",
+            "pnx_display_name": "Delrue, HG$$QDelrue, HG"
+        },
+        {
+            "last_name": "De Corte",
+            "initials": "W",
+            "first_names": "W",
+            "name": "De Corte, W",
+            "pnx_display_name": "De Corte, W$$QDe Corte, W"
+        },
+        {
+            "last_name": "Pottel",
+            "initials": "H",
+            "first_names": "H",
+            "identifiers": [
+                {
+                    "orcid": "0000-0003-0074-8919"
+                },
+                {
+                    "staff_nbr": "U0003149"
+                }
+            ],
+            "name": "Pottel, H",
+            "pnx_display_name": "Pottel, H$$QPottel, H"
+        },
+        {
+            "last_name": "Devriendt",
+            "initials": "D",
+            "first_names": "D",
+            "identifiers": [
+                {
+                    "staff_nbr": "U0073069"
+                }
+            ],
+            "name": "Devriendt, D",
+            "pnx_display_name": "Devriendt, D$$QDevriendt, D"
+        },
+        {
+            "last_name": "Hec Van Rooy",
+            "initials": "F",
+            "first_names": "F",
+            "name": "Hec Van Rooy, F",
+            "pnx_display_name": "Hec Van Rooy, F$$QHec Van Rooy, F"
+        },
+        {
+            "last_name": "Carlier",
+            "initials": "S",
+            "first_names": "S",
+            "name": "Carlier, S",
+            "pnx_display_name": "Carlier, S$$QCarlier, S"
+        },
+        {
+            "last_name": "Desmet",
+            "initials": "MB",
+            "first_names": "MB",
+            "identifiers": [
+                {
+                    "staff_nbr": "U0072468"
+                }
+            ],
+            "name": "Desmet, MB",
+            "pnx_display_name": "Desmet, MB$$QDesmet, MB"
+        }
+    ],
+    "facets_creator_contributor": [
+        "Delrue, HG",
+        "De Corte, W",
+        "Pottel, H",
+        "Devriendt, D",
+        "Hec Van Rooy, F",
+        "Carlier, S",
+        "Desmet, MB",
+        "U0003149",
+        "U0073069",
+        "U0072468"
+    ],
+    "facets_staffnr": [
+        "staffnr_U0003149",
+        "staffnr_U0072468",
+        "staffnr_U0073069"
+    ],
+    "search_creationdate": [
+        "20110601"
+    ],
+    "risdate": [
+        "20110601"
+    ],
+    "search_startdate": [
+        "20110101"
+    ],
+    "search_enddate": [
+        "20111231"
+    ],
+    "ispartof": [
+        "Acta Anaesthesiologica Belgica; 2011; Vol. 62; iss. 2; pp. 115 - ..."
+    ],
+    "journal_title": [
+        "Acta Anaesthesiologica Belgica"
+    ],
+    "book_title": [],
+    "article_title": [
+        "Desflurane but not sevoflurane increases intestinal motility during gastric bypass surgery"
+    ],
+    "identifiers": [
+        "$$CISSN:$$V0001-5164",
+        "$$CSCOPUSID:$$V2-s2.0-80052792360"
+    ],
+    "description": null,
+    "local_field_02": null,
+    "local_field_08": [
+        "Published"
+    ],
+    "local_field_10": [],
+    "local_facet_10": [
+        "51841970",
+        "50000050",
+        "50000598",
+        "50000600",
+        "53940104",
+        "54965008",
+        "50000687",
+        "52331635"
+    ],
+    "backlink": [
+        "$$Uhttps://lirias.kuleuven.be/1373285$$Ebacklink_lirias"
+    ],
+    "delivery_delcategory": "Remote Search Resource",
+    "linktorsrc": "",
+    "delivery_fulltext": "fulltext_unknown",
+    "facets_toplevel": [
+        "peer_reviewed"
+    ],
+    "facets_prefilter": "conference_proceedings",
+    "facets_rsrctype": "conference_proceedings",
+    "es_created": "2022-04-16T11:31:49Z",
+    "es_updated": "2023-04-01T13:44:22Z"
+}

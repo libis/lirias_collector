@@ -1,21 +1,21 @@
-# FROM ruby:2.7.6-alpine
+FROM ruby:2.7.6
 # RUN addgroup -S dockergroup -g 503 && adduser -S dockeruser -u 504 -G dockergroup && apk --no-cache add g++ make bash
-
-FROM ruby:2.4.3-alpine
-#RUN addgroup -gid 503 dockergroup && adduser --uid 504 dockeruser --group dockergroup && apk --no-cache add g++ make bash
-RUN addgroup -S dockergroup -g 503 && adduser -S dockeruser -u 504 -G dockergroup && apk --no-cache add g++ make bash
 
 # Install gems
 ENV APP_HOME /app
 ENV HOME /root
 
-RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+COPY ./src ./src/
+WORKDIR $APP_HOME/src/data_collector_gem
+RUN gem build data_collector.gemspec; gem install data_collector-0.20.0.gem
+
 WORKDIR $APP_HOME
 
-RUN chown -R dockeruser:dockergroup /app
-USER dockeruser:dockergroup
+# RUN chown -R dockeruser:dockergroup /app
+# USER dockeruser:dockergroup
 
 COPY ./Gemfile ./
-RUN gem install bundler
-RUN bundle install
-COPY ./src ./src/
+RUN gem install bundle; bundle install
+
+CMD cd /app/src/; ruby lirias_collector.rb

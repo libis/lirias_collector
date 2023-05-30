@@ -1,0 +1,299 @@
+{
+    "id": "977104",
+    "claimed": [
+        true
+    ],
+    "type": "article",
+    "updated": [
+        "2022-12-03T15:12:26.367+01:00"
+    ],
+    "elements_creation_date": [
+        "2017-06-14T23:27:29.573+02:00"
+    ],
+    "keyword": [
+        "Social Sciences",
+        "Economics",
+        "Business & Economics",
+        "Informed principal",
+        "Moral hazard",
+        "Signaling",
+        "Franchising",
+        "Initially reduced royalty rates",
+        "PRINCIPAL-AGENT RELATIONSHIP",
+        "INFORMED-PRINCIPAL",
+        "PRIVATE VALUES",
+        "MORAL HAZARD",
+        "MECHANISM DESIGN",
+        "CONTRACTS",
+        "INFORMATION",
+        "GAMES",
+        "14 Economics"
+    ],
+    "wosid": "WOS:000376815900002",
+    "scopusid": "2-s2.0-84959549984",
+    "title": [
+        "Signaling quality through increased incentives"
+    ],
+    "abstract": [
+        "© 2016 Elsevier B.V. Previous work on informed-principal problems with moral hazard suggested that the principal should signal project quality by retaining a larger share of the project and hence lowering incentives for the agent. We show that this view is incomplete. If project quality and effort are complements and effort is more valuable for high-quality projects, a principal with a high-quality project may separate from a principal with a low-quality project by increasing incentives for the agent. This holds with a risk-neutral agent who is protected by limited liability as well as with a risk-averse agent and unlimited liability. A dynamic version of our model in which the agent learns project quality in later periods provides an explanation for the use of initially reduced royalty rates in business-format franchising contracts."
+    ],
+    "author": [
+        {
+            "last_name": "Karle",
+            "initials": "H",
+            "first_names": "H",
+            "name": "Karle, H",
+            "pnx_display_name": "Karle, H$$QKarle, H"
+        },
+        {
+            "last_name": "Schumacher",
+            "initials": "H",
+            "first_names": "Heiner",
+            "identifiers": [
+                {
+                    "staff_nbr": "U0103306"
+                }
+            ],
+            "name": "Schumacher, Heiner",
+            "pnx_display_name": "Schumacher, Heiner$$QSchumacher, Heiner"
+        },
+        {
+            "last_name": "Staat",
+            "initials": "C",
+            "first_names": "C",
+            "name": "Staat, C",
+            "pnx_display_name": "Staat, C$$QStaat, C"
+        }
+    ],
+    "author_url": [
+        "https://www.webofscience.com/api/gateway?GWVersion=2&SrcApp=PARTNER_APP&SrcAuth=LinksAMR&KeyUT=WOS:000376815900002&DestLinkType=FullRecord&DestApp=ALL_WOS&UsrCustomerID=ef845e08c439e550330acc77c7d2d848"
+    ],
+    "volume": [
+        "85"
+    ],
+    "pagination": [
+        {
+            "begin_page": "8",
+            "end_page": "21",
+            "pagination": "8 - 21"
+        }
+    ],
+    "publisher": [
+        "Elsevier"
+    ],
+    "publication_date": [
+        "2016-01-01"
+    ],
+    "doi": [
+        "10.1016/j.euroecorev.2016.02.002"
+    ],
+    "publication_status": [
+        "Published"
+    ],
+    "journal": [
+        "European Economic Review "
+    ],
+    "issn": [
+        "0014-2921"
+    ],
+    "language": [
+        "eng"
+    ],
+    "eissn": [
+        "1873-572X"
+    ],
+    "external_identifiers": [
+        "000376815900002"
+    ],
+    "peer_reviewed": [
+        "Yes - author can provide reports Yes - author can provide reports",
+        "Yes - author can provide reports"
+    ],
+    "professional_oriented": [
+        "false"
+    ],
+    "funding_acknowledgements": [
+        "We are grateful to Heski Bar-Isaac, Stefan Bechtold, Helmut Bester, Stefan Buhler, Jacques Cremer, Gregory Crawford, Johannes Dittrich, Christian Ewerhart, Jens Frankenreiter, Roman Inderst, John Kennes, Georg Kirchsteiger, Francine Lafontaine, Patrick Legros, Igor Letina, Wanda Mimra, Tymofiy Mylovanov, Martin Peitz, Maria Saez-Marti, Wilfried Sand-Zantman, Patrick Schmitz, Armin Schmutzler, Maik Schneider, Martin Schonger, Michelle Sovinsky, Kathryn Spier, Konrad Stahl, Roland Strausz, and Elu von Thadden, as well as seminar audiences in Aarhus, Brussels, Mannheim, Zurich, at the HOC in Chicago, the ENTER Jamboree in Stockholm, the EEA-ESEM in Toulouse, the EARIE in Milan, and the VfS Annual Meeting in Hamburg for their valuable comments and suggestions. Heiko Karle gratefully acknowledges financial support from the National Bank of Belgium (Research Grant, \"The Impact of Consumer Loss Aversion on the Price Elasticity of Demand\"), and the ARC Grant \"Market Evolution, Competition and Policy: Theory and Evidence.\" The usual disclaimer applies."
+    ],
+    "vabb_type": [
+        "VABB-1"
+    ],
+    "vabb_identifier": [
+        "c:vabb:426648"
+    ],
+    "historic_collection": [
+        "Department of Economics, Leuven - miscellaneous;50000218"
+    ],
+    "public_url": [
+        "https://lirias.kuleuven.be/handle/123456789/563638",
+        "https://lirias.kuleuven.be/977104"
+    ],
+    "files": [
+        {
+            "filename": "Karle_2016EER.pdf",
+            "extension": "pdf",
+            "embargo_release_date": "9999-12-31",
+            "embargo_description": "No anonymous read access",
+            "file_url": "https://lirias.kuleuven.be/retrieve/422838",
+            "filePublic": false,
+            "fileIntranet": true
+        }
+    ],
+    "organizational_unit": [
+        "51841970",
+        "50000050",
+        "50000100",
+        "50000208",
+        "55044748",
+        "50000218",
+        "56962573"
+    ],
+    "source": "lirias",
+    "sourceid": "lirias",
+    "sourcerecordid": [
+        "977104"
+    ],
+    "recordid": "lirias977104",
+    "local_field_07": [
+        "journal-article"
+    ],
+    "ristype": [
+        "JOUR"
+    ],
+    "addlink": [
+        "Schumacher, Heiner [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0103306"
+    ],
+    "first_author": {
+        "last_name": "Karle",
+        "initials": "H",
+        "first_names": "H",
+        "name": "Karle, H",
+        "pnx_display_name": "Karle, H$$QKarle, H"
+    },
+    "creator": [
+        {
+            "last_name": "Karle",
+            "initials": "H",
+            "first_names": "H",
+            "name": "Karle, H",
+            "pnx_display_name": "Karle, H$$QKarle, H"
+        },
+        {
+            "last_name": "Schumacher",
+            "initials": "H",
+            "first_names": "Heiner",
+            "identifiers": [
+                {
+                    "staff_nbr": "U0103306"
+                }
+            ],
+            "name": "Schumacher, Heiner",
+            "pnx_display_name": "Schumacher, Heiner$$QSchumacher, Heiner"
+        },
+        {
+            "last_name": "Staat",
+            "initials": "C",
+            "first_names": "C",
+            "name": "Staat, C",
+            "pnx_display_name": "Staat, C$$QStaat, C"
+        }
+    ],
+    "facets_creator_contributor": [
+        "Karle, H",
+        "Schumacher, Heiner",
+        "Staat, C",
+        "U0103306"
+    ],
+    "facets_staffnr": [
+        "staffnr_U0103306"
+    ],
+    "search_creationdate": [
+        "20160101"
+    ],
+    "risdate": [
+        "20160101"
+    ],
+    "search_startdate": [
+        "20160101"
+    ],
+    "search_enddate": [
+        "20161231"
+    ],
+    "ispartof": [
+        "European Economic Review ; 2016; Vol. 85; pp. 8 - 21"
+    ],
+    "journal_title": [
+        "European Economic Review "
+    ],
+    "book_title": [],
+    "article_title": [
+        "Signaling quality through increased incentives"
+    ],
+    "identifiers": [
+        "$$CISSN:$$V0014-2921",
+        "$$CEISSN:$$V1873-572X",
+        "$$CDOI:$$V10.1016/j.euroecorev.2016.02.002",
+        "$$CSCOPUSID:$$V2-s2.0-84959549984",
+        "$$Cexternal_identifiers:$$V000376815900002"
+    ],
+    "subject": [
+        "Social Sciences",
+        "Economics",
+        "Business & Economics",
+        "Informed principal",
+        "Moral hazard",
+        "Signaling",
+        "Franchising",
+        "Initially reduced royalty rates",
+        "PRINCIPAL-AGENT RELATIONSHIP",
+        "INFORMED-PRINCIPAL",
+        "PRIVATE VALUES",
+        "MORAL HAZARD",
+        "MECHANISM DESIGN",
+        "CONTRACTS",
+        "INFORMATION",
+        "GAMES",
+        "14 Economics"
+    ],
+    "description": [
+        "© 2016 Elsevier B.V. Previous work on informed-principal problems with moral hazard suggested that the principal should signal project quality by retaining a larger share of the project and hence lowering incentives for the agent. We show that this view is incomplete. If project quality and effort are complements and effort is more valuable for high-quality projects, a principal with a high-quality project may separate from a principal with a low-quality project by increasing incentives for the agent. This holds with a risk-neutral agent who is protected by limited liability as well as with a risk-averse agent and unlimited liability. A dynamic version of our model in which the agent learns project quality in later periods provides an explanation for the use of initially reduced royalty rates in business-format franchising contracts."
+    ],
+    "notes": [
+        "We are grateful to Heski Bar-Isaac, Stefan Bechtold, Helmut Bester, Stefan Buhler, Jacques Cremer, Gregory Crawford, Johannes Dittrich, Christian Ewerhart, Jens Frankenreiter, Roman Inderst, John Kennes, Georg Kirchsteiger, Francine Lafontaine, Patrick Legros, Igor Letina, Wanda Mimra, Tymofiy Mylovanov, Martin Peitz, Maria Saez-Marti, Wilfried Sand-Zantman, Patrick Schmitz, Armin Schmutzler, Maik Schneider, Martin Schonger, Michelle Sovinsky, Kathryn Spier, Konrad Stahl, Roland Strausz, and Elu von Thadden, as well as seminar audiences in Aarhus, Brussels, Mannheim, Zurich, at the HOC in Chicago, the ENTER Jamboree in Stockholm, the EEA-ESEM in Toulouse, the EARIE in Milan, and the VfS Annual Meeting in Hamburg for their valuable comments and suggestions. Heiko Karle gratefully acknowledges financial support from the National Bank of Belgium (Research Grant, \"The Impact of Consumer Loss Aversion on the Price Elasticity of Demand\"), and the ARC Grant \"Market Evolution, Competition and Policy: Theory and Evidence.\" The usual disclaimer applies."
+    ],
+    "local_field_11": [
+        "We are grateful to Heski Bar-Isaac, Stefan Bechtold, Helmut Bester, Stefan Buhler, Jacques Cremer, Gregory Crawford, Johannes Dittrich, Christian Ewerhart, Jens Frankenreiter, Roman Inderst, John Kennes, Georg Kirchsteiger, Francine Lafontaine, Patrick Legros, Igor Letina, Wanda Mimra, Tymofiy Mylovanov, Martin Peitz, Maria Saez-Marti, Wilfried Sand-Zantman, Patrick Schmitz, Armin Schmutzler, Maik Schneider, Martin Schonger, Michelle Sovinsky, Kathryn Spier, Konrad Stahl, Roland Strausz, and Elu von Thadden, as well as seminar audiences in Aarhus, Brussels, Mannheim, Zurich, at the HOC in Chicago, the ENTER Jamboree in Stockholm, the EEA-ESEM in Toulouse, the EARIE in Milan, and the VfS Annual Meeting in Hamburg for their valuable comments and suggestions. Heiko Karle gratefully acknowledges financial support from the National Bank of Belgium (Research Grant, \"The Impact of Consumer Loss Aversion on the Price Elasticity of Demand\"), and the ARC Grant \"Market Evolution, Competition and Policy: Theory and Evidence.\" The usual disclaimer applies."
+    ],
+    "local_field_02": null,
+    "local_field_08": [
+        "Published"
+    ],
+    "local_field_10": [],
+    "local_facet_10": [
+        "51841970",
+        "50000050",
+        "50000100",
+        "50000208",
+        "55044748",
+        "50000218",
+        "56962573"
+    ],
+    "backlink": [
+        "$$Uhttps://lirias.kuleuven.be/handle/123456789/563638$$Ebacklink_lirias",
+        "$$Uhttps://lirias.kuleuven.be/977104$$Ebacklink_lirias"
+    ],
+    "delivery_delcategory": "fulltext_linktorsrc",
+    "linktorsrc": [
+        "$$Uhttps://lirias.kuleuven.be/retrieve/422838$$DLink to resource [Available for KU Leuven users]$$Hfree_for_read"
+    ],
+    "delivery_fulltext": "fulltext_linktorsrc",
+    "facets_toplevel": [
+        "peer_reviewed",
+        "online_resources"
+    ],
+    "facets_prefilter": "articles",
+    "facets_rsrctype": "articles",
+    "es_created": "2022-04-16T11:52:10Z",
+    "es_updated": "2023-04-01T13:42:18Z",
+    "oa": "free_for_read"
+}

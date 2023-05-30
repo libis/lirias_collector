@@ -1,0 +1,274 @@
+{
+    "id": "1769877",
+    "claimed": [
+        true
+    ],
+    "type": "book_chapter",
+    "updated": [
+        "2023-01-14T12:41:57.79+01:00"
+    ],
+    "elements_creation_date": [
+        "2018-05-03T09:16:55.607+02:00"
+    ],
+    "virtual_collections": [
+        "KUL-CoE-EcoSocio"
+    ],
+    "keyword": [
+        "KUL-CoE-EcoSocio",
+        "C16/17/002#54271307"
+    ],
+    "title": [
+        "Red Queen Dynamics"
+    ],
+    "abstract": [
+        "Host-parasite coevolutionary dynamics are characterized by fast reciprocal adaptations, resulting in fluctuating Red Queen dynamics. Red Queen dynamics provide a powerful explanation for the occurrence of sexual reproduction, i.e. as a mechanism to cope with the rapidly evolving parasites. Parasites adapt to specific and frequent host genotypes. A possible way for the host population to escape is to produce a genetically diverse set of offspring so that these also include genotypes to which the parasites are not adapted. These fast reciprocal interactions between hosts and parasites result in fluctuating frequencies of allelic variants of both host and parasite genotypes through time. These fluctuations are driven by frequency-dependent selection and do not result in a net change or steady increase in the fitness of any of the coevolving partners over time. We here describe what Red Queen dynamics (RQDs) are, give two experimental model systems for RQDs, explain the theoretical models of RQDs, indicate what spatial patterns of RQDs are, how environmental variation structures RQDs, indicate the role of RQDs in eco-coevolutionary interactions and we end with extrapolating beyond the pairwise: Red Queen and microbiota."
+    ],
+    "author": [
+        {
+            "last_name": "Decaestecker",
+            "initials": "E",
+            "first_names": "Ellen",
+            "identifiers": [
+                {
+                    "orcid": "0000-0001-6328-5283"
+                },
+                {
+                    "researcherid": "M-8949-2016"
+                },
+                {
+                    "staff_nbr": "U0003403"
+                }
+            ],
+            "name": "Decaestecker, Ellen",
+            "pnx_display_name": "Decaestecker, Ellen$$QDecaestecker, Ellen"
+        },
+        {
+            "last_name": "King",
+            "initials": "K",
+            "first_names": "Kayla",
+            "name": "King, Kayla",
+            "pnx_display_name": "King, Kayla$$QKing, Kayla"
+        }
+    ],
+    "volume": [
+        "3"
+    ],
+    "pagination": [
+        {
+            "begin_page": "185",
+            "end_page": "192",
+            "page_count": "7",
+            "pagination": "185 - 192"
+        }
+    ],
+    "number_of_pages": [
+        "7"
+    ],
+    "publisher": [
+        "Elsevier"
+    ],
+    "publication_date": [
+        "2019-01-01"
+    ],
+    "isbn_13": [
+        "9780444637680"
+    ],
+    "publication_status": [
+        "Published"
+    ],
+    "parent_title": [
+        "Elsevier Encyclopedia of Ecology"
+    ],
+    "language": [
+        "eng"
+    ],
+    "peer_reviewed": [
+        "Yes - author can provide reports Yes - author can provide reports",
+        "Yes - author can provide reports"
+    ],
+    "professional_oriented": [
+        "false"
+    ],
+    "historic_collection": [
+        "Biology, Campus Kulak Kortrijk;50000820",
+        "Department of Biology - miscellaneous;50000454"
+    ],
+    "public_url": [
+        "https://lirias.kuleuven.be/handle/123456789/617447",
+        "https://lirias.kuleuven.be/1769877"
+    ],
+    "files": [
+        {
+            "filename": "RedQueendynamics_encyclopedia_Decaestecker & King.doc",
+            "extension": "doc",
+            "embargo_release_date": "9999-12-31",
+            "embargo_description": "No anonymous read access",
+            "file_url": "https://lirias.kuleuven.be/retrieve/500971",
+            "filePublic": false,
+            "fileIntranet": true
+        }
+    ],
+    "organizational_unit": [
+        "51841970",
+        "50000050",
+        "50000403",
+        "50000454",
+        "50000820"
+    ],
+    "editor": [
+        {
+            "last_name": "Wertheim",
+            "initials": "B",
+            "first_names": "Bregje"
+        }
+    ],
+    "contributor": [
+        {
+            "last_name": "Wertheim",
+            "initials": "B",
+            "first_names": "Bregje",
+            "function": [
+                "Editor"
+            ],
+            "roles": [
+                "Editor"
+            ],
+            "name": "Wertheim, Bregje",
+            "pnx_display_name": "Wertheim, Bregje (Editor)$$QWertheim, Bregje"
+        }
+    ],
+    "source": "lirias",
+    "sourceid": "lirias",
+    "sourcerecordid": [
+        "1769877"
+    ],
+    "recordid": "lirias1769877",
+    "local_field_07": [
+        "chapter"
+    ],
+    "ristype": [
+        "CHAP"
+    ],
+    "addlink": [
+        "Decaestecker, Ellen [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0003403",
+        "Decaestecker, Ellen [ResearcherID]$$Uhttps://www.researcherid.com/rid/M-8949-2016",
+        "Decaestecker, Ellen [ORCID]$$Uhttps://orcid.org/0000-0001-6328-5283"
+    ],
+    "first_author": {
+        "last_name": "Decaestecker",
+        "initials": "E",
+        "first_names": "Ellen",
+        "identifiers": [
+            {
+                "orcid": "0000-0001-6328-5283"
+            },
+            {
+                "researcherid": "M-8949-2016"
+            },
+            {
+                "staff_nbr": "U0003403"
+            }
+        ],
+        "name": "Decaestecker, Ellen",
+        "pnx_display_name": "Decaestecker, Ellen$$QDecaestecker, Ellen"
+    },
+    "creator": [
+        {
+            "last_name": "Decaestecker",
+            "initials": "E",
+            "first_names": "Ellen",
+            "identifiers": [
+                {
+                    "orcid": "0000-0001-6328-5283"
+                },
+                {
+                    "researcherid": "M-8949-2016"
+                },
+                {
+                    "staff_nbr": "U0003403"
+                }
+            ],
+            "name": "Decaestecker, Ellen",
+            "pnx_display_name": "Decaestecker, Ellen$$QDecaestecker, Ellen"
+        },
+        {
+            "last_name": "King",
+            "initials": "K",
+            "first_names": "Kayla",
+            "name": "King, Kayla",
+            "pnx_display_name": "King, Kayla$$QKing, Kayla"
+        }
+    ],
+    "facets_creator_contributor": [
+        "Decaestecker, Ellen",
+        "King, Kayla",
+        "U0003403",
+        "Wertheim, Bregje"
+    ],
+    "facets_staffnr": [
+        "staffnr_U0003403"
+    ],
+    "search_creationdate": [
+        "20190101"
+    ],
+    "risdate": [
+        "20190101"
+    ],
+    "search_startdate": [
+        "20190101"
+    ],
+    "search_enddate": [
+        "20191231"
+    ],
+    "ispartof": [
+        "Elsevier Encyclopedia of Ecology; 2019; Vol. 3; pp. 185 - 192"
+    ],
+    "book_title": [
+        "Elsevier Encyclopedia of Ecology"
+    ],
+    "article_title": [
+        "Red Queen Dynamics"
+    ],
+    "identifiers": [
+        "$$CISBN:$$V9780444637680"
+    ],
+    "subject": [
+        "KUL-CoE-EcoSocio",
+        "C16/17/002#54271307"
+    ],
+    "description": [
+        "Host-parasite coevolutionary dynamics are characterized by fast reciprocal adaptations, resulting in fluctuating Red Queen dynamics. Red Queen dynamics provide a powerful explanation for the occurrence of sexual reproduction, i.e. as a mechanism to cope with the rapidly evolving parasites. Parasites adapt to specific and frequent host genotypes. A possible way for the host population to escape is to produce a genetically diverse set of offspring so that these also include genotypes to which the parasites are not adapted. These fast reciprocal interactions between hosts and parasites result in fluctuating frequencies of allelic variants of both host and parasite genotypes through time. These fluctuations are driven by frequency-dependent selection and do not result in a net change or steady increase in the fitness of any of the coevolving partners over time. We here describe what Red Queen dynamics (RQDs) are, give two experimental model systems for RQDs, explain the theoretical models of RQDs, indicate what spatial patterns of RQDs are, how environmental variation structures RQDs, indicate the role of RQDs in eco-coevolutionary interactions and we end with extrapolating beyond the pairwise: Red Queen and microbiota."
+    ],
+    "local_field_02": null,
+    "local_field_08": [
+        "Published"
+    ],
+    "local_field_10": [
+        "KUL-CoE-EcoSocio"
+    ],
+    "local_facet_10": [
+        "KUL-CoE-EcoSocio",
+        "51841970",
+        "50000050",
+        "50000403",
+        "50000454",
+        "50000820"
+    ],
+    "backlink": [
+        "$$Uhttps://lirias.kuleuven.be/handle/123456789/617447$$Ebacklink_lirias",
+        "$$Uhttps://lirias.kuleuven.be/1769877$$Ebacklink_lirias"
+    ],
+    "delivery_delcategory": "Remote Search Resource",
+    "linktorsrc": [
+        "$$Uhttps://lirias.kuleuven.be/retrieve/500971$$DLink to resource [Available for KU Leuven users]$$Hfree_for_read"
+    ],
+    "delivery_fulltext": "fulltext_linktorsrc",
+    "facets_toplevel": [
+        "peer_reviewed",
+        "online_resources"
+    ],
+    "facets_prefilter": "book_chapters",
+    "facets_rsrctype": "book_chapters",
+    "es_created": "2022-08-02T11:44:55Z",
+    "es_updated": "2023-04-21T04:40:06Z"
+}

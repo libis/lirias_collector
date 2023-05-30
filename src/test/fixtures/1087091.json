@@ -1,0 +1,547 @@
+{
+    "id": "1087091",
+    "claimed": [
+        true
+    ],
+    "type": "article",
+    "updated": [
+        "2022-12-25T06:19:22.373+01:00"
+    ],
+    "elements_creation_date": [
+        "2017-06-16T10:20:55.147+02:00"
+    ],
+    "wosid": "WOS:000353565500042",
+    "scopusid": "2-s2.0-84928617551",
+    "title": [
+        "FIRST EXPERIMENTAL TESTS OF SHELS: A NEW HEAVY ION SEPARATOR AT THE JINR"
+    ],
+    "abstract": [
+        "A new Separator for Heavy ELement Spectroscopy (SHELS) has been recently installed at the U-400 accelerator at FLNR, JINR in Dubna, Russia. The details of the upgrade as well as the results from some of the commissioning runs are discussed. In particular, transmission tests with the 208Pb(40Ar, 2–3n)245−6Fm reaction, as well as isomer spectroscopy results for 210Ra produced in 164Dy(50Ti, 3–5n)209−11Ra reaction are presented."
+    ],
+    "author": [
+        {
+            "last_name": "Rezynkina",
+            "initials": "K",
+            "first_names": "Kseniia",
+            "identifiers": [
+                {
+                    "orcid": "0000-0002-3017-6440"
+                },
+                {
+                    "staff_nbr": "U0113320"
+                }
+            ],
+            "name": "Rezynkina, Kseniia",
+            "pnx_display_name": "Rezynkina, Kseniia$$QRezynkina, Kseniia"
+        },
+        {
+            "last_name": "Hauschild",
+            "initials": "K",
+            "first_names": "K",
+            "name": "Hauschild, K",
+            "pnx_display_name": "Hauschild, K$$QHauschild, K"
+        },
+        {
+            "last_name": "Lopez-Martens",
+            "initials": "A",
+            "first_names": "A",
+            "name": "Lopez-Martens, A",
+            "pnx_display_name": "Lopez-Martens, A$$QLopez-Martens, A"
+        },
+        {
+            "last_name": "Dorvaux",
+            "initials": "O",
+            "first_names": "O",
+            "name": "Dorvaux, O",
+            "pnx_display_name": "Dorvaux, O$$QDorvaux, O"
+        },
+        {
+            "last_name": "Gall",
+            "initials": "B",
+            "first_names": "B",
+            "name": "Gall, B",
+            "pnx_display_name": "Gall, B$$QGall, B"
+        },
+        {
+            "last_name": "Dechery",
+            "initials": "F",
+            "first_names": "F",
+            "name": "Dechery, F",
+            "pnx_display_name": "Dechery, F$$QDechery, F"
+        },
+        {
+            "last_name": "Faure",
+            "initials": "H",
+            "first_names": "H",
+            "name": "Faure, H",
+            "pnx_display_name": "Faure, H$$QFaure, H"
+        },
+        {
+            "last_name": "Yeremin",
+            "initials": "AV",
+            "first_names": "AV",
+            "name": "Yeremin, AV",
+            "pnx_display_name": "Yeremin, AV$$QYeremin, AV"
+        },
+        {
+            "last_name": "Chelnokov",
+            "initials": "ML",
+            "first_names": "ML",
+            "name": "Chelnokov, ML",
+            "pnx_display_name": "Chelnokov, ML$$QChelnokov, ML"
+        },
+        {
+            "last_name": "Chepigin",
+            "initials": "VI",
+            "first_names": "VI",
+            "name": "Chepigin, VI",
+            "pnx_display_name": "Chepigin, VI$$QChepigin, VI"
+        },
+        {
+            "last_name": "Isaev",
+            "initials": "AV",
+            "first_names": "AV",
+            "name": "Isaev, AV",
+            "pnx_display_name": "Isaev, AV$$QIsaev, AV"
+        },
+        {
+            "last_name": "Izosimov",
+            "initials": "IN",
+            "first_names": "IN",
+            "name": "Izosimov, IN",
+            "pnx_display_name": "Izosimov, IN$$QIzosimov, IN"
+        },
+        {
+            "last_name": "Katrasev",
+            "initials": "DE",
+            "first_names": "DE",
+            "name": "Katrasev, DE",
+            "pnx_display_name": "Katrasev, DE$$QKatrasev, DE"
+        },
+        {
+            "last_name": "Kuznetsov",
+            "initials": "AN",
+            "first_names": "AN",
+            "name": "Kuznetsov, AN",
+            "pnx_display_name": "Kuznetsov, AN$$QKuznetsov, AN"
+        },
+        {
+            "last_name": "Kuznetsova",
+            "initials": "AA",
+            "first_names": "AA",
+            "name": "Kuznetsova, AA",
+            "pnx_display_name": "Kuznetsova, AA$$QKuznetsova, AA"
+        },
+        {
+            "last_name": "Malyshev",
+            "initials": "ON",
+            "first_names": "ON",
+            "name": "Malyshev, ON",
+            "pnx_display_name": "Malyshev, ON$$QMalyshev, ON"
+        },
+        {
+            "last_name": "Popeko",
+            "initials": "AG",
+            "first_names": "AG",
+            "name": "Popeko, AG",
+            "pnx_display_name": "Popeko, AG$$QPopeko, AG"
+        },
+        {
+            "last_name": "Popov",
+            "initials": "YA",
+            "first_names": "YA",
+            "name": "Popov, YA",
+            "pnx_display_name": "Popov, YA$$QPopov, YA"
+        },
+        {
+            "last_name": "Sokol",
+            "initials": "EA",
+            "first_names": "EA",
+            "name": "Sokol, EA",
+            "pnx_display_name": "Sokol, EA$$QSokol, EA"
+        },
+        {
+            "last_name": "Svirikhin",
+            "initials": "AI",
+            "first_names": "AI",
+            "name": "Svirikhin, AI",
+            "pnx_display_name": "Svirikhin, AI$$QSvirikhin, AI"
+        },
+        {
+            "last_name": "Piot",
+            "initials": "J",
+            "first_names": "J",
+            "name": "Piot, J",
+            "pnx_display_name": "Piot, J$$QPiot, J"
+        },
+        {
+            "last_name": "Rubert",
+            "initials": "J",
+            "first_names": "J",
+            "name": "Rubert, J",
+            "pnx_display_name": "Rubert, J$$QRubert, J"
+        }
+    ],
+    "author_url": [
+        "https://www.webofscience.com/api/gateway?GWVersion=2&SrcApp=PARTNER_APP&SrcAuth=LinksAMR&KeyUT=WOS:000353565500042&DestLinkType=FullRecord&DestApp=ALL_WOS&UsrCustomerID=ef845e08c439e550330acc77c7d2d848"
+    ],
+    "volume": [
+        "46"
+    ],
+    "issue": [
+        "3"
+    ],
+    "pagination": [
+        {
+            "begin_page": "623",
+            "end_page": "626",
+            "pagination": "623 - 626"
+        }
+    ],
+    "publisher": [
+        "Państwowe Wydawn. Naukowe"
+    ],
+    "publication_date": [
+        "2015-01-16"
+    ],
+    "doi": [
+        "10.5506/APhysPolB.46.623"
+    ],
+    "publication_status": [
+        "Published"
+    ],
+    "location": [
+        "Zakopane: POLAND"
+    ],
+    "journal": [
+        "Acta Physica Polonica B "
+    ],
+    "issn": [
+        "0587-4254"
+    ],
+    "language": [
+        "eng"
+    ],
+    "eissn": [
+        "1509-5770"
+    ],
+    "external_identifiers": [
+        "000353565500042"
+    ],
+    "peer_reviewed": [
+        "Yes - author can provide reports Yes - author can provide reports",
+        "Yes - author can provide reports"
+    ],
+    "professional_oriented": [
+        "false"
+    ],
+    "historic_collection": [
+        "Non-KU Leuven Association publications;999999"
+    ],
+    "public_url": [
+        "https://lirias.kuleuven.be/handle/123456789/575886",
+        "https://lirias.kuleuven.be/1087091"
+    ],
+    "files": [
+        {
+            "filename": "v46p0623.pdf",
+            "extension": "pdf",
+            "file_url": "https://lirias.kuleuven.be/retrieve/444310",
+            "filePublic": true,
+            "fileIntranet": true
+        }
+    ],
+    "organizational_unit": [
+        "51841970",
+        "50000050",
+        "50000403",
+        "50000437",
+        "50000441"
+    ],
+    "source": "lirias",
+    "sourceid": "lirias",
+    "sourcerecordid": [
+        "1087091"
+    ],
+    "recordid": "lirias1087091",
+    "local_field_07": [
+        "journal-article"
+    ],
+    "ristype": [
+        "JOUR"
+    ],
+    "addlink": [
+        "Rezynkina, Kseniia [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0113320",
+        "Rezynkina, Kseniia [ORCID]$$Uhttps://orcid.org/0000-0002-3017-6440"
+    ],
+    "first_author": {
+        "last_name": "Rezynkina",
+        "initials": "K",
+        "first_names": "Kseniia",
+        "identifiers": [
+            {
+                "orcid": "0000-0002-3017-6440"
+            },
+            {
+                "staff_nbr": "U0113320"
+            }
+        ],
+        "name": "Rezynkina, Kseniia",
+        "pnx_display_name": "Rezynkina, Kseniia$$QRezynkina, Kseniia"
+    },
+    "creator": [
+        {
+            "last_name": "Rezynkina",
+            "initials": "K",
+            "first_names": "Kseniia",
+            "identifiers": [
+                {
+                    "orcid": "0000-0002-3017-6440"
+                },
+                {
+                    "staff_nbr": "U0113320"
+                }
+            ],
+            "name": "Rezynkina, Kseniia",
+            "pnx_display_name": "Rezynkina, Kseniia$$QRezynkina, Kseniia"
+        },
+        {
+            "last_name": "Hauschild",
+            "initials": "K",
+            "first_names": "K",
+            "name": "Hauschild, K",
+            "pnx_display_name": "Hauschild, K$$QHauschild, K"
+        },
+        {
+            "last_name": "Lopez-Martens",
+            "initials": "A",
+            "first_names": "A",
+            "name": "Lopez-Martens, A",
+            "pnx_display_name": "Lopez-Martens, A$$QLopez-Martens, A"
+        },
+        {
+            "last_name": "Dorvaux",
+            "initials": "O",
+            "first_names": "O",
+            "name": "Dorvaux, O",
+            "pnx_display_name": "Dorvaux, O$$QDorvaux, O"
+        },
+        {
+            "last_name": "Gall",
+            "initials": "B",
+            "first_names": "B",
+            "name": "Gall, B",
+            "pnx_display_name": "Gall, B$$QGall, B"
+        },
+        {
+            "last_name": "Dechery",
+            "initials": "F",
+            "first_names": "F",
+            "name": "Dechery, F",
+            "pnx_display_name": "Dechery, F$$QDechery, F"
+        },
+        {
+            "last_name": "Faure",
+            "initials": "H",
+            "first_names": "H",
+            "name": "Faure, H",
+            "pnx_display_name": "Faure, H$$QFaure, H"
+        },
+        {
+            "last_name": "Yeremin",
+            "initials": "AV",
+            "first_names": "AV",
+            "name": "Yeremin, AV",
+            "pnx_display_name": "Yeremin, AV$$QYeremin, AV"
+        },
+        {
+            "last_name": "Chelnokov",
+            "initials": "ML",
+            "first_names": "ML",
+            "name": "Chelnokov, ML",
+            "pnx_display_name": "Chelnokov, ML$$QChelnokov, ML"
+        },
+        {
+            "last_name": "Chepigin",
+            "initials": "VI",
+            "first_names": "VI",
+            "name": "Chepigin, VI",
+            "pnx_display_name": "Chepigin, VI$$QChepigin, VI"
+        },
+        {
+            "last_name": "Isaev",
+            "initials": "AV",
+            "first_names": "AV",
+            "name": "Isaev, AV",
+            "pnx_display_name": "Isaev, AV$$QIsaev, AV"
+        },
+        {
+            "last_name": "Izosimov",
+            "initials": "IN",
+            "first_names": "IN",
+            "name": "Izosimov, IN",
+            "pnx_display_name": "Izosimov, IN$$QIzosimov, IN"
+        },
+        {
+            "last_name": "Katrasev",
+            "initials": "DE",
+            "first_names": "DE",
+            "name": "Katrasev, DE",
+            "pnx_display_name": "Katrasev, DE$$QKatrasev, DE"
+        },
+        {
+            "last_name": "Kuznetsov",
+            "initials": "AN",
+            "first_names": "AN",
+            "name": "Kuznetsov, AN",
+            "pnx_display_name": "Kuznetsov, AN$$QKuznetsov, AN"
+        },
+        {
+            "last_name": "Kuznetsova",
+            "initials": "AA",
+            "first_names": "AA",
+            "name": "Kuznetsova, AA",
+            "pnx_display_name": "Kuznetsova, AA$$QKuznetsova, AA"
+        },
+        {
+            "last_name": "Malyshev",
+            "initials": "ON",
+            "first_names": "ON",
+            "name": "Malyshev, ON",
+            "pnx_display_name": "Malyshev, ON$$QMalyshev, ON"
+        },
+        {
+            "last_name": "Popeko",
+            "initials": "AG",
+            "first_names": "AG",
+            "name": "Popeko, AG",
+            "pnx_display_name": "Popeko, AG$$QPopeko, AG"
+        },
+        {
+            "last_name": "Popov",
+            "initials": "YA",
+            "first_names": "YA",
+            "name": "Popov, YA",
+            "pnx_display_name": "Popov, YA$$QPopov, YA"
+        },
+        {
+            "last_name": "Sokol",
+            "initials": "EA",
+            "first_names": "EA",
+            "name": "Sokol, EA",
+            "pnx_display_name": "Sokol, EA$$QSokol, EA"
+        },
+        {
+            "last_name": "Svirikhin",
+            "initials": "AI",
+            "first_names": "AI",
+            "name": "Svirikhin, AI",
+            "pnx_display_name": "Svirikhin, AI$$QSvirikhin, AI"
+        },
+        {
+            "last_name": "Piot",
+            "initials": "J",
+            "first_names": "J",
+            "name": "Piot, J",
+            "pnx_display_name": "Piot, J$$QPiot, J"
+        },
+        {
+            "last_name": "Rubert",
+            "initials": "J",
+            "first_names": "J",
+            "name": "Rubert, J",
+            "pnx_display_name": "Rubert, J$$QRubert, J"
+        }
+    ],
+    "facets_creator_contributor": [
+        "Rezynkina, Kseniia",
+        "Hauschild, K",
+        "Lopez-Martens, A",
+        "Dorvaux, O",
+        "Gall, B",
+        "Dechery, F",
+        "Faure, H",
+        "Yeremin, AV",
+        "Chelnokov, ML",
+        "Chepigin, VI",
+        "Isaev, AV",
+        "Izosimov, IN",
+        "Katrasev, DE",
+        "Kuznetsov, AN",
+        "Kuznetsova, AA",
+        "Malyshev, ON",
+        "Popeko, AG",
+        "Popov, YA",
+        "Sokol, EA",
+        "Svirikhin, AI",
+        "Piot, J",
+        "Rubert, J",
+        "U0113320"
+    ],
+    "facets_staffnr": [
+        "staffnr_U0113320"
+    ],
+    "search_creationdate": [
+        "20150116"
+    ],
+    "risdate": [
+        "20150116"
+    ],
+    "search_startdate": [
+        "20150101"
+    ],
+    "search_enddate": [
+        "20151231"
+    ],
+    "ispartof": [
+        "Acta Physica Polonica B ; 2015; Vol. 46; iss. 3; pp. 623 - 626"
+    ],
+    "journal_title": [
+        "Acta Physica Polonica B "
+    ],
+    "book_title": [],
+    "article_title": [
+        "FIRST EXPERIMENTAL TESTS OF SHELS: A NEW HEAVY ION SEPARATOR AT THE JINR"
+    ],
+    "identifiers": [
+        "$$CISSN:$$V0587-4254",
+        "$$CEISSN:$$V1509-5770",
+        "$$CDOI:$$V10.5506/APhysPolB.46.623",
+        "$$CSCOPUSID:$$V2-s2.0-84928617551",
+        "$$Cexternal_identifiers:$$V000353565500042"
+    ],
+    "description": [
+        "A new Separator for Heavy ELement Spectroscopy (SHELS) has been recently installed at the U-400 accelerator at FLNR, JINR in Dubna, Russia. The details of the upgrade as well as the results from some of the commissioning runs are discussed. In particular, transmission tests with the 208Pb(40Ar, 2–3n)245−6Fm reaction, as well as isomer spectroscopy results for 210Ra produced in 164Dy(50Ti, 3–5n)209−11Ra reaction are presented."
+    ],
+    "local_field_02": null,
+    "local_field_08": [
+        "Published"
+    ],
+    "local_field_10": [],
+    "local_facet_10": [
+        "51841970",
+        "50000050",
+        "50000403",
+        "50000437",
+        "50000441"
+    ],
+    "backlink": [
+        "$$Uhttps://lirias.kuleuven.be/handle/123456789/575886$$Ebacklink_lirias",
+        "$$Uhttps://lirias.kuleuven.be/1087091$$Ebacklink_lirias"
+    ],
+    "delivery_delcategory": "fulltext_linktorsrc",
+    "linktorsrc": [
+        "$$Uhttps://lirias.kuleuven.be/retrieve/444310$$DLink to resource [freely available]$$Hfree_for_read"
+    ],
+    "delivery_fulltext": "fulltext_linktorsrc",
+    "oa": "free_for_read",
+    "facets_toplevel": [
+        "peer_reviewed",
+        "online_resources",
+        "open_access"
+    ],
+    "facets_prefilter": "articles",
+    "facets_rsrctype": "articles",
+    "es_created": "2022-04-17T11:30:24Z",
+    "es_updated": "2023-04-01T13:56:45Z"
+}

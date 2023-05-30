@@ -1,0 +1,290 @@
+{
+    "id": "3119197",
+    "claimed": [
+        true
+    ],
+    "type": "research_dataset",
+    "updated": [
+        "2022-03-01T11:36:16.097+01:00"
+    ],
+    "elements_creation_date": [
+        "2020-08-06T11:17:13.4+02:00"
+    ],
+    "keyword": [
+        "Howling detection",
+        "music",
+        "speech",
+        "AIRs"
+    ],
+    "supplement_to": [
+        "3083921"
+    ],
+    "title": [
+        "Howling Corrupted Music and Speech dataset (HCMS)"
+    ],
+    "abstract": [
+        "The database contains in total 28 music files and 30 speech files. Each file is a 20 s excerpt where the howling is simulated to start between the 8th and 9th second. This is simulated by feeding the music or speech source signal to a closed-loop system with a varying broadband gain. A total of 8 acoustic impulse responses (AIRs) were used for the simulations, hence covering a wide range of howling frequencies. The final dataset1 contains fewer excerpts than the number of excerpts originally generated, as it went through a pruning step conducted by three experts, aiming to eliminate unsuitable examples (exhibiting howling at multiple howling frequencies or no howling at all). For more details see Ch.7 of \"Acoustic Event Detection: Feature, Evaluation and Dataset design\", PhD thesis Mina Mounir."
+    ],
+    "author": [
+        {
+            "last_name": "MOUNIR ABDELMESSIH SHEHATA",
+            "initials": "M",
+            "first_names": "Mina",
+            "identifiers": [
+                {
+                    "orcid": "0000-0002-6407-7125"
+                },
+                {
+                    "researcherid": "FQG-2339-2022"
+                },
+                {
+                    "staff_nbr": "U0095757"
+                }
+            ],
+            "name": "MOUNIR ABDELMESSIH SHEHATA, Mina",
+            "pnx_display_name": "MOUNIR ABDELMESSIH SHEHATA, Mina$$QMOUNIR ABDELMESSIH SHEHATA, Mina"
+        },
+        {
+            "last_name": "Bernardi",
+            "initials": "G",
+            "first_names": "Giuliano",
+            "identifiers": [
+                {
+                    "orcid": "0000-0003-4266-8212"
+                },
+                {
+                    "staff_nbr": "U0085510"
+                }
+            ],
+            "name": "Bernardi, Giuliano",
+            "pnx_display_name": "Bernardi, Giuliano$$QBernardi, Giuliano"
+        },
+        {
+            "last_name": "van Waterschoot",
+            "initials": "T",
+            "first_names": "Toon",
+            "identifiers": [
+                {
+                    "orcid": "0000-0002-6323-7350"
+                },
+                {
+                    "staff_nbr": "U0042022"
+                }
+            ],
+            "name": "van Waterschoot, Toon",
+            "pnx_display_name": "van Waterschoot, Toon$$Qvan Waterschoot, Toon"
+        }
+    ],
+    "place_of_publication": [
+        "/esat/ftp/stadius/mshehata/datasets/Howling_Corrupted_Music_Speech_HCMS.zip"
+    ],
+    "publication_date": [
+        "2020-08-12"
+    ],
+    "medium": [
+        ".wav, .csv"
+    ],
+    "publication_status": [
+        "Published"
+    ],
+    "public_url": [
+        "https://lirias.kuleuven.be/handle/123456789/658088",
+        "https://lirias.kuleuven.be/3119197"
+    ],
+    "files": [
+        {
+            "filename": "Howling_Corrupted_Music_Speech_HCMS.zip",
+            "extension": "zip",
+            "description": "Published version",
+            "file_url": "https://lirias.kuleuven.be/retrieve/583301",
+            "filePublic": true,
+            "fileIntranet": true
+        }
+    ],
+    "organizational_unit": [
+        "51841970",
+        "50000050",
+        "50000403",
+        "50000516",
+        "55685386",
+        "50000521",
+        "52469956",
+        "50463548",
+        "55685313",
+        "53386927"
+    ],
+    "source": "lirias",
+    "sourceid": "lirias",
+    "sourcerecordid": [
+        "3119197"
+    ],
+    "recordid": "lirias3119197",
+    "relationship": {
+        "supplement": {
+            "to": [
+                {
+                    "id": "3083921",
+                    "title": null
+                }
+            ]
+        }
+    },
+    "local_field_07": [
+        "dataset"
+    ],
+    "ristype": [
+        "DATA"
+    ],
+    "addlink": [
+        "MOUNIR ABDELMESSIH SHEHATA, Mina [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0095757",
+        "Bernardi, Giuliano [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0085510",
+        "van Waterschoot, Toon [KU Leuven ID]$$Uhttps://www.kuleuven.be/wieiswie/en/person/U0042022",
+        "MOUNIR ABDELMESSIH SHEHATA, Mina [ResearcherID]$$Uhttps://www.researcherid.com/rid/FQG-2339-2022",
+        "MOUNIR ABDELMESSIH SHEHATA, Mina [ORCID]$$Uhttps://orcid.org/0000-0002-6407-7125",
+        "Bernardi, Giuliano [ORCID]$$Uhttps://orcid.org/0000-0003-4266-8212",
+        "van Waterschoot, Toon [ORCID]$$Uhttps://orcid.org/0000-0002-6323-7350"
+    ],
+    "first_author": {
+        "last_name": "MOUNIR ABDELMESSIH SHEHATA",
+        "initials": "M",
+        "first_names": "Mina",
+        "identifiers": [
+            {
+                "orcid": "0000-0002-6407-7125"
+            },
+            {
+                "researcherid": "FQG-2339-2022"
+            },
+            {
+                "staff_nbr": "U0095757"
+            }
+        ],
+        "name": "MOUNIR ABDELMESSIH SHEHATA, Mina",
+        "pnx_display_name": "MOUNIR ABDELMESSIH SHEHATA, Mina$$QMOUNIR ABDELMESSIH SHEHATA, Mina"
+    },
+    "creator": [
+        {
+            "last_name": "MOUNIR ABDELMESSIH SHEHATA",
+            "initials": "M",
+            "first_names": "Mina",
+            "identifiers": [
+                {
+                    "orcid": "0000-0002-6407-7125"
+                },
+                {
+                    "researcherid": "FQG-2339-2022"
+                },
+                {
+                    "staff_nbr": "U0095757"
+                }
+            ],
+            "name": "MOUNIR ABDELMESSIH SHEHATA, Mina",
+            "pnx_display_name": "MOUNIR ABDELMESSIH SHEHATA, Mina$$QMOUNIR ABDELMESSIH SHEHATA, Mina"
+        },
+        {
+            "last_name": "Bernardi",
+            "initials": "G",
+            "first_names": "Giuliano",
+            "identifiers": [
+                {
+                    "orcid": "0000-0003-4266-8212"
+                },
+                {
+                    "staff_nbr": "U0085510"
+                }
+            ],
+            "name": "Bernardi, Giuliano",
+            "pnx_display_name": "Bernardi, Giuliano$$QBernardi, Giuliano"
+        },
+        {
+            "last_name": "van Waterschoot",
+            "initials": "T",
+            "first_names": "Toon",
+            "identifiers": [
+                {
+                    "orcid": "0000-0002-6323-7350"
+                },
+                {
+                    "staff_nbr": "U0042022"
+                }
+            ],
+            "name": "van Waterschoot, Toon",
+            "pnx_display_name": "van Waterschoot, Toon$$Qvan Waterschoot, Toon"
+        }
+    ],
+    "facets_creator_contributor": [
+        "MOUNIR ABDELMESSIH SHEHATA, Mina",
+        "Bernardi, Giuliano",
+        "van Waterschoot, Toon",
+        "U0095757",
+        "U0085510",
+        "U0042022"
+    ],
+    "facets_staffnr": [
+        "staffnr_U0042022",
+        "staffnr_U0085510",
+        "staffnr_U0095757"
+    ],
+    "search_creationdate": [
+        "20200812"
+    ],
+    "risdate": [
+        "20200812"
+    ],
+    "search_startdate": [
+        "20200101"
+    ],
+    "search_enddate": [
+        "20201231"
+    ],
+    "creationdate": [
+        "2020-08"
+    ],
+    "format": [
+        ".wav, .csv"
+    ],
+    "book_title": [
+        "Howling Corrupted Music and Speech dataset (HCMS)"
+    ],
+    "identifiers": [],
+    "subject": [
+        "Howling detection",
+        "music",
+        "speech",
+        "AIRs"
+    ],
+    "description": [
+        "The database contains in total 28 music files and 30 speech files. Each file is a 20 s excerpt where the howling is simulated to start between the 8th and 9th second. This is simulated by feeding the music or speech source signal to a closed-loop system with a varying broadband gain. A total of 8 acoustic impulse responses (AIRs) were used for the simulations, hence covering a wide range of howling frequencies. The final dataset1 contains fewer excerpts than the number of excerpts originally generated, as it went through a pruning step conducted by three experts, aiming to eliminate unsuitable examples (exhibiting howling at multiple howling frequencies or no howling at all). For more details see Ch.7 of \"Acoustic Event Detection: Feature, Evaluation and Dataset design\", PhD thesis Mina Mounir."
+    ],
+    "local_field_02": null,
+    "local_field_08": [
+        "Published"
+    ],
+    "local_field_10": [],
+    "local_facet_10": [
+        "51841970",
+        "50000050",
+        "50000403",
+        "50000516",
+        "55685386",
+        "50000521",
+        "52469956",
+        "50463548",
+        "55685313",
+        "53386927"
+    ],
+    "backlink": [
+        "$$Uhttps://lirias.kuleuven.be/handle/123456789/658088$$Ebacklink_lirias",
+        "$$Uhttps://lirias.kuleuven.be/3119197$$Ebacklink_lirias"
+    ],
+    "delivery_delcategory": "Remote Search Resource",
+    "linktorsrc": [
+        "$$Uhttps://lirias.kuleuven.be/retrieve/583301$$DLink to resource [freely available]$$Hfree_for_read"
+    ],
+    "delivery_fulltext": "fulltext_linktorsrc",
+    "facets_toplevel": [],
+    "facets_prefilter": null,
+    "facets_rsrctype": null,
+    "es_created": "2022-08-02T11:59:22Z",
+    "es_updated": "2023-03-31T07:36:24Z"
+}

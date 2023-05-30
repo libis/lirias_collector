@@ -39,6 +39,7 @@ class DataCollectorInputTest < Minitest::Test
 # 136525 geen files wel issn, isbn en doi
 # 1373285  geen files wel issn
 
+# 1950560 intranet file geen Embargoed 
 
 @@lirias_test_ids = [1087091, 136525, 1373285, 1769877,893282,4080935, 1815226, 977104]
 @@lirias_dataset_test_ids = [3958772,3119197]

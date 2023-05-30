@@ -984,6 +984,8 @@ RULE_SET_v2_0 = {
   'rs_file_restriction_desc' => { 
     'file_restriction_desc' => { '@' => lambda { |file,o|
 
+      pp 'rs_file_restriction_desc description' if DEBUG
+
       if file.has_key?(:description) && file[:description].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file[:description].first)
         desc = file[:description].first
       else
@@ -997,7 +999,7 @@ RULE_SET_v2_0 = {
         else
           if file[:fileIntranet].first
             restriction = "Available for KU Leuven users"
-            if file[:embargo_release_date].first
+            if file[:embargo_release_date]&.first
               unless file[:embargo_release_date].first.to_s.match(/^9999/)
                 restriction = "Available for KU Leuven users - Embargoed until #{file[:embargo_release_date].first}"
               end
@@ -1006,6 +1008,7 @@ RULE_SET_v2_0 = {
         end
         restriction = " [#{restriction}]" unless restriction == nil
       end
+
       restriction
     }}
   },

@@ -1,0 +1,25 @@
+---
+:source_name: Lirias
+:base_url: https://example.be/rest/publications?per-page=150&affected-since=
+:base_delete_url: https:/example.be/rest/deleted/publications?per-page=50&deleted-since=
+:user: user
+:password: password
+:last_run_updates: '2022-11-05T16:05:05.790+0100'
+:last_run_deletes: '2023-05-25T09:37:57.180+0000'
+:records_dir: "/records/"
+:record_filename_erb_template: primoVE_<%= data[:id] %>
+:records_to_tar_pattern: primoVE_*
+:tar_filename_erb_template: <% if form.to_s=="xml" %>ALMA_<% end %>lirias_<%= Time.now.strftime("%Y%m%d_%H%M%S")
+  %>_<%= rand(1000) %>.tar.gz
+:max_updated_records: 1000
+:max_deleted_records: 50
+:max_records_in_tar: 100
+:tar_records: true
+:debugging: false
+:log_recordids: true
+:admin_email_from: john.doen@example.com
+:rule_set: RULE_SET_v2_0
+:delete_rule_set: RULE_SET_v2_0
+:rules_base: "/app/src/rules/"
+:current_processing_updates: '2022-11-20T16:30:34.020+0100'
+:current_processing_deletes: 

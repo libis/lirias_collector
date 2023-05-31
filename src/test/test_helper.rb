@@ -156,8 +156,8 @@ def show_for_debug(data,es_data,field)
     data_field = process_field( data[field] )
     es_data_field = process_field( es_data[field] )
 
-    pp data_field == es_data_field
-
+    pp "data_field == es_data_field : #{data_field == es_data_field}"
+    
     if data_field == es_data_field
         # puts "data and es_data are equal"    
         # pp data_field

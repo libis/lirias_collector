@@ -94,8 +94,9 @@ RULE_SET_v2_0 = {
 
       o[:recordid] = rdata[:recordid]
 
-      if rdata[:claimed].present? && rdata[:claimed].to_s == "false"
+      if rdata[:claimed]&.to_s == "false"
         rdata[:deleted] = d['object']['_last_affected_when']
+        return rdata
       end
             
       out = DataCollector::Output.new
@@ -997,7 +998,7 @@ RULE_SET_v2_0 = {
         if file[:filePublic]&.first
           restriction ="freely available"
         else
-          if file[:fileIntranet].first
+          if file[:fileIntranet]&.first
             restriction = "Available for KU Leuven users"
             if file[:embargo_release_date]&.first
               unless file[:embargo_release_date].first.to_s.match(/^9999/)

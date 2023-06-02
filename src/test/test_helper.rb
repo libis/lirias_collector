@@ -50,6 +50,37 @@ def s2s(h)
       h
     end
 end
+
+def migrate_function1( f, field, parsed_data )
+
+  # Overnemen van identifiers van de parser (Hier is te veel aan gesleuteld)
+  parsed_field = parsed_data[field.to_sym].is_a?(Array) ? parsed_data[field.to_sym] : [ parsed_data[field.to_sym] ]  
+  parsed_field = parsed_field.select { |pdf| pdf[:pnx_display_name] == f["pnx_display_name"]  }
+  
+  #pp "\n\n f[field] #{ field } :: f[pnx_display_name] #{f["pnx_display_name"] } "
+  
+  if parsed_field.size == 1
+    # pp parsed_field[0][:identifiers]
+    f["identifiers"] = parsed_field[0][:identifiers] unless parsed_field[0][:identifiers].nil?
+  end
+  unless f["username"].nil?
+    if f["identifiers"].nil?
+      f["identifiers"] = [ { "staff_nbr" => f["username"] } ]
+    end
+    f.delete("username") 
+  end
+  f.delete("function") 
+  return f
+end
+
+def migrate_function2( f, field, parsed_data )
+  f["name"] = "#{f["last_name"]}, #{f["first_names"]}"
+  f["pnx_display_name"] = "#{f["name"]}$$Q#{f["name"]}"
+  #pp " f[field] #{ field } "
+  #pp " f[pnx_display_name] #{f["pnx_display_name"] } "
+
+  return migrate_function1( f, field, parsed_data )
+end
   
 def get_data(lirias_id)
     url_options = {user: config[:user], password: config[:password]}
@@ -58,7 +89,7 @@ def get_data(lirias_id)
       options = {
         :lirias_type_2_limo_type => LIRIAS_TYPE_2_LIMO_TYPE,
         :lirias_language => LIRIAS_LANGUAGE,
-        :lirias_foramt_mean => FORMAT_MEAN,
+        :lirias_format_mean => FORMAT_MEAN,
         :prefixid => "",
       } 
       output = DataCollector::Output.new
@@ -66,7 +97,12 @@ def get_data(lirias_id)
       rules_ng.run( RULE_SET['rs_data'], data, output, options )
   
       data = s2s( output[:data] )
-      data.slice(*FIELDS).compact.deep_sort!
+      
+      # data.slice(*FIELDS).compact.deep_sort!
+
+      data = data.compact.deep_sort!
+
+      data
     end
 end
   
@@ -88,16 +124,40 @@ def get_esdata(lirias_id)
     
         data = data["_source"] 
 
+        parsed_data = get_data(lirias_id)
+
         # function werd verwijderd. enkel roles wordt gebruikt
-        persons_field=["first_author","creator","author"]
+        persons_field=["first_author","creator","author","contributor"]
         persons_field.each do |field|
+          unless data[field].nil?
             if data[field].is_a?(Array)
                 data[field].each do | f |
-                    f.delete("function")
+                  f = migrate_function1( f, field, parsed_data  )
+                  f
                 end
             else
-                data[field].delete("function")
+              f = data[field]
+              data[field] = migrate_function1( f, field, parsed_data  )
             end
+          end
+        end
+
+        persons_field=["book_series_editor"]
+        persons_field.each do |field|
+          unless data[field].nil?
+            if data[field].is_a?(Array)
+                data[field].each do | f |
+                    f["name"] = "#{f["last_name"]}, #{f["first_names"]}"
+                    f["roles"] = "Book series editor"
+                    f["pnx_display_name"] = "#{f["name"]} (Book series editor)$$Q#{f["name"]}"
+                end
+            else
+              f = data[field]
+              f["name"] = "#{f["last_name"]}, #{f["first_names"]}"
+              f["roles"] = "Book series editor"
+              f["pnx_display_name"] = "#{f["name"]} (Book series editor)$$Q#{f["name"]}"
+            end
+          end
         end
 
         # personen bezitten nu altijd een name en pnx_display_name
@@ -106,13 +166,11 @@ def get_esdata(lirias_id)
             unless data[field].nil?
                 if data[field].is_a?(Array)
                     data[field].each do | f |
-                        f["name"] = "#{f["last_name"]}, #{f["first_names"]}"
-                        f["pnx_display_name"] = "#{f["name"]}$$Q#{f["name"]}"
+                        f = migrate_function2( f, field, parsed_data  )
                     end
                 else
                     f = data[field]
-                    f["name"] = "#{f["last_name"]}, #{f["first_names"]}"
-                    f["pnx_display_name"] = "#{f["name"]}$$Q#{f["name"]}"
+                    f = migrate_function2(  f, field, parsed_data  )
                 end
             end
         end
@@ -122,6 +180,42 @@ def get_esdata(lirias_id)
             data["embargo_release_date"] = "#{data["embargo_release_date"][0]["year"]}-#{data["embargo_release_date"][0]["month"]}-#{data["embargo_release_date"][0]["day"]}"
         end
 
+        # Remove addlink links naar wieiswie en orcid (worden niet meer gebruikt)
+        data.delete("addlink")
+
+        # migration of link to resource with .pdf in $$D
+        data["linktorsrc"]&.map! do |l|
+          m = l.to_s.match( /(?<url>\$\$Uhttps:\/\/lirias.kuleuven.be\/retrieve.*\$\$D).*.pdf.*\$\$Hfree_for_read/)
+          if m
+            linktorsrc =  parsed_data[:linktorsrc].is_a?(Array) ? parsed_data[:linktorsrc] : [ parsed_data[:linktorsrc] ]
+            linktorsrc_f = linktorsrc.select{ |lrsrc| lrsrc.match( Regexp.new( Regexp.quote(m[:url]) ) )  }
+            unless linktorsrc_f.size() < 1
+              l = linktorsrc_f[0]
+            end
+          end
+          l
+        end
+        
+        data["name_of_conference"]&.map! do |c|
+          c.sub!(/, Location.*/, '') 
+          c.sub!(/, Date:.*/, '') 
+          c
+        end
+        
+        # use of correction_to, correction_from, ... for creating relationships is deprecated 
+        data.delete("correction_to")
+        data.delete("correction_from")
+        data.delete("derivative_to")
+        data.delete("derivative_from")
+        data.delete("supplement_to")
+        data.delete("supplement_from")
+        data.delete("supersedes_to")
+        data.delete("supersedes_from")
+
+        #pp " ==========>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<================================== "
+        #pp "Reactivate puts to json file "
+        #pp " ==========>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<================================== "
+        
         File.open(file_name, 'wb') do |f|
             f.puts data.to_json
         end
@@ -147,8 +241,8 @@ def get_esdata(lirias_id)
     #pp data["relationship"]
     #pp "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
     data =  s2s( data )
-    data.slice(*FIELDS).compact.deep_sort!
-  
+    #data.slice(*FIELDS).compact.deep_sort!
+    data.compact.deep_sort!
 end
   
 def show_for_debug(data,es_data,field)
@@ -179,6 +273,10 @@ def process_field(data)
     if data.is_a?(String)
         return data.delete(' ')
     end
+    if data.is_a?(Array)
+      return  data.sort.uniq.map { |str| process_field(str) }.join('')
+    end
+    data
 end
 
 LIRIAS_TYPE_2_LIMO_TYPE = {

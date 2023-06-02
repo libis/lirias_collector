@@ -99,6 +99,14 @@ RULE_SET_v2_0 = {
         return rdata
       end
             
+      #####   special/additional transformation  #######
+      pp 'special/additional transformation parsing data' if DEBUG
+      rdata[:type]    = o[:lirias_type_2_limo_type][ rdata[:lirias_type] ].nil? ? "other" : o[:lirias_type_2_limo_type][ rdata[:lirias_type] ][:limo]
+      rdata[:ristype] = o[:lirias_type_2_limo_type][ rdata[:lirias_type] ].nil? ? "GEN" : o[:lirias_type_2_limo_type][ rdata[:lirias_type] ][:ris]
+      rdata[:facets_rsrctype] = rdata[:facets_prefilter] =  o[:lirias_format_mean][ rdata[:type].downcase ] ||  rdata[:type]
+
+      o[:type]        = rdata[:type] 
+
       out = DataCollector::Output.new
       pp 'rs_merged_record' if DEBUG
       rules_ng.run(RULE_SET_v2_0['rs_merged_record'], d, out, o)
@@ -116,17 +124,15 @@ RULE_SET_v2_0 = {
       out.clear
 
       pp 'identifiers concat' if DEBUG
-      rdata[:identifiers].concat( rdata[:pmid] ) if rdata[:pmid].is_a?(Array)
-      rdata[:identifiers].concat( rdata[:scopusid] ) if rdata[:scopusid].is_a?(Array)
+      rdata[:identifiers].concat( rdata[:pmid].map { |i| "$$CPMID:$$V" + i } ) if rdata[:pmid].is_a?(Array)
+      rdata[:identifiers].concat( rdata[:scopusid].map { |i| "$$CSCOPUSID:$$V" + i } ) if rdata[:scopusid].is_a?(Array)
 
       # WOS-ID https://libis.teamwork.com/app/tasks/20947956 ( Web of Science  terms of use)
       # rdata[:identifiers].concat( rdata[:wosid] ) if rdata[:wosid].is_a?(Array)
 
-      #####   special/additional transformation  #######
-      pp 'special/additional transformation  parsing data' if DEBUG
-      rdata[:type]    = o[:lirias_type_2_limo_type][ rdata[:lirias_type] ].nil? ? "other" : o[:lirias_type_2_limo_type][ rdata[:lirias_type] ][:limo]
-      rdata[:ristype] = o[:lirias_type_2_limo_type][ rdata[:lirias_type] ].nil? ? "GEN" : o[:lirias_type_2_limo_type][ rdata[:lirias_type] ][:ris]
 
+
+      rdata[:subject] = rdata[:keyword]&.uniq
       pp 'special/additional transformation language' if DEBUG
 
       rdata[:language]&.map! { |t| o[:lirias_language][t.downcase] || t }
@@ -148,7 +154,17 @@ RULE_SET_v2_0 = {
       #end
       pp 'special/additional medium' if DEBUG
 
-      rdata[:medium] = rdata[:format]&.uniq
+      rdata[:medium]&.uniq!
+
+      unless rdata[:medium].nil?
+        if rdata[:number_of_pages].nil?
+          rdata[:format] = rdata[:medium]
+        else
+          rdata[:format] = rdata[:medium].map { |m| m + " page(s): " + rdata[:number_of_pages].uniq.join(', ')  }
+        end
+      end
+
+      
 
       pp 'special/additional transformation facets_creator_contributor' if DEBUG
 
@@ -197,34 +213,36 @@ RULE_SET_v2_0 = {
       out = DataCollector::Output.new
       pp 'rs_record' if DEBUG
       rules_ng.run(RULE_SET_v2_0['rs_record'], d, out, o)
-    
-
 
       pp 'rs_creator' if DEBUG
       rules_ng.run(RULE_SET_v2_0['rs_creator'], d, out, o)
       
-      pp 'rs_files' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_files'], d, out, o)
-      pp 'rs_identifiers' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_identifiers'], out.data, out, o)
-
-=begin
-# rs_creator > contributor werd aangepast om deze naverwerking te vermijden
-
+      unless out.data[:author].nil?
+        if out.data[:author].is_a?(Array)
+          out.data[:first_author] = out.data[:author].first
+        else
+          out.data[:first_author] = out.data[:author]
+        end
+      end
+   
       # De manier waarop de verschillende auteurs functies en credit roles worden
       # in gevoerd is niet eenduidig. Daarom wordt de "contributor" nog eens extra 
       # aangevuld met persons en/of roles
       # :editor, :supervisor, :co_supervisor, :translator hebben 
       # die specifieke role niet in de property role (dit zou verdubbeling zijn van info)
       # Deze property role wordt toegevoegd als ze aan contributor worden toegevoegd.
+      
       include_in_contributors=[:editor, :supervisor, :co_supervisor, :translator]
       key_properties = [:last_name, :first_names, :initials]
       contributors = {}
 
+      pp 'include_in_contributors' if DEBUG 
       out.data[:contributor] = [ out.data[:contributor] ] unless out.data[:contributor].is_a?(Array)
-      out.data[:contributor]&.each do |contributor|
-        k = contributor.values_at(*key_properties).join("_")
-        contributors[ k ] = contributor
+      out.data[:contributor].each do |contributor|
+        unless contributor.nil?
+          k = contributor.values_at(*key_properties).join("_")
+          contributors[ k ] = contributor
+        end
       end
 
       include_in_contributors.each do |author_type|
@@ -232,11 +250,12 @@ RULE_SET_v2_0 = {
 
           authors_of_type = out.data[author_type].is_a?(Array) ? out.data[author_type] : [ out.data[author_type] ]
 
-          authors_of_type.each do |author_of_type|
+          authors_of_type.each do |aot|
+            author_of_type = aot.clone
             if author_of_type[:roles].nil?
-              author_of_type[:roles] = [author_type.to_s]
+              author_of_type[:roles] = [author_type.to_s.capitalize() ]
             else
-              author_of_type[:roles].union( [author_type.to_s] )
+              author_of_type[:roles].union( [author_type.to_s.capitalize()] )
             end
 
             k = author_of_type.values_at(*key_properties).join("_")
@@ -262,12 +281,13 @@ RULE_SET_v2_0 = {
         
       end
 
-      pp "lirias rules author_type contributors.values:"
-      pp contributors.values.size
-      pp contributors.values
+
+      
+      pp 'author_type contributors.values:' if DEBUG 
+#      pp contributors.values.size
+#      pp contributors.values
 
       out.data[:contributor] = contributors.values
-=end
 
 =begin      
 # Nog geen out.data[:version] gevonden
@@ -283,6 +303,11 @@ RULE_SET_v2_0 = {
         end
       end
 =end     
+
+      pp 'rs_files' if DEBUG
+      rules_ng.run(RULE_SET_v2_0['rs_files'], d, out, o)
+      pp 'rs_identifiers' if DEBUG
+      rules_ng.run(RULE_SET_v2_0['rs_identifiers'], out.data, out, o)
 
       unless out.data[:place_of_publication].nil?
         out.data[:publisher].map! { |p| p + "; " +  out.data[:place_of_publication].uniq.join(', ') } unless out.data[:publisher].nil?
@@ -305,7 +330,7 @@ RULE_SET_v2_0 = {
     #    out.data[:edition] = nil
     #  end
         
-      out.data[:subject] = out.data[:keyword]&.uniq
+
       out.data[:description] = out.data[:abstract]
 
       out.data[:notes]          = out.data[:funding_acknowledgements]
@@ -354,8 +379,6 @@ RULE_SET_v2_0 = {
       pp 'rs_facets_toplevel' if DEBUG
       rules_ng.run(RULE_SET_v2_0['rs_facets_toplevel'], out.data, out, o)
 
-      out.data[:facets_rsrctype] = out.data[:facets_prefilter] = out.data[:type]&.map! { |t| o[:lirias_format_mean][t.downcase] || t }
-
       out.data
     } }
   },
@@ -367,10 +390,10 @@ RULE_SET_v2_0 = {
     'edition' => '$.field[?(@._name=="edition")].text',
     'volume' => '$.field[?(@._name=="volume")].text',
     'issue' => '$.field[?(@._name=="issue")].text',
-    'format' => '$.field[?(@._name=="medium")].text',
+    'medium' => '$.field[?(@._name=="medium")].text',
 
-    'pagination' => '$.field[?(@._name=="pagination")][?( @._display_name=="Pagination" || @._display_name=="Number of pages\")].pagination',
-    'number_of_pages' => '$.field[?(@._name=="pagination")][?( @._display_name=="Pagination" || @._display_name=="Number of pages\")].pagination.page_count',
+    'pagination' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination',
+    'number_of_pages' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination.page_count',
    
     'publisher' => '$.field[?(@._name=="publisher")].text',
     'publisher_url' => '$.field[?(@._name=="publisher-url")].text',
@@ -381,7 +404,7 @@ RULE_SET_v2_0 = {
     'doi' => '$.field[?(@._name=="doi")].text',
     
     'eissn' => '$.field[?(@._name=="eissn")].text',
-    'external_identifiers' => '$.field[?(@._name=="external-identifiers")].identifiers.identifier.$text',
+    'external_identifiers' => { '$.field[?(@._name=="external-identifiers")].identifiers.identifier' => lambda { |d,o| d["$text"] } },
 
     'other_identifier' => '$.field[?(@._name=="c-identifier-other"].text',
     'other_identifier_type' => '$.field[?(@._name=="c-identifierother-type")].text',
@@ -482,7 +505,6 @@ RULE_SET_v2_0 = {
 # <api:field name="c-translator"    display-name="Translator" type="person-list"> (1815226)
 # <api:field name="c-series-editor" display-name="Book series editors" type="person-list"> (1815226)
 
-
   'rs_creator' => {
     'author' => {'$.field[?(@._name=="authors")].people.person' => lambda { |d,o|
       pp 'rs_creator author' if DEBUG
@@ -529,7 +551,6 @@ RULE_SET_v2_0 = {
       rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
       out.data
     } },
-=begin    
 ## Na verwerking van contributers noodzakelijk om editors, translators, .... toe te voegen
     'contributor' => {'$.field[?(@._name=="c-contributor")].people.person' => lambda { |d,o|
       pp 'rs_creator contributor' if DEBUG
@@ -538,7 +559,10 @@ RULE_SET_v2_0 = {
       rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
       out.data
     } }
-=end
+
+
+=begin
+# werkt niet. enkele de laatste wordt opgenomen in de array
     'contributor' => [
       {'$.field[?(@._name=="c-contributor")].people.person' => lambda { |d,o|
         pp 'rs_creator contributor' if DEBUG
@@ -548,6 +572,7 @@ RULE_SET_v2_0 = {
         out.data
       } },
       {'$.field[?(@._name=="editors")][?(@._display_name=="Editors")].people.person' => lambda { |d,o|
+        pp 'rs_creator contributor Editor' if DEBUG
         o['role'] = "Editor"
         out = DataCollector::Output.new
         rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
@@ -555,27 +580,34 @@ RULE_SET_v2_0 = {
         out.data
       } },
       {'$.field[?(@._name=="c-translator")][?(@._display_name=="Translator")].people.person' => lambda { |d,o|
+        pp 'rs_creator contributor Translator' if DEBUG
         o['role'] = "Translator"
         out = DataCollector::Output.new
         rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
         rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
         out.data
       } },
-      'supervisor' => {'$.field[?(@._name=="editors")][?(@._display_name=="Supervisor")].people.person' => lambda { |d,o|
+      {'$.field[?(@._name=="c-cosupervisor")].people.person' => lambda { |d,o|
+        pp 'rs_creator contributor Co supervisor' if DEBUG
+        o['role'] = "Co supervisor"
+        pp d
+        out = DataCollector::Output.new
+        rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
+        rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+        pp out.data
+        out.data
+      } },
+      {'$.field[?(@._name=="editors")][?(@._display_name=="Supervisor")].people.person' => lambda { |d,o|
+        pp 'rs_creator contributor Supervisor' if DEBUG
         o['role'] = "Supervisor"
         out = DataCollector::Output.new
         rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
         rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
-        out.data
-      } },
-      'co_supervisor' => {'$.field[?(@._name=="c-cosupervisor")].people.person' => lambda { |d,o|
-        o['role'] = "Co supervisor"
-        out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-        rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+        pp out.data
         out.data
       } }
     ]
+=end
   },
 
   # ########################################################################################
@@ -665,15 +697,9 @@ RULE_SET_v2_0 = {
     } }
   },
   'rs_ids' => {
-    'pmid'     => {'$.object.records.record[?(@._source_name=="pubmed")]._id_at_source' => lambda { |d,o|
-      "$$CPMID:$$V#{d}"
-    } },
-    'wosid'    => {'$.object.records.record[?(@._source_name=="wos")]._id_at_source' => lambda { |d,o|
-      "$$CWOSID:$$V#{d}"
-    } },
-    'scopusid' => {'$.object.records.record[?(@._source_name=="scopus")]._id_at_source'  => lambda { |d,o|
-      "$$CSCOPUSID:$$V#{d}"
-    }}
+    'pmid'     => {'$.object.records.record[?(@._source_name=="pubmed")]._id_at_source' => lambda { |d,o| d } },
+    'wosid'    => {'$.object.records.record[?(@._source_name=="wos")]._id_at_source' => lambda { |d,o| d } },
+    'scopusid' => {'$.object.records.record[?(@._source_name=="scopus")]._id_at_source'  => lambda { |d,o| d }}
   },
   'rs_relationships' => {
     'relationship' => {'$.object.relationships' => lambda { |d,o|
@@ -751,10 +777,10 @@ RULE_SET_v2_0 = {
       identifiers.concat d[:issn].map { |i| "$$CISSN:$$V" + i } unless d[:issn].nil?
       identifiers.concat d[:eissn].map { |i| "$$CEISSN:$$V" + i } unless d[:eissn].nil?
       identifiers.concat d[:doi].map { |i| "$$CDOI:$$V" + i } unless d[:doi].nil?
-      # identifiers << "$$CPMID:$$V" + d[:pmid]  unless d[:pmid].nil?
-      # identifiers << "$$CSCOPUSID:$$V" + d[:scopusid]  unless d[:scopusid].nil?
+      # identifiers.concat d[:pmid].map { |i| "$$CPMID:$$V" + i } unless d[:pmid].nil?
+      # identifiers.concat d[:scopusid].map { |i| "$$CSCOPUSID:$$V" + i } unless d[:doi].nil?
       # WOS-ID https://libis.teamwork.com/app/tasks/20947956 ( Web of Science  terms of use)
-      # identifiers << "$$CWOSID:$$V" + d[:wosid] unless d[:wosid].nil?      
+      # identifiers.concat d[:wosid].map { |i| "$$CWOSID:$$V" + i } unless d[:wosid].nil?
       identifiers.concat d[:external_identifiers].map { |i| "$$Cexternal_identifiers:$$V" + i } unless d[:external_identifiers].nil?
       identifiers.concat d[:patent_number].map { |i| "$$Cpatent_number:$$V" + i } unless d[:patent_number].nil?
       identifiers
@@ -782,7 +808,7 @@ RULE_SET_v2_0 = {
 
       if d[:journal].nil? && d[:parent_title].nil? && !d[:search_creationdate].nil?
         creationdate = d[:search_creationdate].map { |d| d.gsub(/([\d]{4})([\d]{2})([\d]{2})/, '\1-\2') }
-        if d[:type] === 'dissertation'
+        if o[:type] === 'dissertation'
           creationdate = d[:search_creationdate].map { |d| d.gsub(/([\d]{4})([\d]{2})([\d]{2})/, '\1-\2-\3') }
         end
       end

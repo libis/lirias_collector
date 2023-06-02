@@ -11,9 +11,8 @@ pp lirias_ids.sort.uniq
 
 =end
 
-lirias_ids = [1128655, 1822382, 1685129, 1685400, 1928278, 1403090, 71653, 1694043, 2788749, 1815226, 1815248, 3791606]
-fields = [:author,  :editor, :contributors, :translator, :supervisor,  :co_supervisor]
 
+fields = [:author,  :editor, :contributors, :translator, :supervisor,  :co_supervisor]
 @@lirias_test_ids = [1128655, 1822382, 1685129, 1685400, 1928278, 1403090, 71653, 1694043, 2788749, 1815226, 1815248, 3791606, 1815226]
 
 

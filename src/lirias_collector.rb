@@ -33,7 +33,7 @@ begin
     options = {
         :lirias_type_2_limo_type => LIRIAS_TYPE_2_LIMO_TYPE,
         :lirias_language => LIRIAS_LANGUAGE,
-        :lirias_foramt_mean => FORMAT_MEAN,
+        :lirias_format_mean => FORMAT_MEAN,
         :prefixid => "",
         :tmp_records_dir => File.join( config[:records_dir],"records_#{Time.now.to_i}"),
         :tmp_deleted_records_dir => File.join( config[:records_dir],"records_not_claimed_#{Time.now.to_i}")

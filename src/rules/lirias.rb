@@ -683,15 +683,15 @@ RULE_SET_v2_0 = {
   },
   'rs_keyword' => {
     'keyword' => {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword' => lambda { |d,o|
-      if d["_scheme"] != "c-virtual-collection"
+      if d.is_a?(Hash) && d["_scheme"] != "c-virtual-collection" 
         d['$text']
       end
-    } },
+} },
     'virtual_collections' => {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword[?(@._scheme=="c-virtual-collection")]' => lambda { |d,o|
       d['$text']
     } },    
     'dspace_keywords' => {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword[?(@._source=="dspace")]' => lambda { |d,o|
-      if d['_scheme'] != 'c-virtual-collection'
+      if d.is_a?(Hash) && d['_scheme'] != 'c-virtual-collection'
         d['$text']
       end
     } }

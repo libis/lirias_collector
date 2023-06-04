@@ -267,7 +267,7 @@ module Collector
           end
 
           # @url = nil
-          if @max_updated_records < nr_parsed_records
+          if @max_updated_records < @total_nr_parsed_records
             @logger.warn("max_updated_records has been reached")
             url = nil
           end

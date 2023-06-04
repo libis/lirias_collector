@@ -50,6 +50,7 @@ fields = [:author,  :editor, :contributors, :translator, :supervisor,  :co_super
   3791606,
   3958772,
   4021242,
+  2858842,
   4080935]
 
 

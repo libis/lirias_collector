@@ -923,6 +923,7 @@ RULE_SET_v2_0 = {
 
         o[:number_files] = nil
       end
+
       if linktorsrc.nil? && ( !d[:isbn_10].nil? ||!d[:isbn_13].nil? || !d[:issn].nil?)
         linktorsrc = ""
       end      
@@ -976,7 +977,7 @@ RULE_SET_v2_0 = {
         desc = file[:description].first
       else
         # if output.raw()[:files].size == 1 desc = "Link to resource"
-        if o[:number_files] == 1 
+        if o[:number_files] == 1 || file[:filename].nil?
           desc =  "Link to resource" 
         else
           desc = file[:filename].first 
@@ -1014,9 +1015,9 @@ RULE_SET_v2_0 = {
       pp 'rs_file_restriction_desc description' if DEBUG
 
       if file.has_key?(:description) && file[:description].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file[:description].first)
-        desc = file[:description].first
+        desc = file[:description]&.first
       else
-        desc = file[:filename].first # if output.raw()[:files].size == 1 desc = "Link to resource"
+        desc = file[:filename]&.first # if output.raw()[:files].size == 1 desc = "Link to resource"
       end
      
       restriction = nil

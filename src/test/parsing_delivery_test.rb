@@ -39,11 +39,17 @@ class DataCollectorInputTest < Minitest::Test
 # 136525 geen files wel issn, isbn en doi
 # 1373285  geen files wel issn
 
+# 2842609 internet publication
+
 # 1950560 intranet file geen Embargoed 
 # 2936906 file available maar geen aanduiding filePublic of fileIntranet (but it is not claimed)
+# 791564 : Geen file, wel ISSN en doi
+# 2291528 : 1 filePublic file  “Published version” , DOI en ISSN en eISSN
+# 3684711: dataset” Geen files, wel doi
+# 3655807 : 1 filePublic file supporting information, DOI en ISSN
 
-@@lirias_test_ids = [1087091, 136525, 1373285, 1769877,893282,4080935, 1815226, 977104, 2936906, 2858842]
-@@lirias_dataset_test_ids = [3958772,3119197]
+
+@@lirias_test_ids = [1087091, 136525, 1373285, 1769877,893282,4080935, 1815226, 977104, 2936906, 2858842, 791564, 2291528, 3684711, 3655807, 2842609 ]
 
     def test_public_url
       lirias_ids = @@lirias_test_ids

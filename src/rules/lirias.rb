@@ -388,7 +388,8 @@ RULE_SET_v2_0 = {
     'serie' => '$.field[?(@._name=="series")].text',
     'book_serie' => '$.field[?(@._name=="c-series-editor")].text',
     'edition' => '$.field[?(@._name=="edition")].text',
-    'volume' => '$.field[?(@._name=="volume")].text',
+    'volume' => { '$.field[?(@._name=="volume")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
+
     'issue' => '$.field[?(@._name=="issue")].text',
     'medium' => '$.field[?(@._name=="medium")].text',
 
@@ -865,11 +866,13 @@ RULE_SET_v2_0 = {
         date =  d[:search_creationdate].map{ |d| d.gsub(/(\d{4})[\d-]*/, '\1') }.uniq.join(', ')
         ispartof.map! { |p| p + "; " + date }
       end
+
       pp 'volume' if DEBUG
       unless d[:volume].nil?
         volume = d[:volume].uniq.join(', ')
         ispartof.map! { |p| p + "; Vol. " + volume }
       end
+
       pp 'issue' if DEBUG
       unless d[:issue].nil?
         issue = d[:issue].uniq.join(', ')

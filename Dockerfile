@@ -7,6 +7,8 @@ ENV HOME /root
 
 WORKDIR $APP_HOME
 COPY ./src ./src/
+RUN cd ./src; rm -r test; rm Rakefile
+
 WORKDIR $APP_HOME/src/data_collector_gem
 RUN gem build data_collector.gemspec; gem install data_collector-0.20.0.gem
 

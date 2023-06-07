@@ -165,7 +165,6 @@ RULE_SET_v2_0 = {
       end
 
       
-
       pp 'special/additional transformation facets_creator_contributor' if DEBUG
 
       rdata[:facets_creator_contributor] << rdata[:creator] unless rdata[:creator].nil?
@@ -200,10 +199,14 @@ RULE_SET_v2_0 = {
       if ["chapter","book_chapter","journal-article","article","conference","conference_proceeding"].include?( rdata[:type] )
         rdata[:article_title] = rdata[:title]
       else
-        rdata[:book_title] = rdata[:title]
+        rdata[:book_title] = rdata[:title].clone()
+        rdata[:book_title].concat rdata[:parent_title] unless rdata[:parent_title].nil?
+
       end
      
       pp 'parsing data DONE' if DEBUG
+
+      pp rdata
 
       rdata.compact!
     } }

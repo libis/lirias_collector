@@ -12,6 +12,31 @@ pp lirias_ids.sort.uniq
 =end
 
 
+# Journal article:	lirias100041
+# Book:	lirias1106653
+# Book chapter:	lirias1061017
+# Conference proceeding:	lirias1001362
+# Abstract/Presentation/Poster:	lirias1112360
+# Creation in the arts or design:	lirias3440711
+# Phd Thesis:	lirias1061008
+# Book review:	lirias3440711
+# Report	 lirias1106285
+# Science outreach:	lirias1660996
+# Other:	lirias3551395
+# Research Dataset:	lirias2894659
+# Software:	lirias2934008
+# Internet publication:	lirias3382196
+# Translation:	lirias3448948
+# Edited book:	lirias1658685
+# Invited lecture:	lirias1711997
+# Preprint:	lirias3759221
+# Book review:	lirias2759464
+# Dataset:	lirias2894659
+
+
+
+
+
 fields = [:author,  :editor, :contributors, :translator, :supervisor,  :co_supervisor]
 @@excludefields= [:es_created, :es_updated ]
 
@@ -51,7 +76,30 @@ fields = [:author,  :editor, :contributors, :translator, :supervisor,  :co_super
   3958772,
   4021242,
   2858842,
-  4080935]
+  4080935,
+  100041,
+  1106653,
+  1061017,
+  1001362,
+  1112360,
+  3440711,
+  1061008,
+  3440711,
+  1106285,
+  1660996,
+  3551395,
+  2894659,
+  2934008,
+  3382196,
+  3448948,
+  1658685,
+  1711997,
+  3759221,
+  2759464,
+  2894659,
+  1332692
+
+]
 
 
 

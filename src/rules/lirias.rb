@@ -206,8 +206,6 @@ RULE_SET_v2_0 = {
      
       pp 'parsing data DONE' if DEBUG
 
-      pp rdata
-
       rdata.compact!
     } }
   },
@@ -393,8 +391,8 @@ RULE_SET_v2_0 = {
     'edition' => '$.field[?(@._name=="edition")].text',
     'volume' => { '$.field[?(@._name=="volume")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
 
-    'issue' => '$.field[?(@._name=="issue")].text',
-    'medium' => '$.field[?(@._name=="medium")].text',
+    'issue' => { '$.field[?(@._name=="issue")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
+    'medium' => { '$.field[?(@._name=="medium")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
 
     'pagination' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination',
     'number_of_pages' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination.page_count',

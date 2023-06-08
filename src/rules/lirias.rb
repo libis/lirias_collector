@@ -389,10 +389,9 @@ RULE_SET_v2_0 = {
     'serie' => '$.field[?(@._name=="series")].text',
     'book_serie' => '$.field[?(@._name=="c-series-editor")].text',
     'edition' => '$.field[?(@._name=="edition")].text',
-    'volume' => { '$.field[?(@._name=="volume")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
-
-    'issue' => { '$.field[?(@._name=="issue")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
-    'medium' => { '$.field[?(@._name=="medium")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
+    'volume' => '$.field[?(@._name=="volume")].text',
+    'issue' => '$.field[?(@._name=="issue")].text',
+    'medium' => '$.field[?(@._name=="medium")].text',
 
     'pagination' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination',
     'number_of_pages' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination.page_count',

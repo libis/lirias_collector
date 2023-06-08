@@ -165,7 +165,6 @@ RULE_SET_v2_0 = {
       end
 
       
-
       pp 'special/additional transformation facets_creator_contributor' if DEBUG
 
       rdata[:facets_creator_contributor] << rdata[:creator] unless rdata[:creator].nil?
@@ -200,7 +199,9 @@ RULE_SET_v2_0 = {
       if ["chapter","book_chapter","journal-article","article","conference","conference_proceeding"].include?( rdata[:type] )
         rdata[:article_title] = rdata[:title]
       else
-        rdata[:book_title] = rdata[:title]
+        rdata[:book_title] = rdata[:title].clone()
+        rdata[:book_title].concat rdata[:parent_title] unless rdata[:parent_title].nil?
+
       end
      
       pp 'parsing data DONE' if DEBUG
@@ -390,8 +391,8 @@ RULE_SET_v2_0 = {
     'edition' => '$.field[?(@._name=="edition")].text',
     'volume' => { '$.field[?(@._name=="volume")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
 
-    'issue' => '$.field[?(@._name=="issue")].text',
-    'medium' => '$.field[?(@._name=="medium")].text',
+    'issue' => { '$.field[?(@._name=="issue")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
+    'medium' => { '$.field[?(@._name=="medium")].text' => lambda { |d,o|  d.is_a?(Date) ? d.strftime("%Y-%m-%d") : d } },
 
     'pagination' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination',
     'number_of_pages' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination.page_count',

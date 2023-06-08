@@ -1,6 +1,7 @@
 FROM ruby:2.7.6
 # RUN addgroup -S dockergroup -g 503 && adduser -S dockeruser -u 504 -G dockergroup && apk --no-cache add g++ make bash
 
+RUN cp /usr/share/zoneinfo/CET /etc/localtime 
 # Install gems
 ENV APP_HOME /app
 ENV HOME /root

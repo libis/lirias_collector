@@ -284,10 +284,21 @@ module Collector
           @filename_list.each_key do | type|
             @filename_list[type].each_key do | form |
               filelist = @filename_list[type][form]
-              tar_records( type: type,  form: form, filelist: filelist )
+              unless @filename_list[type][form].size == 0
+                @logger.debug("size of @filename_list[#{type}][#{type}].size  #{  @filename_list[type][form].size }")
+                tar_records( type: type,  form: form, filelist: filelist )
+              end
               @filename_list[type][form] = []
             end
           end
+
+          if Dir[ "#{@options[:tmp_records_dir]}/*" ]&.empty?
+            FileUtils.rm_rf(@options[:tmp_records_dir])
+          end
+
+          if Dir[ "#{@options[:tmp_deleted_records_dir]}/*" ]&.empty?
+            FileUtils.rm_rf(@options[:tmp_deleted_records_dir])
+          end          
         end
 
       rescue StandardError => e

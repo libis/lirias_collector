@@ -291,9 +291,14 @@ module Collector
               @filename_list[type][form] = []
             end
           end
-          if Dir.empty?(tmp_output_dir)
-            FileUtils.rm_rf(tmp_output_dir)
+
+          if Dir[ "#{@options[:tmp_records_dir]}/*" ]&.empty?
+            FileUtils.rm_rf(@options[:tmp_records_dir])
           end
+
+          if Dir[ "#{@options[:tmp_deleted_records_dir]}/*" ]&.empty?
+            FileUtils.rm_rf(@options[:tmp_deleted_records_dir])
+          end          
         end
 
       rescue StandardError => e

@@ -66,7 +66,7 @@ RULE_SET_v2_0 = {
           :deleted_when           => d['deleted_object']['_deleted_when'],
           :deleted                => d['deleted_object']['_deleted_when'],
           :title                  => d['title']
-        }
+        }.with_indifferent_access
 
         
 
@@ -88,7 +88,7 @@ RULE_SET_v2_0 = {
         :claimed                => d['object']['claimed'],
         :facets_creator_contributor => [],
         :identifiers             => []
-      }
+      }.with_indifferent_access
             
       rdata[:recordid] = rdata[:sourceid] + rdata[:id]
 
@@ -129,8 +129,6 @@ RULE_SET_v2_0 = {
 
       # WOS-ID https://libis.teamwork.com/app/tasks/20947956 ( Web of Science  terms of use)
       # rdata[:identifiers].concat( rdata[:wosid] ) if rdata[:wosid].is_a?(Array)
-
-
 
       rdata[:subject] = rdata[:keyword]&.uniq
       pp 'special/additional transformation language' if DEBUG
@@ -193,7 +191,6 @@ RULE_SET_v2_0 = {
       rdata[:local_facet_10] = rdata[:local_field_10].clone()
       rdata[:local_facet_10].concat  rdata[:organizational_unit] unless rdata[:organizational_unit].nil?
 
-
       pp 'special/additional transformation article_title' if DEBUG
 
       if ["chapter","book_chapter","journal-article","article","conference","conference_proceeding"].include?( rdata[:type] )
@@ -205,8 +202,10 @@ RULE_SET_v2_0 = {
       end
      
       pp 'parsing data DONE' if DEBUG
-
       rdata.compact!
+
+      rdata
+
     } }
   },
   'rs_merged_record' => {
@@ -704,7 +703,7 @@ RULE_SET_v2_0 = {
   },
   'rs_relationships' => {
     'relationship' => {'$.object.relationships' => lambda { |d,o|
-      rdata = {}
+      rdata = {}.with_indifferent_access
       out = DataCollector::Output.new
       #rules_ng.run(RULE_SET_v2_0['rs_correction'], d, out, o)
       #rules_ng.run(RULE_SET_v2_0['rs_derivative'], d, out, o)

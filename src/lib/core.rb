@@ -131,6 +131,7 @@ module Collector
       begin
 
         DataCollector::Input.new( @logger )
+        one_record_output = DataCollector::Output.new
 
         pp "####################################################################################"
         pp "# Should the input resonpse be saved to disk for later use or                      #" 
@@ -200,7 +201,11 @@ module Collector
 
           output.data[:data] = [output.data[:data]] unless output.data[:data].is_a?(Array)
 
+
           output.data[:data].each do | data |
+
+            data = data.with_indifferent_access
+            one_record_output[:data] = data
 
             filename = @record_filename_erb_template.result( binding ) 
 
@@ -210,7 +215,9 @@ module Collector
               tmp_output_dir = @options[:tmp_records_dir]
             end
 
-            file = output.to_jsonfile(data, filename, tmp_output_dir)
+            file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.json"
+            one_record_output.to_uri("file://#{ file }", {content_type: "application/json"})
+            #  file = output.to_jsonfile(data, filename, tmp_output_dir)
 
             if data[:deleted]
               @filename_list[:deleted][:json] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
@@ -229,17 +236,26 @@ module Collector
                 #   pp "----------------------"
                 #   pp data[:linktorsrc]
                 #   pp data[:local_field_08]
-                  file = output.to_xmlfile(data, filename, records_dir=tmp_output_dir, root="record")
+                
+                file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                
+                one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+                 
+                #file = output.to_xmlfile(data, filename, records_dir=tmp_output_dir, root="record")
+
+
                   @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
                 end
               end
             end
 
             unless ( data[:deleted].nil? )
-              file = output.to_xmlfile(data, filename, records_dir=tmp_output_dir, root="record")
+              file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
+              one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+
               @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
             end
 
+            one_record_output.clear
             @total_nr_parsed_records += 1
             nr_parsed_records += 1
           end

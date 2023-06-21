@@ -9,7 +9,7 @@ ENV HOME /root
 WORKDIR $APP_HOME
 COPY ./src ./src/
 WORKDIR $APP_HOME/src/data_collector_gem
-RUN gem build data_collector.gemspec; gem install data_collector-0.20.0.gem
+RUN gem build data_collector.gemspec; gem install data_collector-0.21.0.gem
 
 WORKDIR $APP_HOME
 

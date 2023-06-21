@@ -1,9 +1,8 @@
 version: '3'
 services:
   lirias_collector:
-    #image: lirias_collector:v2.0
-    image: libis/lirias_collector:v2.0
-    #image: registry.docker.libis.be/libis/lirias_collector:v2.0
+    image: lirias_collector:v2.1
+    #image: registry.docker.libis.be/libis/lirias_collector:v2.1
     container_name: lirias_collector
     build: 
       context: ./
@@ -14,7 +13,7 @@ services:
       - ./config:/app/src/config/
       - ./records:/records/
   lirias_collector_develop:
-    image: lirias_collector:v2.0
+    image: lirias_collector:v2.1
     build: 
       context: ./
       dockerfile: Dockerfile

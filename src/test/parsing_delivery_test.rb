@@ -50,7 +50,8 @@ class DataCollectorInputTest < Minitest::Test
 
 
 @@lirias_test_ids = [1087091, 136525, 1373285, 1769877, 893282, 4080935, 1815226, 977104, 2936906, 2858842, 791564, 2291528, 3684711, 3655807, 2842609 ]
-@@lirias_dataset_test_ids = [3958772, 3119197, 3684711 ]
+
+@@lirias_dataset_test_ids = [ 3684711, 3958772, 3119197, 3684711 ]
 
     def test_public_url
       lirias_ids = @@lirias_test_ids

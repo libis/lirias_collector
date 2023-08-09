@@ -638,7 +638,8 @@ class DataCollectorInputTest < Minitest::Test
 
     def test_oa
     
-      lirias_ids = [977104,71653,893282]
+      lirias_ids = [4080935,977104,71653,893282,3655807,1373285, 1739312, 1769877, 4080935, 977104,  791564, 829591, 1376504,2291528]
+
       field = :oa
     
       lirias_ids.each do |lirias_id|

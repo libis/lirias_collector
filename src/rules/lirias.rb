@@ -417,6 +417,8 @@ RULE_SET_v2_0 = {
 
     'additional_identifier' => '$.field[?(@._name=="c-additional-identifier")].items.item',
 
+    'is_open_access' => '$.field[?(@._name=="is-open-access")].boolean',
+
     'abstract'  => '$.field[?(@._name=="abstract")].text',
     'author_url' => '$.field[?(@._name=="author-url")].text',
     
@@ -926,7 +928,7 @@ RULE_SET_v2_0 = {
         o[:number_files] = nil
       end
 
-      if linktorsrc.nil? && ( !d[:isbn_10].nil? ||!d[:isbn_13].nil? || !d[:issn].nil?)
+      if linktorsrc.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
         linktorsrc = ""
       end      
       if linktorsrc.nil? && !d[:doi].nil?
@@ -947,6 +949,7 @@ RULE_SET_v2_0 = {
         rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
         linktorsrc = out.data[:linktorsrc_from_additional_identifier]
       end
+
       linktorsrc
     }},
     'delivery_fulltext' =>{ '@' => lambda { |d,o|
@@ -954,11 +957,11 @@ RULE_SET_v2_0 = {
       unless d[:files].nil?
         delivery_fulltext = "fulltext_linktorsrc" 
       end
-      if delivery_fulltext.nil? && !d[:doi].nil?
-        delivery_fulltext = "fulltext_unknown" 
-      end
       if delivery_fulltext.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
         delivery_fulltext = "fulltext_unknown" 
+      end
+      if delivery_fulltext.nil? && !d[:doi].nil?
+        delivery_fulltext = "fulltext_linktorsrc" 
       end
       if delivery_fulltext.nil? && !d[:publisher_url].nil? 
         delivery_fulltext = "fulltext_linktorsrc" 
@@ -969,6 +972,7 @@ RULE_SET_v2_0 = {
       if delivery_fulltext.nil?
         delivery_fulltext = "no_fulltext"
       end
+
       delivery_fulltext
     }}
   },
@@ -1045,23 +1049,19 @@ RULE_SET_v2_0 = {
   'rs_open_access' => { 
     'oa' => { '@' => lambda { |d,o|
       open_access = nil    
+      if d[:is_open_access].is_a?(Array)
+        if d[:is_open_access].first
+          open_access =  "free_for_read"
+        end
+      end
       if d[:type] == "research_dataset" && !d[:accessright].nil? && !d[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
         open_access =  "free_for_read"
       end
-
       if  d[:type] != "research_dataset"
-        unless d[:files]&.select { |file| file["filePublic"] }&.empty?
+        unless [d[:files]].flatten.compact.select { |file| file[:description]&.first != "Supporting information" && file["filePublic"]&.first }.blank?
           open_access =  "free_for_read"
-        else
-          unless d[:publisher_url].nil? 
-            open_access =  "free_for_read"
-          end
-          unless d[:additional_identifier]&.select { |ai| ai.match(/^http/) }&.empty?
-            open_access =  "free_for_read"
-          end        
         end
       end
-
       open_access
     }}
   },

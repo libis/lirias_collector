@@ -916,8 +916,6 @@ RULE_SET_v2_0 = {
     }},
     'linktorsrc' =>{ '@' => lambda { |d,o|
       linktorsrc = nil
-
-      pp "LINKTO RSRSR  d[:oa] #{ d[:oa] }"
       
       unless d[:files].nil?
         pp 'rs_linktorsrc_from_files' if DEBUG
@@ -932,7 +930,9 @@ RULE_SET_v2_0 = {
         o[:number_files] = nil
       end
 
-      unless d[:oa].include?("free_for_read") || d[:type] == "research_dataset"
+
+
+      unless d[:oa].nil? || d[:oa].include?("free_for_read") || d[:type] == "research_dataset"
         if linktorsrc.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
           linktorsrc = ""
         end
@@ -964,7 +964,7 @@ RULE_SET_v2_0 = {
       unless d[:files].nil?
         delivery_fulltext = "fulltext_linktorsrc" 
       end
-      unless d[:oa].include?("free_for_read")
+      unless d[:oa]&.include?("free_for_read")
         if delivery_fulltext.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
           delivery_fulltext = "fulltext_unknown" 
         end

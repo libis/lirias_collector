@@ -418,6 +418,7 @@ RULE_SET_v2_0 = {
     'additional_identifier' => '$.field[?(@._name=="c-additional-identifier")].items.item',
 
     'is_open_access' => '$.field[?(@._name=="is-open-access")].boolean',
+    'open_access_status' => '$.field[?(@._name=="open-access-status")].text',
 
     'abstract'  => '$.field[?(@._name=="abstract")].text',
     'author_url' => '$.field[?(@._name=="author-url")].text',
@@ -915,6 +916,9 @@ RULE_SET_v2_0 = {
     }},
     'linktorsrc' =>{ '@' => lambda { |d,o|
       linktorsrc = nil
+
+      pp "LINKTO RSRSR  d[:oa] #{ d[:oa] }"
+      
       unless d[:files].nil?
         pp 'rs_linktorsrc_from_files' if DEBUG
 
@@ -928,9 +932,12 @@ RULE_SET_v2_0 = {
         o[:number_files] = nil
       end
 
-      if linktorsrc.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
-        linktorsrc = ""
+      unless d[:oa].include?("free_for_read")
+        if linktorsrc.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
+          linktorsrc = ""
+        end
       end      
+      
       if linktorsrc.nil? && !d[:doi].nil?
         pp 'rs_linktorsrc_from_doi' if DEBUG
         out = DataCollector::Output.new
@@ -957,8 +964,10 @@ RULE_SET_v2_0 = {
       unless d[:files].nil?
         delivery_fulltext = "fulltext_linktorsrc" 
       end
-      if delivery_fulltext.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
-        delivery_fulltext = "fulltext_unknown" 
+      unless d[:oa].include?("free_for_read")
+        if delivery_fulltext.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
+          delivery_fulltext = "fulltext_unknown" 
+        end
       end
       if delivery_fulltext.nil? && !d[:doi].nil?
         delivery_fulltext = "fulltext_linktorsrc" 
@@ -1052,6 +1061,17 @@ RULE_SET_v2_0 = {
       if d[:is_open_access].is_a?(Array)
         if d[:is_open_access].first
           open_access =  "free_for_read"
+        end
+      end
+      if d[:open_access_status].is_a?(Array)
+        if d[:open_access_status].any? {|ar| ["Open Access"].include?(ar) }
+          if d[:is_open_access].is_a?(Array)
+            unless d[:is_open_access].first
+              open_access = "free_for_read"
+            else
+              #pp "TEST TEST record #{d[:identifiers]} open_access_status : #{ d[:open_access_status]} && is_open_access: #{d[:is_open_access]}"
+            end
+          end
         end
       end
       if d[:type] == "research_dataset" && !d[:accessright].nil? && !d[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }

@@ -932,7 +932,7 @@ RULE_SET_v2_0 = {
         o[:number_files] = nil
       end
 
-      unless d[:oa].include?("free_for_read")
+      unless d[:oa].include?("free_for_read") || d[:type] == "research_dataset"
         if linktorsrc.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
           linktorsrc = ""
         end
@@ -944,13 +944,13 @@ RULE_SET_v2_0 = {
         rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_doi'], d[:doi], out, o)
         linktorsrc = out.data[:linktorsrc_from_doi]
       end
-      if linktorsrc.nil? && !d[:publisher_url].nil? 
+      if linktorsrc.nil? && !d[:publisher_url].nil? && d[:type] != "research_dataset"
         pp 'rs_linktorsrc_from_publisher_url' if DEBUG
         out = DataCollector::Output.new
         rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_publisher_url'], d[:publisher_url], out, o)
         linktorsrc = out.data[:linktorsrc_from_publisher_url]
       end
-      if linktorsrc.nil? && !d[:additional_identifier].nil?
+      if linktorsrc.nil? && !d[:additional_identifier].nil? && d[:type] != "research_dataset"
         pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
         out = DataCollector::Output.new
         rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)

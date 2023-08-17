@@ -205,7 +205,8 @@ module Collector
           output.data[:data].each do | data |
 
             data = data.with_indifferent_access
-            one_record_output[:data] = data
+            #one_record_output[:data] = data
+            one_record_output << data
 
             filename = @record_filename_erb_template.result( binding ) 
 
@@ -239,11 +240,8 @@ module Collector
                 
                 file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                
                 one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
-                 
-                #file = output.to_xmlfile(data, filename, records_dir=tmp_output_dir, root="record")
-
-
-                  @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+                
+                @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
                 end
               end
             end

@@ -665,6 +665,14 @@ RULE_SET_v2_0 = {
         roles = " (#{ d[:roles].join(', ') })"
       end
       "#{name}#{roles}$$Q#{name}"
+    } },
+    'display_name' =>  { '$'  => lambda { |d,o|
+      roles = ""
+      name = [d[:last_name]&.first, d[:first_names]&.first].join(", ")
+      unless d[:roles].nil?
+        roles = " (#{ d[:roles].join(', ') })"
+      end
+      "#{name}#{roles}"
     } }
   },
   'rs_person_identifiers' => {

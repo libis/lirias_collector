@@ -275,6 +275,7 @@ RULE_SET_v2_0 = {
             pp 'rs_person_display_name' if DEBUG
             rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], author_of_type, person, o)
             contributors[k][:pnx_display_name] = person.data[:pnx_display_name]
+            contributors[k][:display_name] = person.data[:display_name]
 
           end
         end

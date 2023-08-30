@@ -26,7 +26,7 @@ module Collector
 
       # @url         = "#{@config[:base_url]}#{ @from_date  }"
       # @url_delete  = "#{@config[:base_delete_url]}#{ @from_date_deleted }"
-      @url_options = {user: @config[:user], password: config[:password]}
+      @url_options = {user: @config[:user], password: config[:password], :xml_typecast => false}
 
 
       @records_dir          = @config[:records_dir]         || "test_records"

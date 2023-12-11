@@ -75,7 +75,8 @@ module Collector
           @url = @config[:base_url]
         end
 
-        # url = @config
+        # ==> in input.rb from data_collector gem : #xml_typecast = true  # record 1657241 kan enkel worden verwerkt als xml_typecast == false
+        # @url = "https://lirias2repo.kuleuven.be/elements-cache/rest/publications?affected-since=2023-01-05T04%3A30%3A22.360Z&after-id=1657152&per-page=10"
   
         collect(url: @url, url_options: @url_options, rule_set: rule_set)
         
@@ -154,6 +155,11 @@ module Collector
             timing_start = Time.now
             parse_data(data: data, rule_set: rule_set)
             @logger.info("Data parsed in #{((Time.now - timing_start) * 1000).to_i} ms")
+          end
+
+
+          if output.data[:metadata].nil? && ! output.data[:data].nil?
+            raise "probably just 1 record parsed (url: #{url})"
           end
 
           @logger.debug("metadata.results_count #{ output.data[:metadata][:results_count] }")
@@ -266,7 +272,11 @@ module Collector
             @filename_list.each_key do | type |
               @filename_list[type].each_key do | form|               
                 if @filename_list[type][form].size >= @max_records_in_tar
+                  @logger.debug("@filename_list[type][form].size  :#{ @filename_list[type][form].size } ")
+                  @logger.debug("@max_records_in_tar              :#{ @max_records_in_tar } ")
+
                   @filename_list[type][form] = @filename_list[type][form].each_slice( @max_records_in_tar ).to_a.select do |filelist|
+                    @logger.debug("sliced filelist.size   :#{  filelist.size  } ")
                     if filelist.size == @max_records_in_tar
                       tar_records( type: type, form: form, filelist: filelist )
                       false

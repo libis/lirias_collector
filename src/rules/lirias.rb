@@ -75,7 +75,16 @@ RULE_SET_v2_0 = {
         return rdata
       end
 
-      pp "OBJECT ID [lirias_recordid]: #{d['object']['_id']}"  if LOG_LIRIAS_RECORDID
+      timing_start = Time.now
+
+      start_process  = Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z") 
+      pp "OBJECT ID [lirias_recordid]: #{d['object']['_id']}"  if LOG_LIRIAS_RECORDID 
+#      if ["712458","431535"].include?(d['object']['_id'])
+#        pp ":last_run_updates: '2023-01-12T18:03:57.6+01:00'"
+#        pp "=====================================================================================================>>>>>"
+#        pp "OBJECT ID [lirias_recordid]: #{d['object']['_id']}"
+#        pp "=====================================================================================================>>>>>"
+#      end
 
       rdata = { 
         :source                 => "lirias",
@@ -122,6 +131,9 @@ RULE_SET_v2_0 = {
       rules_ng.run(RULE_SET_v2_0['rs_relationships'], d, out, o)
       rdata.merge!(out.data.to_h)
       out.clear
+
+      # performance debugging 
+      # pp ("parsing 1 #{((Time.now - timing_start) * 1000).to_i} ms")
 
       pp 'identifiers concat' if DEBUG
       rdata[:identifiers].concat( rdata[:pmid].map { |i| "$$CPMID:$$V" + i } ) if rdata[:pmid].is_a?(Array)
@@ -213,7 +225,7 @@ RULE_SET_v2_0 = {
       out = DataCollector::Output.new
       pp 'rs_record' if DEBUG
       rules_ng.run(RULE_SET_v2_0['rs_record'], d, out, o)
-
+      
       pp 'rs_creator' if DEBUG
       rules_ng.run(RULE_SET_v2_0['rs_creator'], d, out, o)
       
@@ -290,20 +302,19 @@ RULE_SET_v2_0 = {
 
       out.data[:contributor] = contributors.values
 
-=begin      
 # Nog geen out.data[:version] gevonden
-      unless out.data[:edition].nil? && out.data[:version].nil?
-        if out.data[:parent_title].nil? && out.data[:journal].nil?
-          if out.data[:edition].nil?
-            out.data[:edition] = out.data[:version]
-          else
-            out.data[:edition].push ( out.data[:version] ) unless out.data[:version].nil?
-          end
-        else
-          out.data[:edition] = nil
-        end
-      end
-=end     
+#      unless out.data[:edition].nil? && out.data[:version].nil?
+#        if out.data[:parent_title].nil? && out.data[:journal].nil?
+#          if out.data[:edition].nil?
+#            out.data[:edition] = out.data[:version]
+#          else
+#            out.data[:edition].push ( out.data[:version] ) unless out.data[:version].nil?
+#          end
+#        else
+#          out.data[:edition] = nil
+#        end
+#      end
+
 
       pp 'rs_files' if DEBUG
       rules_ng.run(RULE_SET_v2_0['rs_files'], d, out, o)
@@ -384,106 +395,106 @@ RULE_SET_v2_0 = {
     } }
   },
   'rs_record' => {
-    'title'  => '$.field[?(@._name=="title")].text',
-    'alternative_title'  => '$.field[?(@._name=="c-alttitle")].text',
-    'serie' => '$.field[?(@._name=="series")].text',
-    'book_serie' => '$.field[?(@._name=="c-series-editor")].text',
-    'edition' => '$.field[?(@._name=="edition")].text',
-    'volume' => '$.field[?(@._name=="volume")].text',
-    'issue' => '$.field[?(@._name=="issue")].text',
-    'medium' => '$.field[?(@._name=="medium")].text',
+    title: '$.field[?(@._name=="title")].text',
+    alternative_title: '$.field[?(@._name=="c-alttitle")].text',
+    serie: '$.field[?(@._name=="series")].text',
+    book_serie: '$.field[?(@._name=="c-series-editor")].text',
+    edition: '$.field[?(@._name=="edition")].text',
+    volume: '$.field[?(@._name=="volume")].text',
+    issue: '$.field[?(@._name=="issue")].text',
+    medium: '$.field[?(@._name=="medium")].text',
 
-    'pagination' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination',
-    'number_of_pages' => '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination.page_count',
+    pagination: '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination',
+    number_of_pages: '$.field[?(@._name=="pagination")][?( @._display_name==( "Pagination" || "Number of pages") )].pagination.page_count',
    
-    'publisher' => '$.field[?(@._name=="publisher")].text',
-    'publisher_url' => '$.field[?(@._name=="publisher-url")].text',
-    'place_of_publication' => '$.field[?(@._name=="place-of-publication")].text',
+    publisher: '$.field[?(@._name=="publisher")].text',
+    publisher_url: '$.field[?(@._name=="publisher-url")].text',
+    place_of_publication: '$.field[?(@._name=="place-of-publication")].text',
    
-    'isbn_10' => '$.field[?(@._name=="isbn-10")].text',
-    'isbn_13' => '$.field[?(@._name=="isbn-13")].text',
-    'doi' => '$.field[?(@._name=="doi")].text',
+    isbn_10: '$.field[?(@._name=="isbn-10")].text',
+    isbn_13: '$.field[?(@._name=="isbn-13")].text',
+    doi: '$.field[?(@._name=="doi")].text',
     
-    'eissn' => '$.field[?(@._name=="eissn")].text',
-    'external_identifiers' => { '$.field[?(@._name=="external-identifiers")].identifiers.identifier' => lambda { |d,o| d["$text"] } },
+    eissn: '$.field[?(@._name=="eissn")].text',
+    external_identifiers: { '$.field[?(@._name=="external-identifiers")].identifiers.identifier' => lambda { |d,o| d["$text"] } },
 
-    'other_identifier' => '$.field[?(@._name=="c-identifier-other"].text',
-    'other_identifier_type' => '$.field[?(@._name=="c-identifierother-type")].text',
+    other_identifier: '$.field[?(@._name=="c-identifier-other"].text',
+    other_identifier_type: '$.field[?(@._name=="c-identifierother-type")].text',
 
-    'other_identifiers_handle' => '$.field[?(@._name=="c-identifier-other" && @._type="handle")].text',
-    'other_identifiers_url' => '$.field[?(@._name=="c-identifier-other" && @._type="url")].text',
-    'other_identifiers_urn' => '$.field[?(@._name=="c-identifier-other" && @._type="urn")].text',
-    'other_identifiers_purl' => '$.field[?(@._name=="c-identifier-other" && @._type=purl")].text',
-    'other_identifiers_ark' => '$.field[?(@._name=="c-identifier-other" && @._type="ark")].text',
+    other_identifiers_handle: '$.field[?(@._name=="c-identifier-other" && @._type="handle")].text',
+    other_identifiers_url: '$.field[?(@._name=="c-identifier-other" && @._type="url")].text',
+    other_identifiers_urn: '$.field[?(@._name=="c-identifier-other" && @._type="urn")].text',
+    other_identifiers_purl: '$.field[?(@._name=="c-identifier-other" && @._type=purl")].text',
+    other_identifiers_ark: '$.field[?(@._name=="c-identifier-other" && @._type="ark")].text',
 
-    'additional_identifier' => '$.field[?(@._name=="c-additional-identifier")].items.item',
+    additional_identifier: '$.field[?(@._name=="c-additional-identifier")].items.item',
 
-    'is_open_access' => '$.field[?(@._name=="is-open-access")].boolean',
-    'open_access_status' => '$.field[?(@._name=="open-access-status")].text',
+    is_open_access: '$.field[?(@._name=="is-open-access")].boolean',
+    open_access_status: '$.field[?(@._name=="open-access-status")].text',
 
-    'abstract'  => '$.field[?(@._name=="abstract")].text',
-    'author_url' => '$.field[?(@._name=="author-url")].text',
+    abstract: '$.field[?(@._name=="abstract")].text',
+    author_url: '$.field[?(@._name=="author-url")].text',
     
-    'publication_status' => '$.field[?(@._name=="publication-status")].text',
-    'note' => '$.field[?(@._name=="notes")].text',
-    'numbers' => '$.field[?(@._name=="numbers")].text',
-    'chapter_number' => '$.field[?(@._display_name=="Chapter number")].text',
-    'abstract_number' => '$.field[?(@._display_name=="Abstract number")].text',
-    'report_number' => '$.field[?(@._display_name=="Report number")].text',
-    'paper_number' => '$.field[?(@._display_name=="Paper number")].text',
-    'article_number' => '$.field[?(@._display_name=="Article number")].text',
+    publication_status: '$.field[?(@._name=="publication-status")].text',
+    note: '$.field[?(@._name=="notes")].text',
+    numbers: '$.field[?(@._name=="numbers")].text',
+    chapter_number: '$.field[?(@._display_name=="Chapter number")].text',
+    abstract_number: '$.field[?(@._display_name=="Abstract number")].text',
+    report_number: '$.field[?(@._display_name=="Report number")].text',
+    paper_number: '$.field[?(@._display_name=="Paper number")].text',
+    article_number: '$.field[?(@._display_name=="Article number")].text',
   
-    'parent_title' => '$.field[?(@._name=="parent-title")].text',
-    'name_of_conference' => '$.field[?(@._name=="name-of-conference")].text',
-    'location' => '$.field[?(@._name=="location")].text',
+    parent_title: '$.field[?(@._name=="parent-title")].text',
+    name_of_conference: '$.field[?(@._name=="name-of-conference")].text',
+    location: '$.field[?(@._name=="location")].text',
 
-    'journal' => '$.field[?(@._name=="journal")].text',
-    'issn' => '$.field[?(@._name=="issn")].text',
-    'pii' => '$.field[?(@._name=="pii")].text',
-    'language' => '$.field[?(@._name=="language")].text',
-    'patent_number' => '$.field[?(@._name=="patent-number")].text',
+    journal: '$.field[?(@._name=="journal")].text',
+    issn: '$.field[?(@._name=="issn")].text',
+    pii: '$.field[?(@._name=="pii")].text',
+    language: '$.field[?(@._name=="language")].text',
+    patent_number: '$.field[?(@._name=="patent-number")].text',
 
-    'patent_status' => '$.field[?(@._name=="patent-status")].text',
-    'commissioning_body' => '$.field[?(@._name=="commissioning-body")].text',
+    patent_status: '$.field[?(@._name=="patent-status")].text',
+    commissioning_body: '$.field[?(@._name=="commissioning-body")].text',
 
-    'peer_reviewed' => '$.field[?(@._name=="c-peer-review")].text',
-    'invitedby' => '$.field[?(@._name=="c-invitedby")].text',
+    peer_reviewed: '$.field[?(@._name=="c-peer-review")].text',
+    invitedby: '$.field[?(@._name=="c-invitedby")].text',
     
-    'funding_acknowledgements' => '$.field[?(@._name=="funding-acknowledgements")].funding_acknowledgements.acknowledgement_text',
-    'vabb_type' => '$.field[?(@._name=="c-vabb-type")].text',
-    'vabb_identifier' => '$.field[?(@._name=="c-vabb-identifier")].text',
-    'historic_collection' => '$.field[?(@._name=="c-collections-historic")].items.item',
+    funding_acknowledgements: '$.field[?(@._name=="funding-acknowledgements")].funding_acknowledgements.acknowledgement_text',
+    vabb_type: '$.field[?(@._name=="c-vabb-type")].text',
+    vabb_identifier: '$.field[?(@._name=="c-vabb-identifier")].text',
+    historic_collection: '$.field[?(@._name=="c-collections-historic")].items.item',
 
-    'public_url' => '$.field[?(@._name=="public-url")].text',
+    public_url: '$.field[?(@._name=="public-url")].text',
 
-    'professional_oriented' => { '$.field[?(@._name=="c-professional")].boolean' => lambda { |d,o| d.to_s } },
-    'confidential' => { '$.field[?(@._name=="confidential")].boolean' => lambda { |d,o| d.to_s } },
-    'number_of_pieces' => { '$.field[?(@._name=="number-of-pieces")].boolean' => lambda { |d,o| d.to_s } },
-    'version' => { '$.field[?(@._name=="version")].boolean' => lambda { |d,o| d.to_s } },
+    professional_oriented: { '$.field[?(@._name=="c-professional")].boolean' => lambda { |d,o| d.to_s } },
+    confidential: { '$.field[?(@._name=="confidential")].boolean' => lambda { |d,o| d.to_s } },
+    number_of_pieces: { '$.field[?(@._name=="number-of-pieces")].boolean' => lambda { |d,o| d.to_s } },
+    version: { '$.field[?(@._name=="version")].boolean' => lambda { |d,o| d.to_s } },
 
-    'accessright' =>  '$.field[?(@._name=="c-accessrights")].text',
-    'venue_designart' =>  '$.field[?(@._name=="c-venue-designart")].items.item',
-    'organizational_unit' =>  '$.field[?(@._name=="cache-user-ous")].items.item',
+    accessright:  '$.field[?(@._name=="c-accessrights")].text',
+    venue_designart:  '$.field[?(@._name=="c-venue-designart")].items.item',
+    organizational_unit:  '$.field[?(@._name=="cache-user-ous")].items.item',
 
-    'publication_date' => { '$.field[?(@._name=="publication-date")].date'  => lambda { |d,o|
+    publication_date: { '$.field[?(@._name=="publication-date")].date'  => lambda { |d,o|
       DateTime.parse("#{d['year']}-#{d['month'] || '1'}-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
     } },
-    'online_publication_date' => { '$.field[?(@._name=="online-publication-date")].date'=> lambda { |d,o|
+    online_publication_date: { '$.field[?(@._name=="online-publication-date")].date'=> lambda { |d,o|
       DateTime.parse("#{d['year']}-#{d['month'] || '1'}-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
     } },
-    'acceptance_date' => { '$.field[?(@._name=="acceptance-date")].date'=> lambda { |d,o|
+    acceptance_date: { '$.field[?(@._name=="acceptance-date")].date'=> lambda { |d,o|
       DateTime.parse("#{d['year']}-#{d['month'] || '1'}-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
     } },
-    'filed_date' => { '$.field[?(@._name=="filed-date")].date' => lambda { |d,o|
+    filed_date: { '$.field[?(@._name=="filed-date")].date' => lambda { |d,o|
       DateTime.parse("#{d['year']}-#{d['month'] || '1' }-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
     } },
-    'embargo_release_date' => { '$.field[?(@._name=="c-date-end-of-embargo")].date' => lambda { |d,o|
+    embargo_release_date: { '$.field[?(@._name=="c-date-end-of-embargo")].date' => lambda { |d,o|
       DateTime.parse("#{d['year']}-#{d['month'] || '1'}-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
     } },
-    'start_date' => { '$.field[?(@._name=="start-date")].date' => lambda { |d,o|
+    start_date: { '$.field[?(@._name=="start-date")].date' => lambda { |d,o|
       DateTime.parse("#{d['year']}-#{d['month'] || '1'}-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
     } },
-    'finish_date' => { '$.field[?(@._name=="finish-date")].date' => lambda { |d,o|
+    finish_date: { '$.field[?(@._name=="finish-date")].date' => lambda { |d,o|
       DateTime.parse("#{d['year']}-#{d['month'] || '1' }-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
     } },
 
@@ -495,7 +506,7 @@ RULE_SET_v2_0 = {
     #'version' => '$.field[?(@._name=="version")].boolean').map(&:to_s)
 
 ##### => ALS ER MAAR 1 bestand is en dit heeft geen label dat zelf een label plaatsen "Link to resource of zoiets"
-#### ne een file eerst open url via ISSN, of ISBN DOI
+#### en een file eerst open url via ISSN, of ISBN DOI
 
   },
 
@@ -510,7 +521,7 @@ RULE_SET_v2_0 = {
 # <api:field name="c-series-editor" display-name="Book series editors" type="person-list"> (1815226)
 
   'rs_creator' => {
-    'author' => {'$.field[?(@._name=="authors")].people.person' => lambda { |d,o|
+    author: {'$.field[?(@._name=="authors")].people.person' => lambda { |d,o|
       pp 'rs_creator author' if DEBUG
       out = DataCollector::Output.new
       pp 'rs_creator author rs_person' if DEBUG
@@ -519,35 +530,35 @@ RULE_SET_v2_0 = {
       rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
       out.data
     } },
-    'editor' => {'$.field[?(@._name=="editors")][?(@._display_name=="Editors")].people.person' => lambda { |d,o|
+    editor: {'$.field[?(@._name=="editors")][?(@._display_name=="Editors")].people.person' => lambda { |d,o|
       pp 'rs_creator editor' if DEBUG
       out = DataCollector::Output.new
       rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
       rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
       out.data
     } },
-    'translator' => {'$.field[?(@._name=="c-translator")][?(@._display_name=="Translator")].people.person' => lambda { |d,o|
+    translator: {'$.field[?(@._name=="c-translator")][?(@._display_name=="Translator")].people.person' => lambda { |d,o|
       pp 'rs_creator translator' if DEBUG
       out = DataCollector::Output.new
       rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
       rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
       out.data
     } },
-    'supervisor' => {'$.field[?(@._name=="editors")][?(@._display_name=="Supervisor")].people.person' => lambda { |d,o|
+    supervisor: {'$.field[?(@._name=="editors")][?(@._display_name=="Supervisor")].people.person' => lambda { |d,o|
       pp 'rs_creator supervisor' if DEBUG
       out = DataCollector::Output.new
       rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
       rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
       out.data
     } },
-    'co_supervisor' => {'$.field[?(@._name=="c-cosupervisor")].people.person' => lambda { |d,o|
+    co_supervisor: {'$.field[?(@._name=="c-cosupervisor")].people.person' => lambda { |d,o|
       pp 'rs_creator co_supervisor' if DEBUG
       out = DataCollector::Output.new
       rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
       rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
       out.data
     } },
-    'book_series_editor' => {'$.field[?(@._name=="c-series-editor")].people.person' => lambda { |d,o|
+    book_series_editor: {'$.field[?(@._name=="c-series-editor")].people.person' => lambda { |d,o|
       pp 'rs_creator book_series_editor' if DEBUG
       o['role'] = "Book series editor"
       out = DataCollector::Output.new
@@ -556,7 +567,7 @@ RULE_SET_v2_0 = {
       out.data
     } },
 ## Na verwerking van contributers noodzakelijk om editors, translators, .... toe te voegen
-    'contributor' => {'$.field[?(@._name=="c-contributor")].people.person' => lambda { |d,o|
+    contributor: {'$.field[?(@._name=="c-contributor")].people.person' => lambda { |d,o|
       pp 'rs_creator contributor' if DEBUG
       out = DataCollector::Output.new
       rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
@@ -622,14 +633,19 @@ RULE_SET_v2_0 = {
   # ########################################################################################
 
   'rs_person' => {
-    'identifiers' => { '$[\'username\',\'identifiers\']'  => lambda { |d,o|
-      pp 'rs_person_identifiers' if DEBUG
-      out = DataCollector::Output.new
-      rules_ng.run(RULE_SET_v2_0['rs_person_identifiers'], d, out, o)
-      out.data[:identifiers]
-
-    } } ,
-    'roles' =>  [
+    identifiers: [
+      { '$.identifiers' => lambda { |d,o|
+        out = DataCollector::Output.new
+        rules_ng.run(RULE_SET_v2_0['rs_person_identifiers'], d, out, o)
+        out.data[:identifiers]
+      } } ,
+      { '$'  => lambda { |d,o|
+        if d['is_current_staff'] && ! d['username'].nil?
+          { 'staff_nbr'.to_sym => d['username'] }
+        end
+      } } 
+    ],
+    roles: [
       { '@' => lambda { |d,o| o['role'] }},
       { '$.roles.role' => lambda { |d,o|  
         if d.is_a?(Hash)
@@ -652,14 +668,14 @@ RULE_SET_v2_0 = {
       { '$.roles.role.$text' => lambda { |d,o| d }}
     ],
 =end
-#    'username'    => '$.username',
-    'last_name'   => '$.last_name',
-    'first_names' => '$.first_names',
-    'initials'    => '$.initials',
-    'name'        =>  { '@' => lambda { |d,o|  "#{d["last_name"]}, #{d["first_names"]}" } },
+#   username:    $.username',
+    last_name:   '$.last_name',
+    first_names: '$.first_names',
+    initials:    '$.initials',
+    name:        { '@' => lambda { |d,o|  "#{d["last_name"]}, #{d["first_names"]}" } },
   },
   'rs_person_display_name' => {
-    'pnx_display_name' =>  { '$'  => lambda { |d,o|
+    pnx_display_name: { '$'  => lambda { |d,o|
       roles = ""
       name = [d[:last_name]&.first, d[:first_names]&.first].join(", ")
       unless d[:roles].nil?
@@ -667,7 +683,7 @@ RULE_SET_v2_0 = {
       end
       "#{name}#{roles}$$Q#{name}"
     } },
-    'display_name' =>  { '$'  => lambda { |d,o|
+    display_name: { '$'  => lambda { |d,o|
       roles = ""
       name = [d[:last_name]&.first, d[:first_names]&.first].join(", ")
       unless d[:roles].nil?
@@ -677,7 +693,7 @@ RULE_SET_v2_0 = {
     } }
   },
   'rs_person_identifiers' => {
-    'identifiers' =>  { '@' => lambda { |d,o|
+    identifiers: { '@' => lambda { |d,o|
       if d['identifier']
         out = DataCollector::Output.new
         rules_ng.run(RULE_SET_v2_0['rs_person_identifiers_identifer'], d['identifier'], out, o)
@@ -689,32 +705,32 @@ RULE_SET_v2_0 = {
     } }
   },
   'rs_person_identifiers_identifer' => {
-    'identifier' => { '@' => lambda { |d,o|
+    identifier: { '@' => lambda { |d,o|
       { d['_scheme'].to_sym => d['$text']}
     } }
   },
   'rs_keyword' => {
-    'keyword' => {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword' => lambda { |d,o|
+    keyword: {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword' => lambda { |d,o|
       if d.is_a?(Hash) && d["_scheme"] != "c-virtual-collection" 
         d['$text']
       end
 } },
-    'virtual_collections' => {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword[?(@._scheme=="c-virtual-collection")]' => lambda { |d,o|
+    virtual_collections: {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword[?(@._scheme=="c-virtual-collection")]' => lambda { |d,o|
       d['$text']
     } },    
-    'dspace_keywords' => {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword[?(@._source=="dspace")]' => lambda { |d,o|
+    dspace_keywords: {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword[?(@._source=="dspace")]' => lambda { |d,o|
       if d.is_a?(Hash) && d['_scheme'] != 'c-virtual-collection'
         d['$text']
       end
     } }
   },
   'rs_ids' => {
-    'pmid'     => {'$.object.records.record[?(@._source_name=="pubmed")]._id_at_source' => lambda { |d,o| d } },
-    'wosid'    => {'$.object.records.record[?(@._source_name=="wos")]._id_at_source' => lambda { |d,o| d } },
-    'scopusid' => {'$.object.records.record[?(@._source_name=="scopus")]._id_at_source'  => lambda { |d,o| d }}
+    pmid:     {'$.object.records.record[?(@._source_name=="pubmed")]._id_at_source' => lambda { |d,o| d } },
+    wosid:    {'$.object.records.record[?(@._source_name=="wos")]._id_at_source' => lambda { |d,o| d } },
+    scopusid: {'$.object.records.record[?(@._source_name=="scopus")]._id_at_source'  => lambda { |d,o| d }}
   },
   'rs_relationships' => {
-    'relationship' => {'$.object.relationships' => lambda { |d,o|
+    relationship: {'$.object.relationships' => lambda { |d,o|
       rdata = {}.with_indifferent_access
       out = DataCollector::Output.new
       #rules_ng.run(RULE_SET_v2_0['rs_correction'], d, out, o)
@@ -741,48 +757,48 @@ RULE_SET_v2_0 = {
     } }
   },
   'rs_correction' => {
-    'to'   => { '$.relationship[?(@._type=="publication-publication-correction")].related[?(@._direction=="to")]' => lambda { |d,o|
+    to: { '$.relationship[?(@._type=="publication-publication-correction")].related[?(@._direction=="to")]' => lambda { |d,o|
       rdata = { :id =>  d["_id"] }
       rdata
     } },
-    'from' => { '$.relationship[?(@._type=="publication-publication-correction")].related[?(@._direction=="from")]' => lambda { |d,o|
+    from: { '$.relationship[?(@._type=="publication-publication-correction")].related[?(@._direction=="from")]' => lambda { |d,o|
       rdata = { :id =>  d["_id"] }
       rdata
     } }
   },
   'rs_derivative' => { 
-    'to'   => { '$.relationship[?(@._type=="publication-publication-derivative")].related[?(@._direction=="to")]' => lambda { |d,o|
+    to: { '$.relationship[?(@._type=="publication-publication-derivative")].related[?(@._direction=="to")]' => lambda { |d,o|
       rdata = { :id =>  d["_id"] }
       rdata
     } },
-    'from' => { '$.relationship[?(@._type=="publication-publication-derivative")].related[?(@._direction=="from")]' => lambda { |d,o|
+    from: { '$.relationship[?(@._type=="publication-publication-derivative")].related[?(@._direction=="from")]' => lambda { |d,o|
       rdata = { :id =>  d["_id"] }
       rdata
     } }
   },
   'rs_supplement' => { 
-    'to'   => { '$.relationship[?(@._type=="publication-publication-supplement")].related[?(@._direction=="to")]' => lambda { |d,o|
+    to: { '$.relationship[?(@._type=="publication-publication-supplement")].related[?(@._direction=="to")]' => lambda { |d,o|
       rdata = { :id =>  d["_id"] }
       rdata
     } },
-    'from' => { '$.relationship[?(@._type=="publication-publication-supplement")].related[?(@._direction=="from")]' => lambda { |d,o|
+    from: { '$.relationship[?(@._type=="publication-publication-supplement")].related[?(@._direction=="from")]' => lambda { |d,o|
       rdata = { :id =>  d["_id"] }
       rdata
     } }
   },
   'rs_supersedes' =>  { 
-    'to'   => { '$.relationship[?(@._type=="publication-publication-supersedence")].related[?(@._direction=="to")]' => lambda { |d,o|
+    to: { '$.relationship[?(@._type=="publication-publication-supersedence")].related[?(@._direction=="to")]' => lambda { |d,o|
       rdata = { :id =>  d["_id"] }
       rdata
     } },
-    'from' => { '$.relationship[?(@._type=="publication-publication-supersedence")].related[?(@._direction=="from")]' => lambda { |d,o|
+    from: { '$.relationship[?(@._type=="publication-publication-supersedence")].related[?(@._direction=="from")]' => lambda { |d,o|
       rdata = { :id =>  d["_id"] }
       rdata
     } }
   },
 
   'rs_identifiers' => {
-    'identifiers' => { '@' => lambda { |d,o|
+    identifiers: { '@' => lambda { |d,o|
       identifiers = []
       identifiers.concat d[:isbn_10].map { |i| "$$CISBN:$$V" + i } unless d[:isbn_10].nil?
       identifiers.concat d[:isbn_13].map { |i| "$$CISBN:$$V" + i } unless d[:isbn_13].nil?
@@ -800,7 +816,7 @@ RULE_SET_v2_0 = {
   },
 
   'rs_search_creationdate' => {
-    'search_creationdate' =>{ '@' => lambda { |d,o|
+    search_creationdate: { '@' => lambda { |d,o|
 
       search_creationdate = d[:acceptance_date].map { |d| d.gsub(/[-\/\.]/, '') }   unless d[:acceptance_date].nil?
       search_creationdate = d[:online_publication_date].map { |d| d.gsub(/[-\/\.]/, '') }  unless d[:online_publication_date].nil?
@@ -811,8 +827,8 @@ RULE_SET_v2_0 = {
   },
 
   'rs_creationdate' => {
-    'risdate' => { '@' => lambda { |d,o| d[:search_creationdate] }},
-    'creationdate' => { '@' => lambda { |d,o|
+    risdate: { '@' => lambda { |d,o| d[:search_creationdate] }},
+    creationdate: { '@' => lambda { |d,o|
       # rules_ng.run(RULE_SET_v2_0['rs_creationdate'], out.data, out, o)
       # PNX - creationdate, search_creationdate, search_startdate, search_enddate
       # For display the date format is yyyy-mm, exception dissertation:foramt is yyyy-mm-dd
@@ -826,16 +842,16 @@ RULE_SET_v2_0 = {
       end
       creationdate
     } },
-    'search_startdate' => { '@' => lambda { |d,o|
+    search_startdate: { '@' => lambda { |d,o|
       [d[:search_creationdate]].flatten&.first&.gsub(/(\d{4})(\d{4})/, '\10101')
     } },
-    'search_enddate' => { '@' => lambda { |d,o|
+    search_enddate: { '@' => lambda { |d,o|
       [d[:search_creationdate]].flatten&.first&.gsub(/(\d{4})(\d{4})/, '\11231')
     } }
   },
   
   'rs_files' =>  { 
-    'files' => { '$.files.file' => lambda { |d,o|
+    files: { '$.files.file' => lambda { |d,o|
       out = DataCollector::Output.new
       rules_ng.run(RULE_SET_v2_0['rs_file'], d, out, o)
       out.data
@@ -843,24 +859,24 @@ RULE_SET_v2_0 = {
     }}
   },
   'rs_file' =>  { 
-    'filename' => '$.filename',
-    'file_url' => '$.file_url',
-    'description' => '$.description',
-    'extension' => '$.extension',
-    'embargo_release_date' => { '$.embargo_release_date' => lambda { |d,o|
+    filename: '$.filename',
+    file_url: '$.file_url',
+    description: '$.description',
+    extension: '$.extension',
+    embargo_release_date: { '$.embargo_release_date' => lambda { |d,o|
       if d.is_a?(Date)
         d.strftime("%Y-%m-%d")
       else
         d
       end
     } },
-    'embargo_description' => '$.embargo_description',
-    'is_open_access' => '$.is_open_access',
-    'filePublic' => '$.filePublic',
-    'fileIntranet' => '$.fileIntranet',
+    embargo_description: '$.embargo_description',
+    is_open_access: '$.is_open_access',
+    filePublic: '$.filePublic',
+    fileIntranet: '$.fileIntranet',
   },
   'rs_ispartof' => {
-    'ispartof' =>{ '@' => lambda { |d,o|
+    ispartof: { '@' => lambda { |d,o|
       if d[:parent_title].nil? && d[:journal].nil?
         return nil
       end
@@ -916,14 +932,14 @@ RULE_SET_v2_0 = {
     }}
   },
   'rs_delivery' => {
-    'delivery_delcategory' =>{ '@' => lambda { |d,o|
+    delivery_delcategory: { '@' => lambda { |d,o|
       delivery_delcategory = "Remote Search Resource"
       unless d[:other_identifier].nil? && d[:doi].nil?
         delivery_delcategory = "fulltext_linktorsrc" 
       end
       delivery_delcategory
     }},
-    'linktorsrc' =>{ '@' => lambda { |d,o|
+    linktorsrc: { '@' => lambda { |d,o|
       linktorsrc = nil
       
       unless d[:files].nil?
@@ -939,10 +955,8 @@ RULE_SET_v2_0 = {
         o[:number_files] = nil
       end
 
-
-
       unless d[:oa].nil? || d[:oa].include?("free_for_read") || d[:type] == "research_dataset"
-        if linktorsrc.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil?)
+        if linktorsrc.nil? && ( !d[:isbn_10].nil? || !d[:isbn_13].nil? || !d[:issn].nil? || !d[:eissn].nil?) 
           linktorsrc = ""
         end
       end      
@@ -968,7 +982,7 @@ RULE_SET_v2_0 = {
 
       linktorsrc
     }},
-    'delivery_fulltext' =>{ '@' => lambda { |d,o|
+    delivery_fulltext: { '@' => lambda { |d,o|
       delivery_fulltext=nil
       unless d[:files].nil?
         delivery_fulltext = "fulltext_linktorsrc" 
@@ -990,12 +1004,11 @@ RULE_SET_v2_0 = {
       if delivery_fulltext.nil?
         delivery_fulltext = "no_fulltext"
       end
-
       delivery_fulltext
     }}
   },
   'rs_linktorsrc_from_files'  =>{ 
-    'linktorsrc_from_files' => { '@' => lambda { |file,o|
+    linktorsrc_from_files: { '@' => lambda { |file,o|
 
       if file.has_key?(:description) && file[:description].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file[:description].first)
         desc = file[:description].first
@@ -1017,24 +1030,24 @@ RULE_SET_v2_0 = {
     }}
   },
   'rs_linktorsrc_from_doi' => { 
-    'linktorsrc_from_doi' => { '@' => lambda { |doi,o|
+    linktorsrc_from_doi: { '@' => lambda { |doi,o|
         "$$Uhttp://doi.org/#{doi}$$D#{doi}$$Hfree_for_read"
     }}
   },
   'rs_linktorsrc_from_publisher_url' => { 
-    'linktorsrc_from_publisher_url' => { '@' => lambda { |d,o|
+    linktorsrc_from_publisher_url: { '@' => lambda { |d,o|
       "$$U#{d}$$Hfree_for_read" 
     }}
   },
   'rs_linktorsrc_from_additional_identifier' => { 
-    'linktorsrc_from_additional_identifier' => { '@' => lambda { |d,o|
+    linktorsrc_from_additional_identifier: { '@' => lambda { |d,o|
       if d.match(/^http/)
         "$$U#{d}$$Hfree_for_read"
       end
     }}
   },
   'rs_file_restriction_desc' => { 
-    'file_restriction_desc' => { '@' => lambda { |file,o|
+    file_restriction_desc: { '@' => lambda { |file,o|
 
       pp 'rs_file_restriction_desc description' if DEBUG
 
@@ -1046,10 +1059,10 @@ RULE_SET_v2_0 = {
      
       restriction = nil
       unless desc == "Supporting information"
-        if file[:filePublic]&.first
+        if file[:filePublic]&.first.to_s.downcase == "true"
           restriction ="freely available"
         else
-          if file[:fileIntranet]&.first
+          if file[:fileIntranet]&.first.to_s.downcase == "true"
             restriction = "Available for KU Leuven users"
             if file[:embargo_release_date]&.first
               unless file[:embargo_release_date].first.to_s.match(/^9999/)
@@ -1065,13 +1078,14 @@ RULE_SET_v2_0 = {
     }}
   },
   'rs_open_access' => { 
-    'oa' => { '@' => lambda { |d,o|
+    oa: { '@' => lambda { |d,o|
       open_access = nil    
-      if d[:is_open_access].is_a?(Array)
-        if d[:is_open_access].first
-          open_access =  "free_for_read"
-        end
-      end
+
+
+
+=begin
+  # Wordt "open-access-status" enkele toegevoegd als is-open-access de waarde "true" bevat ?
+  #  => Antwoord wordt nog bekeken.      
       if d[:open_access_status].is_a?(Array)
         if d[:open_access_status].any? {|ar| ["Open Access"].include?(ar) }
           if d[:is_open_access].is_a?(Array)
@@ -1083,19 +1097,40 @@ RULE_SET_v2_0 = {
           end
         end
       end
+=end      
       if d[:type] == "research_dataset" && !d[:accessright].nil? && !d[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
         open_access =  "free_for_read"
       end
       if  d[:type] != "research_dataset"
-        unless [d[:files]].flatten.compact.select { |file| file[:description]&.first != "Supporting information" && file["filePublic"]&.first }.blank?
+        unless [d[:files]].flatten.compact.select { |file| file[:description]&.first != "Supporting information" && file["filePublic"]&.first == "true" }.blank?
           open_access =  "free_for_read"
         end
+  # "Mag de open-access indicator van Limo op true worden gezet ongeacht de andere velden als is-open-access de waarde "true" bevat ?"
+  # => nee want het kan zijn dat iemand dit heeft aangevinkt terwijl er nog niets is opgeladen / geen url ingegeven.
+  #  Minstens moet er dus gecheckt worden op aanwezigheid van bestand (als het kan dan liefst ook of het public is als dat niet te omslachtig is) of url in metadata.      
+        if d[:is_open_access].is_a?(Array)
+          if d[:is_open_access].first == "true"
+            if d[:files].nil?
+              if !d[:publisher_url].nil?
+                open_access =  "free_for_read"
+              end
+
+              pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
+              out = DataCollector::Output.new
+              rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
+              unless  out.data[:linktorsrc_from_additional_identifier].nil?
+                open_access =  "free_for_read"
+              end
+            end          
+          end
+        end
       end
+
       open_access
     }}
   },
   'rs_facets_toplevel' => { 
-    'facets_toplevel' => { '@' => lambda { |d,o|
+    facets_toplevel: { '@' => lambda { |d,o|
       facets_toplevel = []
       facets_toplevel << "open_access" unless d[:oa].nil? || d[:oa].empty?
       facets_toplevel << "online_resources" if d[:delivery_fulltext].include?("fulltext_linktorsrc")

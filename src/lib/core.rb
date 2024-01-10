@@ -8,7 +8,7 @@ module Collector
   class CollectRecords
     include DataCollector::Core
 
-    attr_accessor :config, :options
+    attr_accessor :config, :options, :list_of_ids
 
     def initialize(config, url_options: {}, logger: Logger.new(STDOUT), options: {} )
       @logger  = logger
@@ -17,6 +17,7 @@ module Collector
       @options = options
       @retries = 0
       @total_nr_parsed_records = 0
+      @list_of_ids = nil
 
       last_affected_when  = @config[:last_run_updates]
       deleted_when        = @config[:last_run_deletes]
@@ -68,25 +69,38 @@ module Collector
           @from_date =  CGI.escape(DateTime.parse( @config[:current_processing_updates] ).xmlschema)
         end
 
-
         if @config[:base_url].end_with?("affected-since=")
           @url = "#{@config[:base_url]}#{ @from_date  }"
         else
           @url = @config[:base_url]
         end
 
+        if @list_of_ids.nil?
+          collect(url: @url, url_options: @url_options, rule_set: rule_set)
+          most_recent_parsed_record_date = output.data[:metadata][:affected_date].max.strftime("%Y-%m-%dT%H:%M:%S.%L%z")
+          return  @total_nr_parsed_records, most_recent_parsed_record_date
+        end
+
+        while id = @list_of_ids.pop 
+          @url =  "https://lirias2repo.kuleuven.be/elements-cache/rest/publications/#{id}"
+          collect(url: @url, url_options: @url_options, rule_set: rule_set)
+        end
+
         # ==> in input.rb from data_collector gem : #xml_typecast = true  # record 1657241 kan enkel worden verwerkt als xml_typecast == false
         # @url = "https://lirias2repo.kuleuven.be/elements-cache/rest/publications?affected-since=2023-01-05T04%3A30%3A22.360Z&after-id=1657152&per-page=10"
   
-        collect(url: @url, url_options: @url_options, rule_set: rule_set)
         
-        most_recent_parsed_record_date = output.data[:metadata][:affected_date].max.strftime("%Y-%m-%dT%H:%M:%S.%L%z")
-        return  @total_nr_parsed_records, most_recent_parsed_record_date
 
       rescue StandardError => e
         # @logger.error("#{ e.message  }")
         # @logger.error("#{ e.backtrace.inspect   }")
-        raise e
+        unless @list_of_ids.nil? 
+          @logger.error ("No Data  found for #{ id } ")
+          pp @list_of_ids
+          collect_records()
+        else
+          raise e
+        end
       end
     end
 
@@ -128,7 +142,7 @@ module Collector
     end
 
 
-    def collect( url: nil, url_options: nil, rule_set: nil )
+    def collect( url: nil, url_options: @url_options, rule_set: nil )
       begin
 
         DataCollector::Input.new( @logger )
@@ -147,6 +161,7 @@ module Collector
           output.clear
 
           data = input.from_uri(url, url_options)
+
           @logger.info("Data loaded in #{((Time.now - timing_start) * 1000).to_i} ms")
 
           if data.nil?
@@ -156,7 +171,6 @@ module Collector
             parse_data(data: data, rule_set: rule_set)
             @logger.info("Data parsed in #{((Time.now - timing_start) * 1000).to_i} ms")
           end
-
 
           if output.data[:metadata].nil? && ! output.data[:data].nil?
             raise "probably just 1 record parsed (url: #{url})"
@@ -341,6 +355,7 @@ module Collector
         end
 
 #        @logger.debug(" options #{ @options }")
+
         rules_ng.run( rule_set['rs_metadata'], data, output, @options)
         rules_ng.run( rule_set['rs_data'], data, output, @options)
         

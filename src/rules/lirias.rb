@@ -942,7 +942,11 @@ RULE_SET_v2_0 = {
     linktorsrc: { '@' => lambda { |d,o|
       linktorsrc = nil
       
+      # remove files from array with files.fileIntranet=false and files.filePublic=false
+      d[:files] = d[:files].select { |f| f["fileIntranet"] != "false" &&  f["filePublic"] != "false" }
+
       unless d[:files].nil?
+
         pp 'rs_linktorsrc_from_files' if DEBUG
 
         o[:number_files] = 1
@@ -1080,41 +1084,39 @@ RULE_SET_v2_0 = {
   'rs_open_access' => { 
     oa: { '@' => lambda { |d,o|
       open_access = nil    
-
-
-
 =begin
   # Wordt "open-access-status" enkele toegevoegd als is-open-access de waarde "true" bevat ?
-  #  => Antwoord wordt nog bekeken.      
+  # mogelijke waardes van open_access_status
+  # Gold OA => maybe free_for_read 
+  # Green OA => not free
+  # Bronze OA => not free
+  # Hybrid OA  => maybe free_for_read
+  # Closed Access => not free
+  # Open Access  => maybe free_for_read
+=end
       if d[:open_access_status].is_a?(Array)
-        if d[:open_access_status].any? {|ar| ["Open Access"].include?(ar) }
-          if d[:is_open_access].is_a?(Array)
-            unless d[:is_open_access].first
-              open_access = "free_for_read"
-            else
-              #pp "TEST TEST record #{d[:identifiers]} open_access_status : #{ d[:open_access_status]} && is_open_access: #{d[:is_open_access]}"
-            end
-          end
-        end
+        open_access_status = d[:open_access_status].select{|ar| ["Open Access","Gold OA","Hybrid OA"].include?(ar) }
       end
-=end      
+
       if d[:type] == "research_dataset" && !d[:accessright].nil? && !d[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
         open_access =  "free_for_read"
       end
       if  d[:type] != "research_dataset"
-        unless [d[:files]].flatten.compact.select { |file| file[:description]&.first != "Supporting information" && file["filePublic"]&.first == "true" }.blank?
+        unless [d[:files]].flatten.compact.select { |file| file[:description]&.first != "Supporting information" && file["filePublic"]&.first.to_s.downcase == "true" }.blank?
           open_access =  "free_for_read"
-        end
+        else
+
   # "Mag de open-access indicator van Limo op true worden gezet ongeacht de andere velden als is-open-access de waarde "true" bevat ?"
   # => nee want het kan zijn dat iemand dit heeft aangevinkt terwijl er nog niets is opgeladen / geen url ingegeven.
   #  Minstens moet er dus gecheckt worden op aanwezigheid van bestand (als het kan dan liefst ook of het public is als dat niet te omslachtig is) of url in metadata.      
-        if d[:is_open_access].is_a?(Array)
-          if d[:is_open_access].first == "true"
+          if (d[:is_open_access].is_a?(Array) && d[:is_open_access].first.to_s.downcase == "true" ) || ! open_access_status.blank?
             if d[:files].nil?
-              if !d[:publisher_url].nil?
+              unless d[:publisher_url].nil?
                 open_access =  "free_for_read"
               end
-
+              unless d[:doi].nil?
+                open_access =  "free_for_read"
+              end
               pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
               out = DataCollector::Output.new
               rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
@@ -1122,6 +1124,12 @@ RULE_SET_v2_0 = {
                 open_access =  "free_for_read"
               end
             end          
+          end
+
+          if d[:is_open_access].is_a?(Array)
+            if d[:is_open_access].first == "false"
+              open_access = nil
+            end
           end
         end
       end

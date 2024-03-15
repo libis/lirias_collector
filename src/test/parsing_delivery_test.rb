@@ -1,6 +1,6 @@
 require "test_helper"
 
-DEBUG_DEL_TEST=false
+DEBUG_DEL_TEST=true
 
 # files ??? 1087091
 # dio no files ??? 136525
@@ -49,7 +49,11 @@ class DataCollectorInputTest < Minitest::Test
 # 3655807 : 1 filePublic file supporting information, DOI en ISSN
 
 
-@@lirias_test_ids = [1087091, 136525, 1373285, 1769877, 893282, 4080935, 1815226, 977104, 2936906, 2858842, 791564, 2291528, 3684711, 3655807, 2842609 ]
+@@lirias_test_ids = [1087091, 136525, 1373285, 1769877, 893282, 4080935, 1815226, 977104, 2858842, 791564, 2291528, 3684711, 3655807, 2842609 ]
+
+@@lirias_test_ids = [1087091, 136525, 1373285, 1769877, 893282, 4080935, 1815226, 2858842, 791564, 2291528, 3684711, 3655807, 2842609 ]
+
+
 
 @@lirias_dataset_test_ids = [ 3684711, 3958772, 3119197, 3684711 ]
 

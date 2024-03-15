@@ -85,8 +85,10 @@ end
 def get_data(lirias_id)
     url_options = {user: config[:user], password: config[:password]}
     data = DataCollector::Input.new.from_uri("https://lirias2repo.kuleuven.be/elements-cache/rest/publications/#{lirias_id}",url_options)
+
     unless data.nil?
       options = {
+
         :lirias_type_2_limo_type => LIRIAS_TYPE_2_LIMO_TYPE,
         :lirias_language => LIRIAS_LANGUAGE,
         :lirias_format_mean => FORMAT_MEAN,
@@ -98,6 +100,8 @@ def get_data(lirias_id)
   
       data = s2s( output[:data] )
       
+      data = JSON.parse( data.to_json.gsub(/:true([,]?)/,':"true"\1').gsub(/:false([,]?)/,':"false"\1'), {:symbolize_names => true})
+     
       # data.slice(*FIELDS).compact.deep_sort!
 
       data = data.compact.deep_sort!
@@ -111,22 +115,22 @@ def get_esdata(lirias_id)
 
     fixtures_dir = FIXTURES_PATH
     file_name = File.join(fixtures_dir,"#{lirias_id}.json")
-
+   
     if  File.exist?(file_name) 
-        data = JSON.load(File.read(file_name))
+       data = JSON.load(File.read(file_name))
     else
-        pp "Download file from Elasticsearch"
-        data = DataCollector::Input.new.from_uri("http://host.docker.internal:9201/libis-q-lirias/_doc/#{lirias_id}",url_options)
+        pp "Download file from Elasticsearch (Staging)" 
+        data = DataCollector::Input.new.from_uri("http://host.docker.internal:9201/libis-s-lirias/_doc/#{lirias_id}",url_options)
         if data.nil?
             raise "====> Error loading Elasticseach records ( id:#{lirias_id} )"
             return nil
         end
     
         data = data["_source"] 
-
         parsed_data = get_data(lirias_id)
 
         # function werd verwijderd. enkel roles wordt gebruikt
+=begin        
         persons_field=["first_author","creator","author","contributor"]
         persons_field.each do |field|
           unless data[field].nil?
@@ -159,8 +163,10 @@ def get_esdata(lirias_id)
             end
           end
         end
+=end
 
         # personen bezitten nu altijd een name en pnx_display_name
+=begin        
         persons_field=["editor","supervisor","co_supervisor","translator"]
         persons_field.each do |field|
             unless data[field].nil?
@@ -174,16 +180,21 @@ def get_esdata(lirias_id)
                 end
             end
         end
+=end
 
         # embargo_release_date is no in format strftime("%Y-%m-%d")
+=begin        
         unless data["embargo_release_date"].nil?
             data["embargo_release_date"] = "#{data["embargo_release_date"][0]["year"]}-#{data["embargo_release_date"][0]["month"]}-#{data["embargo_release_date"][0]["day"]}"
         end
-
+=end
+    
         # Remove addlink links naar wieiswie en orcid (worden niet meer gebruikt)
+=begin        
         data.delete("addlink")
-
+=end
         # migration of link to resource with .pdf in $$D
+=begin        
         data["linktorsrc"]&.map! do |l|
           m = l.to_s.match( /(?<url>\$\$Uhttps:\/\/lirias.kuleuven.be\/retrieve.*\$\$D).*.pdf.*\$\$Hfree_for_read/)
           if m
@@ -195,13 +206,16 @@ def get_esdata(lirias_id)
           end
           l
         end
-        
-        data["name_of_conference"]&.map! do |c|
+=end       
+
+=begin
+        [data["name_of_conference"]]&.flatten.compact.map! do |c|
           c.sub!(/, Location.*/, '') 
           c.sub!(/, Date:.*/, '') 
           c
         end
-        
+=end
+
         # use of correction_to, correction_from, ... for creating relationships is deprecated 
         data.delete("correction_to")
         data.delete("correction_from")
@@ -217,7 +231,7 @@ def get_esdata(lirias_id)
         #pp " ==========>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<================================== "
         
         File.open(file_name, 'wb') do |f|
-            f.puts data.to_json
+          f.puts data.to_json
         end
     end
     
@@ -241,6 +255,7 @@ def get_esdata(lirias_id)
     #pp data["relationship"]
     #pp "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
     data =  s2s( data )
+    data = JSON.parse( data.to_json, {:symbolize_names => true})
     #data.slice(*FIELDS).compact.deep_sort!
     data.compact.deep_sort!
 end

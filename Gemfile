@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "data_collector"
+gem "data_collector", '0.45.0'
 gem "builder"
 gem "deepsort"
 gem "net-smtp"

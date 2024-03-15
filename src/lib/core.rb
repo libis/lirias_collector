@@ -69,6 +69,7 @@ module Collector
           @from_date =  CGI.escape(DateTime.parse( @config[:current_processing_updates] ).xmlschema)
         end
 
+        # TODO: check for regex affected-since=$ or affected-since=& and replace it with affected-since=#{ @from_date  }
         if @config[:base_url].end_with?("affected-since=")
           @url = "#{@config[:base_url]}#{ @from_date  }"
         else
@@ -88,8 +89,7 @@ module Collector
 
         # ==> in input.rb from data_collector gem : #xml_typecast = true  # record 1657241 kan enkel worden verwerkt als xml_typecast == false
         # @url = "https://lirias2repo.kuleuven.be/elements-cache/rest/publications?affected-since=2023-01-05T04%3A30%3A22.360Z&after-id=1657152&per-page=10"
-  
-        
+          
 
       rescue StandardError => e
         # @logger.error("#{ e.message  }")
@@ -249,28 +249,54 @@ module Collector
             # create XML record.
             # Used in ALMA Lirias Import Profile
             # only for records 
-            # - with publication_status must be "published", "published online" or "accepted"
-            # - with a linktorsrc              
+            # - with publication_status must be "published", "published online" or "accepted" is  data[:local_field_08]
+            # - with a linktorsrc (filter links with Supporting information)             
+            xml_added = false
             unless ( data[:linktorsrc].nil? || data[:linktorsrc].empty?)
+
+              pp data[:linktorsrc].class
+              pp "check for 'Supporting information'"
               unless data[:local_field_08].nil?
                 if [ "published", "published online", "accepted"].include?(data[:local_field_08].downcase)
-                #   pp "----------------------"
-                #   pp data[:linktorsrc]
-                #   pp data[:local_field_08]
-                
-                file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                
-                one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
-                
-                @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+                  file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                
+                  one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+                  
+                  @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+                  xml_added = true
                 end
               end
             end
 
+
             unless ( data[:deleted].nil? )
               file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
               one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
-
+              
               @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+              xml_added = true
+            end
+
+            unless xml_added
+              
+              one_record_output.clear
+              data = { 
+                :source                 => "lirias",
+                :sourceid               => "lirias",
+                :id                     => data[:id],
+                :sourcerecordid         => data[:id],
+                :deleted_when           => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
+                :deleted                => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
+                :title                  => data[:title]
+              }
+              one_record_output << data
+
+              tmp_output_dir = @options[:tmp_deleted_records_dir]
+
+              file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
+              one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+              
+              @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] }
+
             end
 
             one_record_output.clear

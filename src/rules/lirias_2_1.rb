@@ -7,19 +7,21 @@ include DataCollector::Core
 DEBUG=config[:debugging]
 LOG_LIRIAS_RECORDID=config[:log_recordids]
 
-RULE_SET_v2_0 = {
-  'version' => "2.0",
+PERFORMANCE_DEBUG=false
+
+RULE_SET_v2_1 = {
+  'version' => "2.1",
   'rs_metadata' => {
     'metadata' => { '@' => lambda { |d,o| 
       out = DataCollector::Output.new
       pp 'rs_this_url' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_this_url'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_this_url'], d, out, o)
       pp 'rs_next_url' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_next_url'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_next_url'], d, out, o)
       pp 'rs_affected_date' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_affected_date'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_affected_date'], d, out, o)
       pp 'rs_deleted_when' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_deleted_when'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_deleted_when'], d, out, o)
       out.data
     } }
   },
@@ -67,10 +69,9 @@ RULE_SET_v2_0 = {
           :deleted                => d['deleted_object']['_deleted_when'],
           :title                  => d['title']
         }.with_indifferent_access
+       
 
-        
-
-        rdata[:recordid] = rdata[:sourceid] + rdata[:id]
+        # rdata[:recordid] = rdata[:sourceid] + rdata[:id]
 
         return rdata
       end
@@ -107,7 +108,7 @@ RULE_SET_v2_0 = {
         rdata[:deleted] = d['object']['_last_affected_when']
         return rdata
       end
-            
+           
       #####   special/additional transformation  #######
       pp 'special/additional transformation parsing data' if DEBUG
       rdata[:type]    = o[:lirias_type_2_limo_type][ rdata[:lirias_type] ].nil? ? "other" : o[:lirias_type_2_limo_type][ rdata[:lirias_type] ][:limo]
@@ -116,25 +117,36 @@ RULE_SET_v2_0 = {
 
       o[:type]        = rdata[:type] 
 
-      out = DataCollector::Output.new
+
+      timing_start = Time.now 
+      merged_record = DataCollector::Output.new
+      pp ("Create DataCollector::Output.new #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
+
+      timing_start = Time.now
       pp 'rs_merged_record' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_merged_record'], d, out, o)
-      rdata.merge!(out.data[:record].to_h)
-      out.clear
+      rules_ng.run(RULE_SET_v2_1['rs_merged_record'], d, merged_record, o)
+      pp ("parsing rs_merged_record #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
- 
+      timing_start = Time.now
+      rdata.merge!(merged_record.data[:record].to_h)
+      pp ("parsing rdata.merge #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
+
+      out_1 = DataCollector::Output.new
       pp 'rs_keyword' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_keyword'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_keyword'], d, out_1, o)
+
       pp 'rs_ids' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_ids'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_ids'], d, out_1, o)
+
+      timing_start = Time.now 
       pp 'rs_relationships' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_relationships'], d, out, o)
-      rdata.merge!(out.data.to_h)
-      out.clear
+      rules_ng.run(RULE_SET_v2_1['rs_relationships'], d, out_1, o)
+      pp ("parsing rs_relationships #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
+      
+      rdata.merge!(out_1.data.to_h)
 
-      # performance debugging 
-      # pp ("parsing 1 #{((Time.now - timing_start) * 1000).to_i} ms")
-
+      out = DataCollector::Output.new
+      
       pp 'identifiers concat' if DEBUG
       rdata[:identifiers].concat( rdata[:pmid].map { |i| "$$CPMID:$$V" + i } ) if rdata[:pmid].is_a?(Array)
       rdata[:identifiers].concat( rdata[:scopusid].map { |i| "$$CSCOPUSID:$$V" + i } ) if rdata[:scopusid].is_a?(Array)
@@ -158,10 +170,12 @@ RULE_SET_v2_0 = {
           rdata[:contributor].sort_by! { |c| c[:roles]&.map{ |cr| contribuors_roles_sort_order.index( cr ) || Float::INFINITY }&.min() || Float::INFINITY }
         end
       end
+
       #if  rdata[:lirias_type] == "design"
       #  contribuors_roles_sort_order = ["Writer", "Editor", "Curator", "Tranlator","Architect"]
       #  rdata[:contributor].sort_by! { |c| c[:roles]&.map{ |cr| contribuors_roles_sort_order.index( cr) || Float::INFINITY }&.min() || Float::INFINITY }
       #end
+      
       pp 'special/additional medium' if DEBUG
 
       rdata[:medium]&.uniq!
@@ -174,9 +188,7 @@ RULE_SET_v2_0 = {
         end
       end
 
-      
       pp 'special/additional transformation facets_creator_contributor' if DEBUG
-
       rdata[:facets_creator_contributor] << rdata[:creator] unless rdata[:creator].nil?
       rdata[:facets_creator_contributor] << rdata[:contributor] unless rdata[:contributor].nil?
 
@@ -189,7 +201,7 @@ RULE_SET_v2_0 = {
       pp 'special/additional transformation facets_staffnr' if DEBUG
 
       rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).select{ |i| i[:staff_nbr] }.map!{ |p| "staffnr_#{p[:staff_nbr]}" }  }.flatten!&.compact!
-    
+
       rdata[:local_field_07] = rdata[:lirias_type]  
 
       rdata[:local_field_10] = []
@@ -212,7 +224,8 @@ RULE_SET_v2_0 = {
         rdata[:book_title].concat rdata[:parent_title] unless rdata[:parent_title].nil?
 
       end
-     
+      # performance debugging 
+
       pp 'parsing data DONE' if DEBUG
       rdata.compact!
 
@@ -222,12 +235,19 @@ RULE_SET_v2_0 = {
   },
   'rs_merged_record' => {
     'record' => {'$.object.records.record[?(@._source_name=="merged")].native' => lambda { |d,o|
+
+      total_time = Time.now
+
+
+      timing_start = Time.now
       out = DataCollector::Output.new
       pp 'rs_record' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_record'], d, out, o)
-      
+      rules_ng.run(RULE_SET_v2_1['rs_record'], d, out, o)
+      pp ("parsing rs_record #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
+
+      timing_start = Time.now
       pp 'rs_creator' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_creator'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_creator'], d, out, o)
       
       unless out.data[:author].nil?
         if out.data[:author].is_a?(Array)
@@ -285,7 +305,7 @@ RULE_SET_v2_0 = {
 
             person = DataCollector::Output.new
             pp 'rs_person_display_name' if DEBUG
-            rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], author_of_type, person, o)
+            rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], author_of_type, person, o)
             contributors[k][:pnx_display_name] = person.data[:pnx_display_name]
             contributors[k][:display_name] = person.data[:display_name]
 
@@ -314,24 +334,34 @@ RULE_SET_v2_0 = {
 #          out.data[:edition] = nil
 #        end
 #      end
+      pp ("parsing rs_creator #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
-
+      timing_start = Time.now
       pp 'rs_files' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_files'], d, out, o)
-      pp 'rs_identifiers' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_identifiers'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_files'], d, out, o)
+      pp ("parsing rs_files #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
+      timing_start = Time.now
+      pp 'rs_identifiers' if DEBUG
+      rules_ng.run(RULE_SET_v2_1['rs_identifiers'], out.data, out, o)
       unless out.data[:place_of_publication].nil?
         out.data[:publisher].map! { |p| p + "; " +  out.data[:place_of_publication].uniq.join(', ') } unless out.data[:publisher].nil?
       end
+      pp ("parsing rs_identifiers #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
       unless out.data[:format].nil? ||  out.data[:number_of_pages].nil?
         out.data[:format] = [out.data[:format]].flatten&.map { |m| m + " page(s): " + out.data[:number_of_pages].uniq.join(', ')  }
       end
+
+      timing_start = Time.now
       pp 'rs_search_creationdate' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_search_creationdate'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_search_creationdate'], out.data, out, o)
+      pp ("parsing rs_search_creationdate #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
+
+      timing_start = Time.now
       pp 'rs_creationdate' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_creationdate'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_creationdate'], out.data, out, o)
+      pp ("parsing rs_creationdate #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
       pp 'titles' if DEBUG
       out.data[:book_title] = out.data[:parent_title] 
@@ -372,8 +402,10 @@ RULE_SET_v2_0 = {
 
       out.data[:local_field_09] = out.data[:invitedby] 
 
+      timing_start = Time.now
       pp 'rs_ispartof' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_ispartof'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_ispartof'], out.data, out, o)
+      pp ("parsing rs_open_access #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
       pp 'backlink' if DEBUG
       out.data[:backlink] = out.data[:public_url].map { |u|
@@ -381,15 +413,24 @@ RULE_SET_v2_0 = {
           "$$U#{u}$$Ebacklink_lirias"
         end
       }
-      pp 'rs_open_access' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_open_access'], out.data, out, o)
 
+      timing_start = Time.now
+      pp 'rs_open_access' if DEBUG
+      rules_ng.run(RULE_SET_v2_1['rs_open_access'], out.data, out, o)
+      pp ("parsing rs_open_access #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
+
+      timing_start = Time.now
       pp 'rs_delivery' if DEBUG
       # no files, issn or isbn for research_dataset
-      rules_ng.run(RULE_SET_v2_0['rs_delivery'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_delivery'], out.data, out, o)
+      pp ("parsing rs_delivery #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
+      timing_start = Time.now
       pp 'rs_facets_toplevel' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_facets_toplevel'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_facets_toplevel'], out.data, out, o)
+      pp ("parsing rs_facets_toplevel #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
+
+      pp ("parsing total_time #{((Time.now - total_time) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
       out.data
     } }
@@ -525,53 +566,53 @@ RULE_SET_v2_0 = {
       pp 'rs_creator author' if DEBUG
       out = DataCollector::Output.new
       pp 'rs_creator author rs_person' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
       pp 'rs_creator author rs_person_display_name' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } },
     editor: {'$.field[?(@._name=="editors")][?(@._display_name=="Editors")].people.person' => lambda { |d,o|
       pp 'rs_creator editor' if DEBUG
       out = DataCollector::Output.new
-      rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-      rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } },
     translator: {'$.field[?(@._name=="c-translator")][?(@._display_name=="Translator")].people.person' => lambda { |d,o|
       pp 'rs_creator translator' if DEBUG
       out = DataCollector::Output.new
-      rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-      rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } },
     supervisor: {'$.field[?(@._name=="editors")][?(@._display_name=="Supervisor")].people.person' => lambda { |d,o|
       pp 'rs_creator supervisor' if DEBUG
       out = DataCollector::Output.new
-      rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-      rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } },
     co_supervisor: {'$.field[?(@._name=="c-cosupervisor")].people.person' => lambda { |d,o|
       pp 'rs_creator co_supervisor' if DEBUG
       out = DataCollector::Output.new
-      rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-      rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } },
     book_series_editor: {'$.field[?(@._name=="c-series-editor")].people.person' => lambda { |d,o|
       pp 'rs_creator book_series_editor' if DEBUG
       o['role'] = "Book series editor"
       out = DataCollector::Output.new
-      rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-      rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } },
 ## Na verwerking van contributers noodzakelijk om editors, translators, .... toe te voegen
     contributor: {'$.field[?(@._name=="c-contributor")].people.person' => lambda { |d,o|
       pp 'rs_creator contributor' if DEBUG
       out = DataCollector::Output.new
-      rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-      rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } }
 
@@ -582,24 +623,24 @@ RULE_SET_v2_0 = {
       {'$.field[?(@._name=="c-contributor")].people.person' => lambda { |d,o|
         pp 'rs_creator contributor' if DEBUG
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-        rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
         out.data
       } },
       {'$.field[?(@._name=="editors")][?(@._display_name=="Editors")].people.person' => lambda { |d,o|
         pp 'rs_creator contributor Editor' if DEBUG
         o['role'] = "Editor"
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-        rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
         out.data
       } },
       {'$.field[?(@._name=="c-translator")][?(@._display_name=="Translator")].people.person' => lambda { |d,o|
         pp 'rs_creator contributor Translator' if DEBUG
         o['role'] = "Translator"
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-        rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
         out.data
       } },
       {'$.field[?(@._name=="c-cosupervisor")].people.person' => lambda { |d,o|
@@ -607,8 +648,8 @@ RULE_SET_v2_0 = {
         o['role'] = "Co supervisor"
         pp d
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-        rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
         pp out.data
         out.data
       } },
@@ -616,8 +657,8 @@ RULE_SET_v2_0 = {
         pp 'rs_creator contributor Supervisor' if DEBUG
         o['role'] = "Supervisor"
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_person'], d, out, o)
-        rules_ng.run(RULE_SET_v2_0['rs_person_display_name'], out.data, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person'], d, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
         pp out.data
         out.data
       } }
@@ -636,7 +677,7 @@ RULE_SET_v2_0 = {
     identifiers: [
       { '$.identifiers' => lambda { |d,o|
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_person_identifiers'], d, out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person_identifiers'], d, out, o)
         out.data[:identifiers]
       } } ,
       { '$'  => lambda { |d,o|
@@ -696,7 +737,7 @@ RULE_SET_v2_0 = {
     identifiers: { '@' => lambda { |d,o|
       if d['identifier']
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_person_identifiers_identifer'], d['identifier'], out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_person_identifiers_identifer'], d['identifier'], out, o)
         r = out.data[:identifier]
       else
         r ={ 'staff_nbr'.to_sym => d }
@@ -731,28 +772,37 @@ RULE_SET_v2_0 = {
   },
   'rs_relationships' => {
     relationship: {'$.object.relationships' => lambda { |d,o|
-      rdata = {}.with_indifferent_access
-      out = DataCollector::Output.new
-      #rules_ng.run(RULE_SET_v2_0['rs_correction'], d, out, o)
-      #rules_ng.run(RULE_SET_v2_0['rs_derivative'], d, out, o)
-      #rules_ng.run(RULE_SET_v2_0['rs_supplement'], d, out, o)
-      #rules_ng.run(RULE_SET_v2_0['rs_supersedes'], d, out, o)
+      unless d.nil?
+        rdata = {
+          :correction => [],
+          :derivative => [],
+          :supplement => [],
+          :supersedes => []
 
-      rules_ng.run(RULE_SET_v2_0['rs_correction'], d, out, o)
-      rdata[:correction] = out.data
-      out.clear
-      rules_ng.run(RULE_SET_v2_0['rs_derivative'], d, out, o)
-      rdata[:derivative] = out.data
-      out.clear
-      rules_ng.run(RULE_SET_v2_0['rs_supplement'], d, out, o)
-      rdata[:supplement] = out.data
-      out.clear
-      rules_ng.run(RULE_SET_v2_0['rs_supersedes'], d, out, o)
-      rdata[:supersedes] = out.data
-      out.clear
-      
-      rdata.delete_if { |k, v| v.empty? }
-      rdata unless rdata.empty?
+        }
+        corrections = DataCollector::Output.new
+        rules_ng.run(RULE_SET_v2_1['rs_correction'], d, corrections, o)
+        rdata[:correction] = corrections.data
+        
+        derivatives = DataCollector::Output.new
+        rules_ng.run(RULE_SET_v2_1['rs_derivative'], d, derivatives, o)
+        rdata[:derivative] = derivatives.data
+   
+        supplements = DataCollector::Output.new
+        rules_ng.run(RULE_SET_v2_1['rs_supplement'], d, supplements, o)
+        rdata[:supplement] = supplements.data
+        
+        supersedes = DataCollector::Output.new
+        rules_ng.run(RULE_SET_v2_1['rs_supersedes'], d, supersedes, o)
+        rdata[:supersedes] = supersedes.data
+        
+        rdata.delete_if { |k, v| v.empty? }
+
+        if rdata.empty?
+          rdata = nil
+        end
+      end
+      rdata
 
     } }
   },
@@ -829,7 +879,7 @@ RULE_SET_v2_0 = {
   'rs_creationdate' => {
     risdate: { '@' => lambda { |d,o| d[:search_creationdate] }},
     creationdate: { '@' => lambda { |d,o|
-      # rules_ng.run(RULE_SET_v2_0['rs_creationdate'], out.data, out, o)
+      # rules_ng.run(RULE_SET_v2_1['rs_creationdate'], out.data, out, o)
       # PNX - creationdate, search_creationdate, search_startdate, search_enddate
       # For display the date format is yyyy-mm, exception dissertation:foramt is yyyy-mm-dd
       # Do not set a creation date if the field journal or parent_title exists in the record
@@ -852,7 +902,7 @@ RULE_SET_v2_0 = {
   'rs_files' =>  { 
     files: { '$.files.file' => lambda { |d,o|
       out = DataCollector::Output.new
-      rules_ng.run(RULE_SET_v2_0['rs_file'], d, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_file'], d, out, o)
       rdata = out.data
       # remove files from array with files.fileIntranet=false and files.filePublic=false
       if ( out.data["fileIntranet"].include?("false") &&  out.data["filePublic"].include?("false") )
@@ -953,7 +1003,7 @@ RULE_SET_v2_0 = {
         o[:number_files] =  d[:files].size if d[:files].is_a?(Array)
 
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_files'], d[:files], out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_files'], d[:files], out, o)
         linktorsrc = out.data[:linktorsrc_from_files]
 
         o[:number_files] = nil
@@ -968,19 +1018,19 @@ RULE_SET_v2_0 = {
       if linktorsrc.nil? && !d[:doi].nil?
         pp 'rs_linktorsrc_from_doi' if DEBUG
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_doi'], d[:doi], out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_doi'], d[:doi], out, o)
         linktorsrc = out.data[:linktorsrc_from_doi]
       end
       if linktorsrc.nil? && !d[:publisher_url].nil? && d[:type] != "research_dataset"
         pp 'rs_linktorsrc_from_publisher_url' if DEBUG
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_publisher_url'], d[:publisher_url], out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_publisher_url'], d[:publisher_url], out, o)
         linktorsrc = out.data[:linktorsrc_from_publisher_url]
       end
       if linktorsrc.nil? && !d[:additional_identifier].nil? && d[:type] != "research_dataset"
         pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
         out = DataCollector::Output.new
-        rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
+        rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
         linktorsrc = out.data[:linktorsrc_from_additional_identifier]
       end
 
@@ -1027,7 +1077,7 @@ RULE_SET_v2_0 = {
 
       out = DataCollector::Output.new
       pp 'rs_file_restriction_desc' if DEBUG
-      rules_ng.run(RULE_SET_v2_0['rs_file_restriction_desc'], file, out, o)
+      rules_ng.run(RULE_SET_v2_1['rs_file_restriction_desc'], file, out, o)
       restriction = out.data[:file_restriction_desc]&.first
 
       "$$U#{file[:file_url].first}$$D#{desc}#{restriction}$$Hfree_for_read"
@@ -1119,7 +1169,7 @@ RULE_SET_v2_0 = {
               end
               pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
               out = DataCollector::Output.new
-              rules_ng.run(RULE_SET_v2_0['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
+              rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
               unless  out.data[:linktorsrc_from_additional_identifier].nil?
                 open_access =  "free_for_read"
               end

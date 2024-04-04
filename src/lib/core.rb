@@ -125,13 +125,16 @@ module Collector
           @url_delete = @config[:base_delete_url]
         end
 
-
-
         # url = @config
 
         collect(url: @url_delete, url_options: @url_options, rule_set: rule_set)
-        
-        most_recent_parsed_record_date = output.data[:metadata][:deleted_when].max.strftime("%Y-%m-%dT%H:%M:%S.%L%z")
+
+        if output.data[:metadata][:deleted_when].max.nil?
+          most_recent_parsed_record_date = @from_date_deleted
+        else
+          most_recent_parsed_record_date = output.data[:metadata][:deleted_when].max.strftime("%Y-%m-%dT%H:%M:%S.%L%z")
+        end
+
         return  @total_nr_parsed_records, most_recent_parsed_record_date
 
       rescue StandardError => e
@@ -221,87 +224,93 @@ module Collector
 
           output.data[:data] = [output.data[:data]] unless output.data[:data].is_a?(Array)
 
-
           output.data[:data].each do | data |
+            unless data.nil?
 
-            data = data.with_indifferent_access
-            #one_record_output[:data] = data
-            one_record_output << data
-
-            filename = @record_filename_erb_template.result( binding ) 
-
-            if data[:deleted]
-              tmp_output_dir = @options[:tmp_deleted_records_dir]
-            else
-              tmp_output_dir = @options[:tmp_records_dir]
-            end
-
-            file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.json"
-            one_record_output.to_uri("file://#{ file }", {content_type: "application/json"})
-            #  file = output.to_jsonfile(data, filename, tmp_output_dir)
-
-            if data[:deleted]
-              @filename_list[:deleted][:json] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
-            else
-              @filename_list[:updated][:json] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
-            end
-
-            # create XML record.
-            # Used in ALMA Lirias Import Profile
-            # only for records 
-            # - with publication_status must be "published", "published online" or "accepted" is  data[:local_field_08]
-            # - with a linktorsrc (filter links with Supporting information)             
-            xml_added = false
-            unless ( data[:linktorsrc].nil? || data[:linktorsrc].empty?)
-
-              pp data[:linktorsrc].class
-              pp "check for 'Supporting information'"
-              unless data[:local_field_08].nil?
-                if [ "published", "published online", "accepted"].include?(data[:local_field_08].downcase)
-                  file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                
-                  one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
-                  
-                  @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
-                  xml_added = true
-                end
-              end
-            end
-
-
-            unless ( data[:deleted].nil? )
-              file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
-              one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
-              
-              @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
-              xml_added = true
-            end
-
-            unless xml_added
-              
-              one_record_output.clear
-              data = { 
-                :source                 => "lirias",
-                :sourceid               => "lirias",
-                :id                     => data[:id],
-                :sourcerecordid         => data[:id],
-                :deleted_when           => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
-                :deleted                => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
-                :title                  => data[:title]
-              }
+              data = data.with_indifferent_access
+              #one_record_output[:data] = data
               one_record_output << data
 
-              tmp_output_dir = @options[:tmp_deleted_records_dir]
+              filename = @record_filename_erb_template.result( binding ) 
 
-              file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
-              one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
-              
-              @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] }
+              if data[:deleted]
+                tmp_output_dir = @options[:tmp_deleted_records_dir]
+              else
+                tmp_output_dir = @options[:tmp_records_dir]
+              end
 
+              file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.json"
+              one_record_output.to_uri("file://#{ file }", {content_type: "application/json"})
+              #  file = output.to_jsonfile(data, filename, tmp_output_dir)
+
+              if data[:deleted]
+                @filename_list[:deleted][:json] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+              else
+                @filename_list[:updated][:json] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+              end
+
+              # create XML record.
+              # Used in ALMA Lirias Import Profile
+              # only for records 
+              # - with publication_status must be "published", "published online" or "accepted" is  data[:local_field_08]
+              # - with a linktorsrc (filter links with '$$DSupporting information')             
+              xml_added = false
+              unless ( data[:linktorsrc].nil? || data[:linktorsrc].empty?)
+
+                unless data[:local_field_08].nil?
+                  if [ "published", "published online", "accepted"].include?(data[:local_field_08].downcase)
+
+                    filtered_linktorsrc = data[:linktorsrc].is_a?(String) ? [ data[:linktorsrc] ] : data[:linktorsrc]
+
+                    filtered_linktorsrc.select!{ |l| ! /\$\$DSupporting information/.match(l) }
+
+                    unless filtered_linktorsrc.empty?
+                      file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                
+                      one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+                    
+                      @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+                      xml_added = true
+                    end
+                  end
+                end
+              end
+
+
+              unless ( data[:deleted].nil? )
+                file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
+                one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+                
+                @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+                xml_added = true
+              end
+
+              unless xml_added
+                
+                one_record_output.clear
+                data = { 
+                  :source                 => "lirias",
+                  :sourceid               => "lirias",
+                  :id                     => data[:id],
+                  :sourcerecordid         => data[:id],
+                  :deleted_when           => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
+                  :deleted                => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
+                  :title                  => data[:title]
+                }
+                one_record_output << data
+
+                tmp_output_dir = @options[:tmp_deleted_records_dir]
+
+                file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
+                one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+                
+                @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] }
+
+              end
+
+              one_record_output.clear
+              @total_nr_parsed_records += 1
+              nr_parsed_records += 1
             end
-
-            one_record_output.clear
-            @total_nr_parsed_records += 1
-            nr_parsed_records += 1
           end
         
           @logger.info("Data saved to disk #{((Time.now - timing_start) * 1000).to_i} ms")

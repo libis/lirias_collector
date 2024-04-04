@@ -30,7 +30,9 @@ fi
 function build {
    echo "Building $SERVICE"
    echo "docker build -f Dockerfile --tag $NAMESPACE/$SERVICE:$VERSION_TAG ."
+   docker build -f Dockerfile --tag $NAMESPACE/$SERVICE:$VERSION_TAG .
    echo docker tag $NAMESPACE/$SERVICE:$VERSION_TAG $REGISTRY/$NAMESPACE/$SERVICE:$VERSION_TAG
+   docker tag $NAMESPACE/$SERVICE:$VERSION_TAG $REGISTRY/$NAMESPACE/$SERVICE:$VERSION_TAG
 
    # docker build -f Dockerfile --tag $NAMESPACE/$SERVICE .
 }
@@ -39,11 +41,15 @@ function push {
    echo "Pushing $SERVICE"
    if [ -z $VERSION_TAG ]; then
      echo docker tag $NAMESPACE/$SERVICE $REGISTRY/$NAMESPACE/$SERVICE
+     docker tag $NAMESPACE/$SERVICE $REGISTRY/$NAMESPACE/$SERVICE
      echo docker push $REGISTRY/$NAMESPACE/$SERVICE
+     docker push $REGISTRY/$NAMESPACE/$SERVICE
    else
     echo "Pushing with version tag $VERSION_TAG"
     echo docker tag $NAMESPACE/$SERVICE $REGISTRY/$NAMESPACE/$SERVICE:$VERSION_TAG
+    docker tag $NAMESPACE/$SERVICE $REGISTRY/$NAMESPACE/$SERVICE:$VERSION_TAG
     echo docker push $REGISTRY/$NAMESPACE/$SERVICE:$VERSION_TAG
+    docker push $REGISTRY/$NAMESPACE/$SERVICE:$VERSION_TAG
    fi   
 }
 

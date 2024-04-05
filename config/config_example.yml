@@ -1,25 +1,27 @@
 ---
 :source_name: Lirias
-:base_url: https://lirias2repo.kuleuven.be/elements-cache/rest/publications?per-page=50&affected-since=
+:base_url: https://lirias2repo.kuleuven.be/elements-cache/rest/publications?per-page=5&affected-since=
 :base_delete_url: https://lirias2repo.example.be/elements-cache/rest/deleted/publications?per-page=50&deleted-since=
 :user: userid
 :password: passwd
-:last_run_updates: '2022-10-27T05:31:05.413+0200'
+:last_run_updates: '2000-10-27T05:31:05.413+0200'
 :last_run_deletes: '2023-05-25T09:37:57.180+0000'
 :records_dir: "/records/"
 :record_filename_erb_template: primoVE_<%= data[:id] %>
 :records_to_tar_pattern: primoVE_*
 :tar_filename_erb_template: <% if :form=="xml" %>ALMA_<% end %>lirias_<%= time %>_<%=
   rand(1000) %>.tar.gz
-:max_updated_records: 1000
+:max_updated_records: 10
 :max_deleted_records: 50000
 :max_records_in_tar: 1000
 :tar_records: true
 :debugging: false
 :log_recordids: true
-:admin_email_from: john.doe@example.be
-:rule_set: RULE_SET_v2_0
-:delete_rule_set: RULE_SET_v2_0
+:admin_email_to: john.doe@example.be
+:admin_email_from: colelctor@example.be
+:smtp_server: smtp.example.be
+:rule_set: RULE_SET_v2_1
+:delete_rule_set: RULE_SET_v2_1
 :rules_base: "/app/src/rules/"
 :current_processing_updates: 
 :current_processing_deletes: ''

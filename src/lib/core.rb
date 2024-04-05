@@ -318,7 +318,7 @@ module Collector
 
           if @tar_records
             @logger.debug("Deliver recods in tar")
-            @filename_list.each_key do | type |
+            @filename_list.each_key do | type | # type is deleted or updated
               @filename_list[type].each_key do | form|               
                 if @filename_list[type][form].size >= @max_records_in_tar
                   @logger.debug("@filename_list[type][form].size  :#{ @filename_list[type][form].size } ")

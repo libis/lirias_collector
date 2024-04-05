@@ -1,5 +1,7 @@
 /config/*
 !/config/config_example.yml
+/src/config/*
+!/src/config/config.yml
 /records
 /logs
 *.txt

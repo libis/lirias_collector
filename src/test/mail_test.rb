@@ -1,14 +1,13 @@
 # encoding: UTF-8
 require 'net/smtp'
 require 'date'
-require 'mail'
-
-$LOAD_PATH << "./lib" << "./"
+require 'time'
 
 to_address = "tom.vanmechelen@kuleuven.be"
-from_address = "test@libis.kuleuven.be"
+from_address = "lirias@libis.kuleuven.be"
+smtp_server = "smtp.kuleuven.be"
 now = DateTime.now
-subject = "TEST Lirias collector"
+subject = "TEST lirias collector"
 
 puts "We gaan proberen te versturen"
 
@@ -27,17 +26,6 @@ BLALALBALBLABLBLBL L LLBLBLBLABALBAL  blbBLALBALBALBABL
 
 END_OF_MESSAGE
 
-Mail.defaults do
-    delivery_method :smtp, address: "smtp.kuleuven.be", port: 25
+Net::SMTP.start(smtp_server, 25, tls_verify: false)  do |smtp|
+    smtp.send_message message, from_address , to_address
 end
-
-mail = Mail.new do
-    from    'tom.vanmechelen@kuleuven.be'
-    to      'tom.vanmechelen@kuleuven.be'
-    subject 'This is a test email'
-    body     'message'
-end
-
-mail.to_s
-
-pp "has been send"

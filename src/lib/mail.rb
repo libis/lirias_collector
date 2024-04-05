@@ -3,8 +3,9 @@ require 'net/smtp'
 module Collector
   class Utils
     def self.mailErrorReport(subject,  report , importance, config)
-        to_address = config[:admin_email_to]
+        to_address   = config[:admin_email_to]
         from_address = config[:admin_email_from]
+        smtp_server  = config[:smtp_server]
         now = DateTime.now
 
         message = <<END_OF_MESSAGE
@@ -23,11 +24,10 @@ module Collector
 END_OF_MESSAGE
 
     # puts "REMOVE THIS LINE BEFORE GOING TO PRODUCTION "
-    
-        Net::SMTP.start('smtp.kuleuven.be', 25) do |smtp|
+        Net::SMTP.start(smtp_server, 25, tls_verify: false)  do |smtp|
             smtp.send_message message,
             from_address, to_address
         end
-    end
+      end
   end
 end

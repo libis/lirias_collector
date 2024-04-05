@@ -100,7 +100,7 @@ ensure
   
     <h2>Parsing #{config[:source_name]} data</h2>
     Parsing using config: #{ config.path}/#{ config.file }
-    H3>#{$0} </h3>
+    <H3>#{$0} </h3>
 
     <hr>
   

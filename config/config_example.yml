@@ -18,7 +18,7 @@
 :debugging: false
 :log_recordids: true
 :admin_email_to: john.doe@example.be
-:admin_email_from: colelctor@example.be
+:admin_email_from: collector@example.be
 :smtp_server: smtp.example.be
 :rule_set: RULE_SET_v2_1
 :delete_rule_set: RULE_SET_v2_1

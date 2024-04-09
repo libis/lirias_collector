@@ -71,7 +71,7 @@ RULE_SET_v2_1 = {
         }.with_indifferent_access
        
 
-        # rdata[:recordid] = rdata[:sourceid] + rdata[:id]
+        rdata[:recordid] = rdata[:sourceid] + rdata[:id]
 
         return rdata
       end

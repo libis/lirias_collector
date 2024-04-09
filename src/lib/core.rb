@@ -276,13 +276,13 @@ module Collector
               end
 
 
-              unless ( data[:deleted].nil? )
-                file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
-                one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
-                
-                @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
-                xml_added = true
-              end
+              #unless ( data[:deleted].nil? )
+              #  file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"
+              #  one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+              #  
+              #  @filename_list[:deleted][:xml] << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+              #  xml_added = true
+              #end
 
               unless xml_added
                 
@@ -293,7 +293,7 @@ module Collector
                   :id                     => data[:id],
                   :sourcerecordid         => data[:id],
                   :deleted_when           => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
-                  :deleted                => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
+                  :deleted                => { :deleted => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z") },
                   :title                  => data[:title]
                 }
                 one_record_output << data

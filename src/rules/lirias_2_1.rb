@@ -196,11 +196,16 @@ RULE_SET_v2_1 = {
 
       rdata[:facets_staffnr] = rdata[:facets_creator_contributor].clone
       
-      rdata[:facets_creator_contributor].map!{ |p| [ p[:name], Array.wrap(p[:identifiers]).map{ |s| s[:staff_nbr]} ] }.flatten!&.compact!
+      rdata[:facets_creator_contributor].map!{ |p| [ p[:name], Array.wrap(p[:identifiers]).map{ |s| [s[:staff_nbr], s[:old_staff_nbr]] } ] }.flatten!&.compact!
+
+      # pp rdata[:facets_creator_contributor]
 
       pp 'special/additional transformation facets_staffnr' if DEBUG
 
-      rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).select{ |i| i[:staff_nbr] }.map!{ |p| "staffnr_#{p[:staff_nbr]}" }  }.flatten!&.compact!
+      #rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).select{ |i| i[:staff_nbr] }.map!{ |p| "staffnr_#{p[:staff_nbr]}" }  }.flatten!&.compact!
+      rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).map!{ |i| [ i[:staff_nbr], i[:old_staff_nbr] ] } }.flatten!&.compact!.map!{ |p| "staffnr_#{p}" } 
+
+      # pp rdata[:facets_staffnr]
 
       rdata[:local_field_07] = rdata[:lirias_type]  
 
@@ -681,8 +686,12 @@ RULE_SET_v2_1 = {
         out.data[:identifiers]
       } } ,
       { '$'  => lambda { |d,o|
-        if d['is_current_staff'] && ! d['username'].nil?
-          { 'staff_nbr'.to_sym => d['username'] }
+        if ! d['username'].nil?
+          if d['is_current_staff'].to_s == "true" 
+            { 'staff_nbr'.to_sym => d['username'] }
+          else
+            { 'old_staff_nbr'.to_sym => d['username'] }
+          end
         end
       } } 
     ],
@@ -740,6 +749,7 @@ RULE_SET_v2_1 = {
         rules_ng.run(RULE_SET_v2_1['rs_person_identifiers_identifer'], d['identifier'], out, o)
         r = out.data[:identifier]
       else
+        pp "====================>>>>>>>>>> rs_person_identifiers #{d} ?????"
         r ={ 'staff_nbr'.to_sym => d }
       end
       r

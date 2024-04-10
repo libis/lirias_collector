@@ -292,6 +292,7 @@ module Collector
                   :sourceid               => "lirias",
                   :id                     => data[:id],
                   :sourcerecordid         => data[:id],
+                  :recordid               => data[:recordid],
                   :deleted_when           => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z"),
                   :deleted                => { :deleted => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z") },
                   :title                  => data[:title]

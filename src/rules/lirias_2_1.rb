@@ -203,7 +203,8 @@ RULE_SET_v2_1 = {
       pp 'special/additional transformation facets_staffnr' if DEBUG
 
       #rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).select{ |i| i[:staff_nbr] }.map!{ |p| "staffnr_#{p[:staff_nbr]}" }  }.flatten!&.compact!
-      rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).map!{ |i| [ i[:staff_nbr], i[:old_staff_nbr] ] } }.flatten!&.compact!.map!{ |p| "staffnr_#{p}" } 
+      
+      rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).map!{ |i| [ i[:staff_nbr], i[:old_staff_nbr] ] } }.flatten!&.compact!&.map!{ |p| "staffnr_#{p}" } 
 
       # pp rdata[:facets_staffnr]
 
@@ -376,10 +377,13 @@ RULE_SET_v2_1 = {
     #  if out.data[:parent_title].nil? && out.data[:journal].nil?
     #    out.data[:edition] = nil
     #  end
-        
-
-      out.data[:description] = out.data[:abstract]
-
+      
+      unless out.data[:abstract].nil?
+        #  data = data.gsub /&lt;/, '&lt; /' => https://github.com/mehmetc/data_collector/ ?????
+        out.data[:description] = out.data[:abstract].map!{ |a| a.gsub /< \//, '<' }
+      end
+      
+      
       out.data[:notes]          = out.data[:funding_acknowledgements]
       out.data[:local_field_11] = out.data[:funding_acknowledgements]
 
@@ -982,9 +986,10 @@ RULE_SET_v2_1 = {
           p
         }
         pagination =  d[:pagination].map { |p|  p["pagination"] } .uniq.join(', ')
-        ispartof.map! { |p| p + "; pp. " + pagination }         
+        unless pagination.empty?
+          ispartof.map! { |p| p + "; pp. " + pagination }         
+        end
       end
-
       if d[:type] === 'chapter'
         chapter = d[:number].uniq.join(', ')
         ispartof.map! { |p| p + "; Chapter Nr. " + chapter }

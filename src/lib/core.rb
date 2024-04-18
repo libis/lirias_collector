@@ -398,7 +398,10 @@ module Collector
         output.crush
         output
       rescue StandardError => e
-        @logger.error("Error parsing file  #{file} ")  
+
+        @logger.error("Error parsing file ")  
+        @logger.error(" local_variables  #{local_variables} ")  
+        @logger.error(" instance_variables  #{instance_variables} ")  
         @logger.error("#{ e.message  }")
         @logger.error("#{ e.backtrace.inspect   }")
         @logger.error( "HELP, HELP !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

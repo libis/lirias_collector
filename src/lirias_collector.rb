@@ -104,8 +104,13 @@ ensure
 
     <hr>
   
+    @tar_filename_erb_template : #{@tar_filename_erb_template}
+    @options[:tmp_records_dir] : #{ options[:tmp_records_dir] }
+    @options[:tmp_deleted_records_dir]: #{ options[:tmp_deleted_records_dir] }
+
 END_OF_MESSAGE
   
+
     Collector::Utils.mailErrorReport(subject, message, importance, config) 
     @logger.info("#{config[:source_name]} Parsing is finished without errors")
    

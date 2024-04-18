@@ -19,7 +19,7 @@ begin
     
     config = Collector::ConfigFile
     config.path = init_config[:config_path]
-    config.file = init_config[:config_file]
+    config.name = init_config[:config_file]
     
     RULES_PATH = "#{File.absolute_path(config[:rules_base])}/*.rb"
     
@@ -99,7 +99,7 @@ ensure
     message = <<END_OF_MESSAGE
   
     <h2>Parsing #{config[:source_name]} data</h2>
-    Parsing using config: #{ config.path}/#{ config.file }
+    Parsing using config: #{ config.path}/#{ config.name }
     <H3>#{$0} </h3>
 
     <hr>

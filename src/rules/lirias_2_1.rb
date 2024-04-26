@@ -203,9 +203,9 @@ RULE_SET_v2_1 = {
       pp 'special/additional transformation facets_staffnr' if DEBUG
 
       #rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).select{ |i| i[:staff_nbr] }.map!{ |p| "staffnr_#{p[:staff_nbr]}" }  }.flatten!&.compact!
-      
-      rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).map!{ |i| [ i[:staff_nbr], i[:old_staff_nbr] ] } }.flatten!&.compact!&.map!{ |p| "staffnr_#{p}" } 
 
+      #rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).map!{ |i| [ i[:staff_nbr], i[:old_staff_nbr] ] } }.flatten!&.compact!&.map!{ |p| "staffnr_#{p}" } 
+      rdata[:facets_staffnr].map!{ |p| Array.wrap(p[:identifiers]).select{ |i| (i[:staff_nbr] || i[:old_staff_nbr] )}.map!{ |p| "staffnr_#{ p[:staff_nbr] || p[:old_staff_nbr] }" }  }.flatten!&.compact!
       # pp rdata[:facets_staffnr]
 
       rdata[:local_field_07] = rdata[:lirias_type]  

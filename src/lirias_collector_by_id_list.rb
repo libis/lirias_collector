@@ -9,40 +9,30 @@ ROOT_PATH = File.join( File.dirname(__FILE__), './')
 
 begin
 
+#
+# This script can be used to create lirias records for limo/lirias from elements cache
+#  
+
     @logger = Logger.new(STDOUT)
     @logger.level=Logger::DEBUG      
 
     init_config = {
       :config_path => File.join(ROOT_PATH, 'config'),
       :config_file => "config.yml",
-    }
-    ids = [
-3498907,
-3945589,
-3945680,
-3946572,
-3946575,
-3946648,
-3946758,
-3946912,
-3947091,
-3947113,
-3947121,
-3947122,
-3947123,
-3947128,
-3947208,
-3947217,
-3947249,
-3947270,
-3947277
-    ]
-
-    url = "https://lirias2repo.kuleuven.be/elements-cache/rest/publications"
-
+    } 
+   
     config = Collector::ConfigFile
     config.path = init_config[:config_path]
-    config.file = init_config[:config_file]
+    config.name = init_config[:config_file]
+
+    ids_file = File.read( File.join(ROOT_PATH, 'config','lirias_ids.json') )
+
+    pp ids_file
+    ids = JSON.parse(ids_file)
+    
+    pp ids
+
+    url = "https://lirias2repo.kuleuven.be/elements-cache/rest/publications"
     
     RULES_PATH = "#{File.absolute_path(config[:rules_base])}/*.rb"
     
@@ -70,7 +60,11 @@ begin
     collect.list_of_ids = ids
 
     total_nr_parsed_records, most_recent_parsed_record_date = collect.collect_records()
+#########################################################################################################    
     exit
+#########################################################################################################
+#########################################################################################################
+#########################################################################################################
 
     #pp "#{config[:source_name]} parsing [#{total_nr_parsed_records}]"
     #pp "#{config[:source_name]} most_recent_parsed_record_date [#{most_recent_parsed_record_date}]"
@@ -80,7 +74,6 @@ begin
     
     config[:last_run_updates] = most_recent_parsed_record_date
     config[:current_processing_updates] = ""
-
 
 
     total_nr_parsed_deleted_records, most_recent_parsed_deleted_record_date = collect.collect_deleted_records()
@@ -100,12 +93,14 @@ rescue StandardError => e
     @logger.error("#{ e.backtrace.inspect   }")
   
     importance = "High"
-    subject = "[ERROR] #{config[:source_name]} parsing"
+    subject = "[ERROR] #{config[:source_name]} parsing by ids"
     
     message = <<END_OF_MESSAGE
     
     <h2>Error while parsing #{config[:source_name]} data</h2>
-    Parsing using config: #{ config.path}/#{ config.file }
+    Parsing using config: #{ config.path}/#{ config.name }
+    ids : lirias_ids.json
+    #{ ids }
     <p>#{e.message}</p>
     <p>#{e.backtrace.inspect}</p>
     
@@ -119,11 +114,13 @@ END_OF_MESSAGE
 ensure
   
     importance = "Normal"
-    subject = "#{config[:source_name]} parsing [#{@total_nr_parsed_records}]"
+    subject = "#{config[:source_name]} parsing by ids [#{@total_nr_parsed_records}]"
     message = <<END_OF_MESSAGE
   
     <h2>Parsing #{config[:source_name]} data</h2>
-    Parsing using config: #{ config.path}/#{ config.file }
+    Parsing using config: #{ config.path}/#{ config.name }
+    ids : lirias_ids.json
+    #{ ids }
     H3>#{$0} </h3>
 
     <hr>
@@ -131,7 +128,7 @@ ensure
 END_OF_MESSAGE
   
     Collector::Utils.mailErrorReport(subject, message, importance, config) 
-    @logger.info("#{config[:source_name]} Parsing is finished without errors")
+    @logger.info("#{config[:source_name]} Parsing is finished")
    
 end
 

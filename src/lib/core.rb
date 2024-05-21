@@ -261,8 +261,7 @@ module Collector
                   if [ "published", "published online", "accepted"].include?(data[:local_field_08].downcase)
 
                     filtered_linktorsrc = data[:linktorsrc].is_a?(String) ? [ data[:linktorsrc] ] : data[:linktorsrc]
-
-                    filtered_linktorsrc.select!{ |l| ! /\$\$DSupporting information/.match(l) }
+                    filtered_linktorsrc.select!{ |l| ! /\$\$DSupporting information/i.match(l) }
 
                     unless filtered_linktorsrc.empty?
                       file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                

@@ -19,7 +19,7 @@ begin
     
     config = Collector::ConfigFile
     config.path = init_config[:config_path]
-    config.file = init_config[:config_file]
+    config.name = init_config[:config_file]    
 
     options = {}
     collect = Collector::CollectRecords.new(config, logger: @logger,  options: options)
@@ -70,7 +70,7 @@ rescue StandardError => e
     message = <<END_OF_MESSAGE
     
     <h2>Error while creating tar </h2>
-    Creating tar using config: #{ config.path}/#{ config.file }
+    Creating tar using config: #{ config.path}/#{ config.name }
     <p>#{e.message}</p>
     <p>#{e.backtrace.inspect}</p>
     
@@ -94,7 +94,7 @@ ensure
     message = <<END_OF_MESSAGE
   
     <h2> Creating tar</h2>
-    Creating tar using config: #{ config.path}/#{ config.file }
+    Creating tar using config: #{ config.path}/#{ config.name }
     <H3>#{$0} </h3>
 
     <hr>
@@ -103,10 +103,5 @@ END_OF_MESSAGE
   
     Collector::Utils.mailErrorReport(subject, message, importance, config) 
     @logger.info("#{config[:source_name]} Parsing is finished without errors")
-   
 
 end
-
-
-
-

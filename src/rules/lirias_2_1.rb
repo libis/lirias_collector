@@ -80,12 +80,12 @@ RULE_SET_v2_1 = {
 
       start_process  = Time.now.strftime("%Y-%m-%dT%H:%M:%S.%L%z") 
       pp "OBJECT ID [lirias_recordid]: #{d['object']['_id']}"  if LOG_LIRIAS_RECORDID 
-#      if ["712458","431535"].include?(d['object']['_id'])
-#        pp ":last_run_updates: '2023-01-12T18:03:57.6+01:00'"
-#        pp "=====================================================================================================>>>>>"
-#        pp "OBJECT ID [lirias_recordid]: #{d['object']['_id']}"
-#        pp "=====================================================================================================>>>>>"
-#      end
+      #      if ["712458","431535"].include?(d['object']['_id'])
+      #        pp ":last_run_updates: '2023-01-12T18:03:57.6+01:00'"
+      #        pp "=====================================================================================================>>>>>"
+      #        pp "OBJECT ID [lirias_recordid]: #{d['object']['_id']}"
+      #        pp "=====================================================================================================>>>>>"
+      #      end
 
       rdata = { 
         :source                 => "lirias",
@@ -319,27 +319,23 @@ RULE_SET_v2_1 = {
         end
         
       end
-
-
       
       pp 'author_type contributors.values:' if DEBUG 
-#      pp contributors.values.size
-#      pp contributors.values
 
       out.data[:contributor] = contributors.values
 
-# Nog geen out.data[:version] gevonden
-#      unless out.data[:edition].nil? && out.data[:version].nil?
-#        if out.data[:parent_title].nil? && out.data[:journal].nil?
-#          if out.data[:edition].nil?
-#            out.data[:edition] = out.data[:version]
-#          else
-#            out.data[:edition].push ( out.data[:version] ) unless out.data[:version].nil?
-#          end
-#        else
-#          out.data[:edition] = nil
-#        end
-#      end
+      # Nog geen out.data[:version] gevonden
+      #      unless out.data[:edition].nil? && out.data[:version].nil?
+      #        if out.data[:parent_title].nil? && out.data[:journal].nil?
+      #          if out.data[:edition].nil?
+      #            out.data[:edition] = out.data[:version]
+      #          else
+      #            out.data[:edition].push ( out.data[:version] ) unless out.data[:version].nil?
+      #          end
+      #        else
+      #          out.data[:edition] = nil
+      #        end
+      #      end
       pp ("parsing rs_creator #{((Time.now - timing_start) * 1000).to_i} ms") if PERFORMANCE_DEBUG
 
       timing_start = Time.now
@@ -525,6 +521,7 @@ RULE_SET_v2_1 = {
     accessright:  '$.field[?(@._name=="c-accessrights")].text',
     venue_designart:  '$.field[?(@._name=="c-venue-designart")].items.item',
     organizational_unit:  '$.field[?(@._name=="cache-user-ous")].items.item',
+    kuleuven_output:  '$.field[?(@._name=="c-affiliation")].boolean',
 
     publication_date: { '$.field[?(@._name=="publication-date")].date'  => lambda { |d,o|
       DateTime.parse("#{d['year']}-#{d['month'] || '1'}-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
@@ -548,27 +545,27 @@ RULE_SET_v2_1 = {
       DateTime.parse("#{d['year']}-#{d['month'] || '1' }-#{d['day'] || '1'}  ").strftime("%Y-%m-%d")
     } },
 
-##  ===> collections ??? availability ??? BOF ??? (lirias977104)
+    ##  ===> collections ??? availability ??? BOF ??? (lirias977104)
 
-    #'professional_oriented' => '$.field[?(@._name=="c-professional")].boolean').map(&:to_s)
-    #'confidential' => '$.field[?(@._name=="confidential")].boolean').map(&:to_s)
-    #'number_of_pieces' => '$.field[?(@._name=="number-of-pieces")].boolean').map(&:to_s)
-    #'version' => '$.field[?(@._name=="version")].boolean').map(&:to_s)
+        #'professional_oriented' => '$.field[?(@._name=="c-professional")].boolean').map(&:to_s)
+        #'confidential' => '$.field[?(@._name=="confidential")].boolean').map(&:to_s)
+        #'number_of_pieces' => '$.field[?(@._name=="number-of-pieces")].boolean').map(&:to_s)
+        #'version' => '$.field[?(@._name=="version")].boolean').map(&:to_s)
 
-##### => ALS ER MAAR 1 bestand is en dit heeft geen label dat zelf een label plaatsen "Link to resource of zoiets"
-#### en een file eerst open url via ISSN, of ISBN DOI
+    ##### => ALS ER MAAR 1 bestand is en dit heeft geen label dan zelf een label plaatsen "Link to resource of zoiets"
+    #### en een file eerst open url via ISSN, of ISBN DOI
 
   },
 
 
-# <api:field name="authors"         display-name="Authors" type="person-list">
-# <api:field name="c-contributor"   display-name="Contributors" type="person-list">
-# <api:field name="editors"         display-name="Supervisor" type="person-list"> (1822382)
-# <api:field name="editors"         display-name="Editors" type="person-list">  (1769877 or 1815226 => wordt NIET herhaald met roles in c-contributor)
-# <api:field name="c-editor"        display-name="Editor" type="person-list"> (1685129 => wordt herhaald met role Editor in c-contributor)
-# <api:field name="c-cosupervisor"  display-name="Co-Supervisor" type="person-list">
-# <api:field name="c-translator"    display-name="Translator" type="person-list"> (1815226)
-# <api:field name="c-series-editor" display-name="Book series editors" type="person-list"> (1815226)
+  # <api:field name="authors"         display-name="Authors" type="person-list">
+  # <api:field name="c-contributor"   display-name="Contributors" type="person-list">
+  # <api:field name="editors"         display-name="Supervisor" type="person-list"> (1822382)
+  # <api:field name="editors"         display-name="Editors" type="person-list">  (1769877 or 1815226 => wordt NIET herhaald met roles in c-contributor)
+  # <api:field name="c-editor"        display-name="Editor" type="person-list"> (1685129 => wordt herhaald met role Editor in c-contributor)
+  # <api:field name="c-cosupervisor"  display-name="Co-Supervisor" type="person-list">
+  # <api:field name="c-translator"    display-name="Translator" type="person-list"> (1815226)
+  # <api:field name="c-series-editor" display-name="Book series editors" type="person-list"> (1815226)
 
   'rs_creator' => {
     author: {'$.field[?(@._name=="authors")].people.person' => lambda { |d,o|
@@ -616,7 +613,7 @@ RULE_SET_v2_1 = {
       rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } },
-## Na verwerking van contributers noodzakelijk om editors, translators, .... toe te voegen
+    ## Na verwerking van contributers noodzakelijk om editors, translators, .... toe te voegen
     contributor: {'$.field[?(@._name=="c-contributor")].people.person' => lambda { |d,o|
       pp 'rs_creator contributor' if DEBUG
       out = DataCollector::Output.new
@@ -624,7 +621,7 @@ RULE_SET_v2_1 = {
       rules_ng.run(RULE_SET_v2_1['rs_person_display_name'], out.data, out, o)
       out.data
     } }
-
+  },
 
 =begin
 # werkt niet. enkele de laatste wordt opgenomen in de array
@@ -673,7 +670,7 @@ RULE_SET_v2_1 = {
       } }
     ]
 =end
-  },
+
 
   # ########################################################################################
   #
@@ -709,6 +706,13 @@ RULE_SET_v2_1 = {
       }},
       { '$.roles.role.$text' => lambda { |d,o| d }}
     ],
+
+    last_name:   '$.last_name',
+    first_names: '$.first_names',
+    initials:    '$.initials',
+    name:        { '@' => lambda { |d,o|  "#{d["last_name"]}, #{d["first_names"]}" } },
+  },
+
 =begin
 # funtion werd vervangen door roles
     'function' =>  [
@@ -723,11 +727,7 @@ RULE_SET_v2_1 = {
     ],
 =end
 #   username:    $.username',
-    last_name:   '$.last_name',
-    first_names: '$.first_names',
-    initials:    '$.initials',
-    name:        { '@' => lambda { |d,o|  "#{d["last_name"]}, #{d["first_names"]}" } },
-  },
+
   'rs_person_display_name' => {
     pnx_display_name: { '$'  => lambda { |d,o|
       roles = ""
@@ -769,7 +769,7 @@ RULE_SET_v2_1 = {
       if d.is_a?(Hash) && d["_scheme"] != "c-virtual-collection" 
         d['$text']
       end
-} },
+    } },
     virtual_collections: {'$.object.all_labels[?(@._type=="keyword-list")].keywords.keyword[?(@._scheme=="c-virtual-collection")]' => lambda { |d,o|
       d['$text']
     } },    
@@ -919,7 +919,9 @@ RULE_SET_v2_1 = {
       rules_ng.run(RULE_SET_v2_1['rs_file'], d, out, o)
       rdata = out.data
       # remove files from array with files.fileIntranet=false and files.filePublic=false
-      if ( out.data["fileIntranet"].include?("false") &&  out.data["filePublic"].include?("false") )
+      if (
+        ( out.data["fileIntranet"].include?("false") && out.data["filePublic"].include?("false") ) || ( out.data["fileIntranet"].include?(false) && out.data["filePublic"].include?(false) )
+      )
         rdata = nil
       end
       rdata           
@@ -938,6 +940,11 @@ RULE_SET_v2_1 = {
       end
     } },
     embargo_description: '$.embargo_description',
+    reuse_licence: { '$.reuse_licence' => lambda { |d,o|
+      if d =~ /^https:\/\/creativecommons.org\// 
+        "CC-#{ d.split('/').last(2).join('-').upcase() }"
+      end
+    } },
     is_open_access: '$.is_open_access',
     filePublic: '$.filePublic',
     fileIntranet: '$.fileIntranet',
@@ -1062,10 +1069,11 @@ RULE_SET_v2_1 = {
         end
       end
       if delivery_fulltext.nil? && !d[:doi].nil?
+
         delivery_fulltext = "fulltext_linktorsrc" 
       end
       if delivery_fulltext.nil? && !d[:publisher_url].nil? 
-        delivery_fulltext = "fulltext_linktorsrc" 
+        delivery_fulltext = "fulltext_linktorsrc"
       end
       if delivery_fulltext.nil? && !d[:additional_identifier].nil?
         delivery_fulltext = "fulltext_linktorsrc" 
@@ -1079,7 +1087,7 @@ RULE_SET_v2_1 = {
   'rs_linktorsrc_from_files'  =>{ 
     linktorsrc_from_files: { '@' => lambda { |file,o|
 
-      if file.has_key?(:description) && file[:description].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file[:description].first)
+      if file.has_key?(:description) && file[:description].present? && !['accepted version', 'published version', 'submitted version', 'supporting version'].include?(file[:description].first&.downcase)
         desc = file[:description].first
       else
         # if output.raw()[:files].size == 1 desc = "Link to resource"
@@ -1091,11 +1099,11 @@ RULE_SET_v2_1 = {
       end
 
       out = DataCollector::Output.new
-      pp 'rs_file_restriction_desc' if DEBUG
-      rules_ng.run(RULE_SET_v2_1['rs_file_restriction_desc'], file, out, o)
-      restriction = out.data[:file_restriction_desc]&.first
+      pp 'rs_file_desc' if DEBUG
+      rules_ng.run(RULE_SET_v2_1['rs_file_desc'], file, out, o)
+      file_desc = out.data[:file_desc]&.first
 
-      "$$U#{file[:file_url].first}$$D#{desc}#{restriction}$$Hfree_for_read"
+      "$$U#{file[:file_url].first}$$D#{desc}#{file_desc}$$Hfree_for_read"
     }}
   },
   'rs_linktorsrc_from_doi' => { 
@@ -1115,19 +1123,23 @@ RULE_SET_v2_1 = {
       end
     }}
   },
-  'rs_file_restriction_desc' => { 
-    file_restriction_desc: { '@' => lambda { |file,o|
+  'rs_file_desc' => { 
+    file_desc: { '@' => lambda { |file,o|
 
-      pp 'rs_file_restriction_desc description' if DEBUG
+      pp 'rs_file_desc description' if DEBUG
 
-      if file.has_key?(:description) && file[:description].present? && !['Accepted version', 'Published version', 'Submitted version', 'Supporting version'].include?(file[:description].first)
+      if file.has_key?(:description) && file[:description].present? && !['accepted version', 'published version', 'submitted version', 'supporting version'].include?(file[:description].first&.downcase)
         desc = file[:description]&.first
       else
         desc = file[:filename]&.first # if output.raw()[:files].size == 1 desc = "Link to resource"
       end
      
-      restriction = nil
-      unless desc == "Supporting information"
+      if file.has_key?(:description) && file[:description].present? && ['accepted version', 'published version', 'submitted version', 'supporting version'].include?(file[:description].first&.downcase)
+        version = file[:description]&.first
+      end
+
+      file_desc = []
+      unless desc&.downcase == "supporting information"
         if file[:filePublic]&.first.to_s.downcase == "true"
           restriction ="freely available"
         else
@@ -1140,15 +1152,23 @@ RULE_SET_v2_1 = {
             end
           end
         end
-        restriction = " [#{restriction}]" unless restriction == nil
+      end
+      
+      file_desc << restriction
+
+      unless version.nil?
+        file_desc << version
       end
 
-      restriction
+      unless file[:reuse_licence].nil?
+        file_desc << file[:reuse_licence]
+      end
+      
+      unless file_desc.empty?
+        " [#{ file_desc.flatten.join(', ') }]"
+      end
     }}
   },
-  'rs_open_access' => { 
-    oa: { '@' => lambda { |d,o|
-      open_access = nil    
 =begin
   # Wordt "open-access-status" enkele toegevoegd als is-open-access de waarde "true" bevat ?
   # mogelijke waardes van open_access_status
@@ -1158,23 +1178,29 @@ RULE_SET_v2_1 = {
   # Hybrid OA  => maybe free_for_read
   # Closed Access => not free
   # Open Access  => maybe free_for_read
-=end
+=end  
+  'rs_open_access' => { 
+    oa: { '@' => lambda { |d,o|
+      open_access = nil    
+
       if d[:open_access_status].is_a?(Array)
-        open_access_status = d[:open_access_status].select{|ar| ["Open Access","Gold OA","Hybrid OA"].include?(ar) }
+        open_access_status = d[:open_access_status].select{|ar| ["open access","gold oa","hybrid oa"].include?(ar.downcase) }
       end
 
-      if d[:type] == "research_dataset" && !d[:accessright].nil? && !d[:accessright].any? {|ar| ["Restricted","Embargoed","Closed"].include?(ar) }
+      if d[:type] == "research_dataset" && !d[:accessright].nil? && !d[:accessright].any? {|ar| ["restricted","embargoed","closed"].include?(ar.downcase) }
         open_access =  "free_for_read"
       end
       if  d[:type] != "research_dataset"
-        unless [d[:files]].flatten.compact.select { |file| file[:description]&.first != "Supporting information" && file["filePublic"]&.first.to_s.downcase == "true" }.blank?
+        unless [d[:files]].flatten.compact.select { |file| file[:description]&.first&.downcase != "supporting information" && file["filePublic"]&.first.to_s.downcase == "true" }.blank?
           open_access =  "free_for_read"
         else
 
-  # "Mag de open-access indicator van Limo op true worden gezet ongeacht de andere velden als is-open-access de waarde "true" bevat ?"
-  # => nee want het kan zijn dat iemand dit heeft aangevinkt terwijl er nog niets is opgeladen / geen url ingegeven.
-  #  Minstens moet er dus gecheckt worden op aanwezigheid van bestand (als het kan dan liefst ook of het public is als dat niet te omslachtig is) of url in metadata.      
-          if (d[:is_open_access].is_a?(Array) && d[:is_open_access].first.to_s.downcase == "true" ) || ! open_access_status.blank?
+          # "Mag de open-access indicator van Limo op true worden gezet ongeacht de andere velden als is-open-access de waarde "true" bevat ?"
+          # => nee want het kan zijn dat iemand dit heeft aangevinkt terwijl er nog niets is opgeladen / geen url ingegeven.
+          #  Minstens moet er dus gecheckt worden op aanwezigheid van bestand (als het kan dan liefst ook of het public is als dat niet te omslachtig is) of url in metadata.
+          
+          # if (d[:is_open_access].is_a?(Array) && d[:is_open_access].first.to_s.downcase == "true" ) || ! open_access_status.blank?
+          unless  [d[:is_open_access]].flatten.compact.select { |oa| oa.to_s.downcase == "true"  }.blank? && open_access_status.blank?
             if d[:files].nil?
               unless d[:publisher_url].nil?
                 open_access =  "free_for_read"
@@ -1183,6 +1209,7 @@ RULE_SET_v2_1 = {
                 open_access =  "free_for_read"
               end
               pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
+
               out = DataCollector::Output.new
               rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
               unless  out.data[:linktorsrc_from_additional_identifier].nil?
@@ -1208,10 +1235,9 @@ RULE_SET_v2_1 = {
       facets_toplevel << "open_access" unless d[:oa].nil? || d[:oa].empty?
       facets_toplevel << "online_resources" if d[:delivery_fulltext].include?("fulltext_linktorsrc")
       facets_toplevel << "peer_reviewed" if d[:peer_reviewed]&.any? { |s| s.match(/^Yes/i) }
+      facets_toplevel << "kuleuven_output" if d[:kuleuven_output].first&.to_s == "true"
       facets_toplevel
     }}
-  },
-
+  }
 
 }
-

@@ -418,6 +418,10 @@ RULE_SET_v2_1 = {
           "$$U#{u}$$Ebacklink_lirias"
         end
       }
+      
+      if out.data[:kuleuven_output].nil?
+        out.data[:kuleuven_output] = ["false"]
+      end
 
       timing_start = Time.now
       pp 'rs_open_access' if DEBUG

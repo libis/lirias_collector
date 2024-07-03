@@ -253,22 +253,26 @@ module Collector
               # Used in ALMA Lirias Import Profile
               # only for records 
               # - with publication_status must be "published", "published online" or "accepted" is  data[:local_field_08]
-              # - with a linktorsrc (filter links with '$$DSupporting information')             
+              # - with a linktorsrc (filter links with '$$DSupporting information')    
+              #  filter op delivery_fulltext moet gelijkt zijn aan "fulltext_linktorsrc"     
+              #  linktorsrc mag niet beginnen met $$Uhttp://doi.org/ tenzij het open acces is
               xml_added = false
               unless ( data[:linktorsrc].nil? || data[:linktorsrc].empty?)
+                if data[:delivery_fulltext] == "fulltext_linktorsrc" 
+                  unless data[:local_field_08].nil?
+                    if [ "published", "published online", "accepted"].include?(data[:local_field_08].downcase)
 
-                unless data[:local_field_08].nil?
-                  if [ "published", "published online", "accepted"].include?(data[:local_field_08].downcase)
+                      filtered_linktorsrc = data[:linktorsrc].is_a?(String) ? [ data[:linktorsrc] ] : data[:linktorsrc]
+                      filtered_linktorsrc.select!{ |l| ! /\$\$DSupporting information/i.match(l) }
+                      filtered_linktorsrc.select!{ |l| ! /\$\$Uhttp:\/\/doi.org\//i.match(l)  && ! ["open_access"].include?(data[:facets_toplevel]) }
 
-                    filtered_linktorsrc = data[:linktorsrc].is_a?(String) ? [ data[:linktorsrc] ] : data[:linktorsrc]
-                    filtered_linktorsrc.select!{ |l| ! /\$\$DSupporting information/i.match(l) }
-
-                    unless filtered_linktorsrc.empty?
-                      file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                
-                      one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
-                    
-                      @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
-                      xml_added = true
+                      unless filtered_linktorsrc.empty?
+                        file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                
+                        one_record_output.to_uri("file://#{ file }", {content_type: "application/xml", root: "record" })
+                      
+                        @filename_list[:updated][:xml]  << { :filename => file, :deleted => data[:deleted], :updated => data[:updated] } 
+                        xml_added = true
+                      end
                     end
                   end
                 end

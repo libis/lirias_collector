@@ -264,7 +264,7 @@ module Collector
 
                       filtered_linktorsrc = data[:linktorsrc].is_a?(String) ? [ data[:linktorsrc] ] : data[:linktorsrc]
                       filtered_linktorsrc.select!{ |l| ! /\$\$DSupporting information/i.match(l) }
-                      filtered_linktorsrc.select!{ |l| ! /\$\$Uhttp:\/\/doi.org\//i.match(l)  && ! ["open_access"].include?(data[:facets_toplevel]) }
+                      filtered_linktorsrc.select!{ |l| ! /\$\$Uhttp(s*):\/\/doi.org\//i.match(l) || data[:facets_toplevel].include?("open_access") }
 
                       unless filtered_linktorsrc.empty?
                         file = "#{ File.join( tmp_output_dir, "#{filename}_#{Time.now.to_i}_#{rand(1000)}" ) }.xml"                

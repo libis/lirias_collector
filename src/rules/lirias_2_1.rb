@@ -1168,7 +1168,7 @@ RULE_SET_v2_1 = {
         file_desc << file[:reuse_licence]
       end
       
-      unless file_desc.empty?
+      unless file_desc.compact.empty?
         " [#{ file_desc.flatten.join(', ') }]"
       end
     }}

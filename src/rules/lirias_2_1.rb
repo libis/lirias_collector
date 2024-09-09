@@ -466,7 +466,11 @@ RULE_SET_v2_1 = {
     doi: '$.field[?(@._name=="doi")].text',
     
     eissn: '$.field[?(@._name=="eissn")].text',
-    external_identifiers: { '$.field[?(@._name=="external-identifiers")].identifiers.identifier' => lambda { |d,o| d["$text"] } },
+    external_identifiers: { '$.field[?(@._name=="external-identifiers")].identifiers.identifier' => lambda { |d,o| 
+      unless ["pubmed","isidoc"].include?(d["_scheme"])
+        d["$text"] 
+      end
+    } },
 
     other_identifier: '$.field[?(@._name=="c-identifier-other"].text',
     other_identifier_type: '$.field[?(@._name=="c-identifierother-type")].text',

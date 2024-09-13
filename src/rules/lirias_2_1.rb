@@ -789,7 +789,8 @@ RULE_SET_v2_1 = {
   },
   'rs_ids' => {
     pmid:     {'$.object.records.record[?(@._source_name=="pubmed")]._id_at_source' => lambda { |d,o| d } },
-    wosid:    {'$.object.records.record[?(@._source_name=="wos")]._id_at_source' => lambda { |d,o| d } },
+# https://libis.teamwork.com/app/tasks/20947956    
+#    wosid:    {'$.object.records.record[?(@._source_name=="wos")]._id_at_source' => lambda { |d,o| d } },
     scopusid: {'$.object.records.record[?(@._source_name=="scopus")]._id_at_source'  => lambda { |d,o| d }}
   },
   'rs_relationships' => {

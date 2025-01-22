@@ -1,5 +1,5 @@
 #encoding: UTF-8
-$LOAD_PATH << '.' << '../lib' << "#{File.dirname(__FILE__)}" << "#{File.dirname(__FILE__)}/lib"
+$LOAD_PATH << '../' << '../lib' << "#{File.dirname(__FILE__)}" << "#{File.dirname(__FILE__)}/lib"
 require 'core'
 require "deepsort"
 
@@ -27,9 +27,9 @@ init_config = {
 
 config = Collector::ConfigFile
 config.path = init_config[:config_path]
-config.file = init_config[:config_file]
+config.name = init_config[:config_file]
 
-RULE_SET = RULE_SET_v2_0 
+RULE_SET = RULE_SET_v2_1
  
 def s2s(h) 
     if Array === h
@@ -53,29 +53,29 @@ end
 
 def migrate_function1( f, field, parsed_data )
 
-  # Overnemen van identifiers van de parser (Hier is te veel aan gesleuteld)
-  parsed_field = parsed_data[field.to_sym].is_a?(Array) ? parsed_data[field.to_sym] : [ parsed_data[field.to_sym] ]  
-  parsed_field = parsed_field.select { |pdf| pdf[:pnx_display_name] == f["pnx_display_name"]  }
+  # Overnemen van identifiers van de parser (Hier is te veel aan gesleuteld) (2024-01-01)
+  # parsed_field = parsed_data[field.to_sym].is_a?(Array) ? parsed_data[field.to_sym] : [ parsed_data[field.to_sym] ]  
+  # parsed_field = parsed_field.select { |pdf| pdf[:pnx_display_name] == f["pnx_display_name"]  }
   
   #pp "\n\n f[field] #{ field } :: f[pnx_display_name] #{f["pnx_display_name"] } "
   
-  if parsed_field.size == 1
-    # pp parsed_field[0][:identifiers]
-    f["identifiers"] = parsed_field[0][:identifiers] unless parsed_field[0][:identifiers].nil?
-  end
-  unless f["username"].nil?
-    if f["identifiers"].nil?
-      f["identifiers"] = [ { "staff_nbr" => f["username"] } ]
-    end
-    f.delete("username") 
-  end
-  f.delete("function") 
+  # if parsed_field.size == 1
+  #  f["identifiers"] = parsed_field[0][:identifiers] unless parsed_field[0][:identifiers].nil?
+  # end
+  # 
+  # unless f["username"].nil?
+  #   if f["identifiers"].nil?
+  #     f["identifiers"] = [ { "staff_nbr" => f["username"] } ]
+  #   end
+  #   f.delete("username") 
+  # end
+  # f.delete("function") 
   return f
 end
 
 def migrate_function2( f, field, parsed_data )
-  f["name"] = "#{f["last_name"]}, #{f["first_names"]}"
-  f["pnx_display_name"] = "#{f["name"]}$$Q#{f["name"]}"
+  #f["name"] = "#{f["last_name"]}, #{f["first_names"]}"
+  #f["pnx_display_name"] = "#{f["name"]}$$Q#{f["name"]}"
   #pp " f[field] #{ field } "
   #pp " f[pnx_display_name] #{f["pnx_display_name"] } "
 
@@ -88,7 +88,6 @@ def get_data(lirias_id)
 
     unless data.nil?
       options = {
-
         :lirias_type_2_limo_type => LIRIAS_TYPE_2_LIMO_TYPE,
         :lirias_language => LIRIAS_LANGUAGE,
         :lirias_format_mean => FORMAT_MEAN,
@@ -120,7 +119,7 @@ def get_esdata(lirias_id)
        data = JSON.load(File.read(file_name))
     else
         pp "Download file from Elasticsearch (Staging)" 
-        data = DataCollector::Input.new.from_uri("http://host.docker.internal:9201/libis-s-lirias/_doc/#{lirias_id}",url_options)
+        data = DataCollector::Input.new.from_uri("http://host.docker.internal:9201/libis-q-lirias/_doc/#{lirias_id}",url_options)
         if data.nil?
             raise "====> Error loading Elasticseach records ( id:#{lirias_id} )"
             return nil
@@ -289,8 +288,15 @@ def process_field(data)
         return data.delete(' ')
     end
     if data.is_a?(Array)
-      return  data.sort.uniq.map { |str| process_field(str) }.join('')
+      if data.empty?
+        return ""
+      end
+      return data.sort.uniq.map { |str| process_field(str) }.join('')
     end
+    if data.is_a?(Hash)
+      return data.map { |k, v| [k,  process_field(v)  ] }.to_h
+    end
+
     data
 end
 

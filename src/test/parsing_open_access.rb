@@ -86,7 +86,26 @@ class DataCollectorInputTest < Minitest::Test
 # muts be free to read
 @@lirias_test_ids = [ 1573899, 1573924, 1573951, 2374346, 2808948, 2808948, 3043544, 1647743, 1424000, ]
 
-@@lirias_test_ids = [ 1573899]
+@@lirias_test_ids = [ 3164312 ]
+
+def test_supporting_info
+  lirias_ids = @@lirias_test_ids
+  field = :linktorsrc
+
+  lirias_ids.each do |lirias_id|
+    pp "---- Test #{lirias_id} / #{field}"
+    data = get_data(lirias_id)
+    es_data = get_esdata(lirias_id)
+    show_for_debug(data,es_data,field) if DEBUG_DEL_TEST
+    unless es_data[field].nil? && data[field].nil?
+      assert_equal("free_for_read", data[field])
+    #  assert_equal(es_data[field], data[field])
+    end
+  end
+end  
+
+
+
 
     def test_open_access
       lirias_ids = @@lirias_test_ids

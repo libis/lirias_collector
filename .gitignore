@@ -1,6 +1,12 @@
 /config/*
 !/config/config_example.yml
+/src/config/*
+!/src/config/config.yml
 /records
 /logs
 *.txt
+/test
+/src/test/fixtures/*
+/src/test/in/*
+/src/test/out/*
 README.md

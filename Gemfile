@@ -1,11 +1,6 @@
 source "https://rubygems.org"
 
-gem 'http'
-gem 'mime-types'
-gem 'nokogiri'
-gem 'nori'
-gem 'json'
-gem 'jsonpath'
-gem 'activesupport'
-gem 'builder'
-gem 'minitar'
+gem "data_collector", '0.51.0'
+gem "builder"
+gem "deepsort"
+gem "net-smtp"

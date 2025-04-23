@@ -27,7 +27,7 @@ pp lirias_ids.sort.uniq
 # Software:	lirias2934008
 # Internet publication:	lirias3382196
 # Translation:	lirias3448948
-# Edited book:	lirias1658685
+# Edited book:	
 # Invited lecture:	lirias1711997
 # Preprint:	lirias3759221
 # Book review:	lirias2759464
@@ -115,7 +115,8 @@ pp lirias_ids.sort.uniq
   :wosid
 =end
 
-@@excludefields = [ :es_created, :es_updated, :updated, :claimed, :oa, :delivery_fulltext, :facets_toplevel ]
+# @@excludefields = [ :es_created, :es_updated, :updated, :claimed, :oa, :delivery_fulltext, :facets_toplevel ]
+@@excludefields = [ :es_created, :es_updated, :updated, :claimed ]
 
 @@lirias_test_ids = [71653,
   133926,
@@ -169,7 +170,6 @@ pp lirias_ids.sort.uniq
   2934008,
   3382196,
   3448948,
-  1658685,
   1711997,
   3759221,
   2759464,
@@ -178,7 +178,6 @@ pp lirias_ids.sort.uniq
   1128655, 1822382, 1685129, 1685400, 1928278, 1403090, 71653, 1694043, 2788749, 1815226, 1815248, 3791606, 1815226,
   1769877, 1739312, 1769877, 1534644, 1536823, 1536891, 1739270, 1739270, 1573268, 1575512, 1567197, 1570828, 1564795, 3418094, 2946871, 1691558, 1795898,
   662170, 1639312, 1664993, 3655807, 2291528, 1769877,
-  1595878, 
   3476821,  
   1739270, 
   3684711, 
@@ -241,13 +240,16 @@ pp lirias_ids.sort.uniq
   3791606,
   3958772,1769877,893282,4080935,3958772,3119197
 ]
+
     
+
+
     def test_all
       lirias_ids = @@lirias_test_ids
       exclude_fields = @@excludefields 
       lirias_ids = lirias_ids.sort.uniq
 
-      #lirias_ids = [1902419]
+      # lirias_ids = [1595878]
       pp lirias_ids
 
       pp "CHECK migration scripts in test helper !!! "
@@ -259,6 +261,24 @@ pp lirias_ids.sort.uniq
         pp "---- Test #{lirias_id} "
         data = get_data(lirias_id)
         es_data = get_esdata(lirias_id)
+
+=begin        
+        pp "d[:oa]d[:oa]d[:oa]d[:oa]d[:oa]"
+        pp data[:oa] 
+        pp es_data[:oa] 
+        pp "d[:oa]d[:oa]d[:oa]d[:oa]d[:oa]"
+
+        pp "d[:is_open_access]d[:is_open_access]d[:oa]d[:oa]d[:oa]"
+        pp data[:is_open_access] 
+        pp es_data[:is_open_access] 
+        pp "d[:is_open_access]d[:is_open_access]d[:oa]d[:oa]d[:oa]"        
+        
+
+        pp "d[:open_access_status]d[:open_access_status]d[:oa]d[:oa]d[:oa]"
+        pp data[:open_access_status] 
+        pp es_data[:open_access_status] 
+        pp "d[:open_access_status]d[:open_access_status]d[:oa]d[:oa]d[:oa]"        
+=end
 
         unless es_data.nil? || data.nil?
           es_data_keys = es_data.keys.sort

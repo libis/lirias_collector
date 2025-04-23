@@ -81,7 +81,7 @@ rescue StandardError => e
     message = <<END_OF_MESSAGE
     
     <h2>Error while parsing #{config[:source_name]} data</h2>
-    Parsing using config: #{ config.path}/#{ config.file }
+    Parsing using config: #{ config.path}/#{ config.name }
     <p>#{e.message}</p>
     <p>#{e.backtrace.inspect}</p>
     

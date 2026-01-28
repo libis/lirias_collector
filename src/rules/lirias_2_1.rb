@@ -9,6 +9,11 @@ LOG_LIRIAS_RECORDID=config[:log_recordids]
 
 PERFORMANCE_DEBUG=false
 
+OPEN_ACCESS = "free_for_read".freeze
+OPEN_STATUSES      = ["open access","gold oa","hybrid oa"].freeze
+CLOSED_STATUSES    = ["restricted","embargoed","closed"].freeze
+SUPPORTING_INFO    = "supporting information".freeze
+
 RULE_SET_v2_1 = {
   'version' => "2.1",
   'rs_metadata' => {
@@ -459,6 +464,7 @@ RULE_SET_v2_1 = {
    
     publisher: '$.field[?(@._name=="publisher")].text',
     publisher_url: '$.field[?(@._name=="publisher-url")].text',
+    author_url: '$.field[?(@._name=="author-url")].text',
     place_of_publication: '$.field[?(@._name=="place-of-publication")].text',
    
     isbn_10: '$.field[?(@._name=="isbn-10")].text',
@@ -1058,6 +1064,13 @@ RULE_SET_v2_1 = {
         rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_publisher_url'], d[:publisher_url], out, o)
         linktorsrc = out.data[:linktorsrc_from_publisher_url]
       end
+      if linktorsrc.nil? && !d[:author_url].nil? && d[:type] != "research_dataset"
+        pp 'rs_linktorsrc_from_author_url' if DEBUG
+        out = DataCollector::Output.new
+        rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_author_url'], d[:author_url], out, o)
+        linktorsrc = out.data[:linktorsrc_from_author_url]
+      end
+
       if linktorsrc.nil? && !d[:additional_identifier].nil? && d[:type] != "research_dataset"
         pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
         out = DataCollector::Output.new
@@ -1082,6 +1095,9 @@ RULE_SET_v2_1 = {
         delivery_fulltext = "fulltext_linktorsrc" 
       end
       if delivery_fulltext.nil? && !d[:publisher_url].nil? 
+        delivery_fulltext = "fulltext_linktorsrc"
+      end
+      if delivery_fulltext.nil? && !d[:author_url].nil? 
         delivery_fulltext = "fulltext_linktorsrc"
       end
       if delivery_fulltext.nil? && !d[:additional_identifier].nil?
@@ -1122,6 +1138,11 @@ RULE_SET_v2_1 = {
   },
   'rs_linktorsrc_from_publisher_url' => { 
     linktorsrc_from_publisher_url: { '@' => lambda { |d,o|
+      "$$U#{d}$$Hfree_for_read" 
+    }}
+  },
+  'rs_linktorsrc_from_author_url' => { 
+    linktorsrc_from_author_url: { '@' => lambda { |d,o|
       "$$U#{d}$$Hfree_for_read" 
     }}
   },
@@ -1190,6 +1211,65 @@ RULE_SET_v2_1 = {
 =end  
   'rs_open_access' => { 
     oa: { '@' => lambda { |d,o|
+
+
+
+      # Normalize inputs
+      files            = [d[:files]].flatten.compact
+      files            = files.map do |file| 
+        file.transform_values do |v|
+          v.is_a?(Array) && v.size == 1 ? v.first.to_s.downcase : v.to_s.downcase
+        end
+      end
+
+      accessright      = Array(d[:accessright]).compact
+      open_access_stat = Array(d[:open_access_status]).map { |s| s.to_s.downcase }
+      is_open_access   = Array(d[:is_open_access])
+
+      oa_status_open   = open_access_stat.any? { |s| OPEN_STATUSES.include?(s) }
+      oa_flag_true     = is_open_access.any? { |oa| oa.to_s.casecmp?("true") }
+      oa_flag_false    = is_open_access.first.to_s.casecmp?("false")
+    
+      # --- research_dataset branch ---
+      if d[:type] == "research_dataset"
+        if !accessright.empty? && accessright.none? { |ar| CLOSED_STATUSES.include?(ar.to_s.downcase) }
+          return OPEN_ACCESS
+        else
+          return nil
+        end
+      end
+
+      # Public files (excluding "supporting information") short-circuit to open.
+      public_files = files.any? do |file|
+        desc   = file["description"]
+        public = file["filePublic"] == "true"
+        desc != SUPPORTING_INFO && public
+      end
+      return OPEN_ACCESS if public_files
+
+      # If we have an OA hint (flag true OR status indicates open) and there are no files,
+      # try URLs or rule-based linking to source.
+      if (oa_flag_true || oa_status_open) && d[:files].nil?
+        if [d[:publisher_url], d[:author_url], d[:doi]].compact.any?
+          open_access = OPEN_ACCESS
+        else
+          pp 'rs_linktorsrc_from_additional_identifier' if debug
+          out = DataCollector::Output.new
+          rules_ng.run(
+            RULE_SET_v2_1['rs_linktorsrc_from_additional_identifier'],
+            d[:additional_identifier],
+            out,
+            o
+          )
+          open_access = OPEN_ACCESS if out.data[:linktorsrc_from_additional_identifier]
+        end
+      end
+
+      # Explicit "false" overrides anything computed in the else-branch.
+      open_access = nil if oa_flag_false
+
+      open_access
+=begin
       open_access = nil    
 
       if d[:open_access_status].is_a?(Array)
@@ -1211,18 +1291,16 @@ RULE_SET_v2_1 = {
           # if (d[:is_open_access].is_a?(Array) && d[:is_open_access].first.to_s.downcase == "true" ) || ! open_access_status.blank?
           unless  [d[:is_open_access]].flatten.compact.select { |oa| oa.to_s.downcase == "true"  }.blank? && open_access_status.blank?
             if d[:files].nil?
-              unless d[:publisher_url].nil?
-                open_access =  "free_for_read"
-              end
-              unless d[:doi].nil?
-                open_access =  "free_for_read"
-              end
-              pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
+              if [d[:publisher_url], d[:author_url], d[:doi]].any?
+                open_access = "free_for_read"
+              else
+                pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
 
-              out = DataCollector::Output.new
-              rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
-              unless  out.data[:linktorsrc_from_additional_identifier].nil?
-                open_access =  "free_for_read"
+                out = DataCollector::Output.new
+                rules_ng.run(RULE_SET_v2_1['rs_linktorsrc_from_additional_identifier'], d[:additional_identifier], out, o)
+                unless  out.data[:linktorsrc_from_additional_identifier].nil?
+                  open_access =  "free_for_read"
+                end
               end
             end          
           end
@@ -1236,6 +1314,8 @@ RULE_SET_v2_1 = {
       end
 
       open_access
+=end
+
     }}
   },
   'rs_facets_toplevel' => { 

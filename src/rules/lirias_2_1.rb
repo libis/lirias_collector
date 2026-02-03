@@ -464,7 +464,6 @@ RULE_SET_v2_1 = {
    
     publisher: '$.field[?(@._name=="publisher")].text',
     publisher_url: '$.field[?(@._name=="publisher-url")].text',
-    author_url: '$.field[?(@._name=="author-url")].text',
     place_of_publication: '$.field[?(@._name=="place-of-publication")].text',
    
     isbn_10: '$.field[?(@._name=="isbn-10")].text',
@@ -1253,7 +1252,7 @@ RULE_SET_v2_1 = {
         if [d[:publisher_url], d[:author_url], d[:doi]].compact.any?
           open_access = OPEN_ACCESS
         else
-          pp 'rs_linktorsrc_from_additional_identifier' if debug
+          pp 'rs_linktorsrc_from_additional_identifier' if DEBUG
           out = DataCollector::Output.new
           rules_ng.run(
             RULE_SET_v2_1['rs_linktorsrc_from_additional_identifier'],

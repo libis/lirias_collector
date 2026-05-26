@@ -1071,7 +1071,8 @@ class DataCollectorInputTest < Minitest::Test
 
 
     def test_public_url
-      lirias_ids = [1769877,893282,4080935]
+      #lirias_ids = [1769877,893282,4080935,1947606]
+      lirias_ids = [1947606]
       field = :public_url
 
       lirias_ids.each do |lirias_id|
@@ -1086,7 +1087,23 @@ class DataCollectorInputTest < Minitest::Test
       end
     end         
 
+    def test_linktorsrc
+      #lirias_ids = [1769877,893282,4080935,1947606]
+      lirias_ids = [1947606]
+      field = :linktorsrc
 
+      lirias_ids.each do |lirias_id|
+        pp "---- Test #{lirias_id} "
+        data = get_data(lirias_id)
+        es_data = get_esdata(lirias_id)
+
+        pp data[:linktorsrc]
+        data_field = process_field( data[field] )
+        es_data_field = process_field( es_data[field] )
+        show_for_debug(data,es_data,field) if DEBUG_TEST
+        assert_equal(es_data_field, data_field)
+      end
+    end    
     
     def test_all
       lirias_ids = [71653,
@@ -1118,7 +1135,7 @@ class DataCollectorInputTest < Minitest::Test
         3152415,
         3727576,
         3791606,
-        3958772,1769877,893282,4080935,3958772,3119197]
+        3958772,1769877,893282,4080935,3958772,3119197,1947606]
 
       lirias_ids = lirias_ids.sort.uniq
 

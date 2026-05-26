@@ -119,7 +119,7 @@ def get_esdata(lirias_id)
        data = JSON.load(File.read(file_name))
     else
         pp "Download file from Elasticsearch (Staging)" 
-        data = DataCollector::Input.new.from_uri("http://host.docker.internal:9201/libis-q-lirias/_doc/#{lirias_id}",url_options)
+        data = DataCollector::Input.new.from_uri("http://host.docker.internal:9208/libis-q-lirias/_doc/#{lirias_id}",url_options)
         if data.nil?
             raise "====> Error loading Elasticseach records ( id:#{lirias_id} )"
             return nil

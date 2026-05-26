@@ -85,6 +85,7 @@ pp lirias_ids.sort.uniq
   :publication_status,
   :publisher,
   :publisher_url,
+  :author_url,
   :recordid,
   :relation,
   :relationship,
@@ -238,7 +239,7 @@ pp lirias_ids.sort.uniq
   3152415,
   3727576,
   3791606,
-  3958772,1769877,893282,4080935,3958772,3119197
+  3958772,1769877,893282,4080935,3958772,3119197,1947606
 ]
 
     

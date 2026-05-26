@@ -1,4 +1,4 @@
-FROM ruby:3.1.4
+FROM ruby:3.4.1
 # RUN addgroup -S dockergroup -g 503 && adduser -S dockeruser -u 504 -G dockergroup && apk --no-cache add g++ make bash
 
 RUN cp /usr/share/zoneinfo/CET /etc/localtime 

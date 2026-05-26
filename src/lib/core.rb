@@ -15,7 +15,6 @@ module Collector
 
       @config  = config
       @options = options
-      @retries = 0
       @total_nr_parsed_records = 0
       @list_of_ids = nil
 
@@ -145,9 +144,10 @@ module Collector
     end
 
 
-    def collect( url: nil, url_options: @url_options, rule_set: nil )
+    def collect( url: nil, url_options: @url_options, rule_set: nil, retries: 3)
+      try = 0
+      
       begin
-
         DataCollector::Input.new( @logger )
         one_record_output = DataCollector::Output.new
 
@@ -163,16 +163,28 @@ module Collector
 
           output.clear
 
-          data = input.from_uri(url, url_options)
+          begin 
+            data = input.from_uri(url, url_options)
 
-          @logger.info("Data loaded in #{((Time.now - timing_start) * 1000).to_i} ms")
+            @logger.info("Data loaded in #{((Time.now - timing_start) * 1000).to_i} ms")
+            if data.nil?
+              raise "No data avalaible from #{url}"
+            else
+              timing_start = Time.now
+              parse_data(data: data, rule_set: rule_set)
+              @logger.info("Data parsed in #{((Time.now - timing_start) * 1000).to_i} ms")
+            end
 
-          if data.nil?
-            raise "No data avalaible from #{@url}"
-          else
-            timing_start = Time.now
-            parse_data(data: data, rule_set: rule_set)
-            @logger.info("Data parsed in #{((Time.now - timing_start) * 1000).to_i} ms")
+          rescue StandardError => e
+             try += 1
+            if (try <= retries)
+              sleep (10)
+              @logger.warn("retry loading data. try nr.: #{try} [max retries: #{retries}]")
+              retry 
+            else
+              raise e
+            end  
+
           end
 
           if output.data[:metadata].nil? && ! output.data[:data].nil?
@@ -186,36 +198,7 @@ module Collector
             @logger.warn("No records found")
             return  @total_nr_parsed_records
           end
-=begin
-          #########################################################################################################################################
-          # pp output.data[:data]
-          #debug_properties=[:parent_title, :journal_title, :journal, :article_title, :book_title, :title, :ispartof ]
-          #debug_properties=[:identifiers ]
-          #debug_properties=[:journal, :parent_title, :search_creationdate, :publication_date, :online_publication_date, :acceptance_date, :search_startdate, :search_enddate, :creationdate ]
-          #debug_properties=[:risdate, :creationdate, :search_creationdate, :search_startdate, :search_enddate, :publication_date]
-          #debug_properties=[:serie, :start_date, :location, :finish_date, :relation ]
-          #debug_properties=[:title, :linktorsrc , :files ,  :doi, :oa, :facets_toplevel ]
-          #debug_properties=[:facets_rsrctype, :type]
-          debug_properties=[:id, :claimed, :title]
 
-          data =  output.data[:data].is_a?(Array) ? output.data[:data] : [output.data[:data]]
-          data.each do |d|
-            debug_properties.each do |property|
-              pp " --- #{property} [#{ d[property].class }] -- "
-              pp d[property]
-              
-            end
-            unless d[:claimed]
-              pp "=============>>>>>>  NOT CLAIMED !!!!!!!"
-            
-            end
-            if d[:deleted]
-              pp "=============>>>>>>  DELETED !!!!!!!"
-            end
-
-          end
-          #########################################################################################################################################
-=end
 
           url = output.data[:metadata][:next_url]
 
@@ -379,8 +362,8 @@ module Collector
         end
 
       rescue StandardError => e
-        # @logger.error("#{ e.message  }")
-        # @logger.error("#{ e.backtrace.inspect   }")
+        # @logger.error("#{ e.message }")
+        # @logger.error("#{ e.backtrace.inspect }")
         raise e
       end
     end
